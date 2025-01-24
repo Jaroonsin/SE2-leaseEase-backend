@@ -5,11 +5,14 @@
 1. Clone the Repository
 
 git clone <repository-url>
-`cd LeaseEase`
+
+````go
+cd LeaseEase```
 
 2. Initialize the Project
 
-`go mod init LeaseEase`
+```go
+go mod init LeaseEase```
 
 3. Install Dependencies
    Run the following commands to install the necessary dependencies:
@@ -22,4 +25,4 @@ go get -u github.com/swaggo/swag/cmd/swag
 go get -u github.com/gofiber/swagger
 go get -u github.com/golang-jwt/jwt/v4
 go get -u golang.org/x/crypto/bcrypt
-```
+````
