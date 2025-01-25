@@ -2,53 +2,29 @@ package main
 
 import (
 	"LeaseEase/config"
+	"LeaseEase/internal/database"
 	"LeaseEase/internal/handlers"
-	"LeaseEase/internal/models"
 	"LeaseEase/internal/repositories"
 	"LeaseEase/internal/services"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	// Load configuration
+	if err := godotenv.Load(); err != nil {
+        log.Println("No .env file found")
+    }
 	config.LoadEnvVars()
 	cfg := config.LoadConfig()
 
 	// Initialize database
-	db, err := gorm.Open(sqlite.Open(cfg.DBSource), &gorm.Config{})
+	db,err := database.ConnectDB(cfg)
 	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
+		log.Printf("Failed to connect to database: %v", err)
 	}
-
-	// AutoMigrate models
-	err = db.AutoMigrate(
-		&models.User{},
-		&models.Customer{},
-		&models.Admin{},
-		&models.Lessor{},
-		&models.Lessee{},
-		&models.PremiumLessor{},
-		&models.Advertisement{},
-		&models.MarketSlot{},
-		&models.Request{},
-		&models.Transaction{},
-		&models.Review{},
-		&models.LessorReview{},
-		&models.SlotReview{},
-		&models.Problem{},
-		&models.ProblemTag{},
-		&models.Solve{},
-		&models.ChatMessage{},
-		&models.Report{},
-	)
-	if err != nil {
-		log.Fatalf("Failed to migrate database: %v", err)
-	}
-	log.Println("Database migration completed.")
 
 	// Initialize repositories, services, and handlers
 	repositories := repositories.NewRepository(cfg, db)
@@ -65,7 +41,7 @@ func main() {
 			"message": "Service is up and running!",
 		})
 	})
-
+	
 	// Auth routes
 	app.Post("/auth/register", handlers.UserHandler.Register)
 
