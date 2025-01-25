@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/services"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,17 +18,13 @@ func NewUserHandler(userService services.UserService) *userHandler {
 }
 
 func (h *userHandler) Register(c *fiber.Ctx) error {
-	var req struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-		Role     string `json:"role"`
-	}
 
+	var req dtos.RegisterDTO
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Failed to parse request body"})
 	}
 
-	err := h.userService.Register(req.Email, req.Password, req.Role)
+	err := h.userService.Register(&req)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}

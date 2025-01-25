@@ -1,10 +1,12 @@
 package services
 
 import (
+	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/models"
 	"LeaseEase/internal/repositories"
 	"LeaseEase/utils"
 	"errors"
+	"time"
 )
 
 type userService struct {
@@ -17,16 +19,20 @@ func NewUserService(userRepo repositories.UserRepository) UserService {
 	}
 }
 
-func (s *userService) Register(email, password, role string) error {
-	hashedPassword, err := utils.HashPassword(password)
+func (s *userService) Register(registerDTO *dtos.RegisterDTO) error {
+	hashedPassword, err := utils.HashPassword(registerDTO.Password)
 	if err != nil {
 		return err
 	}
 
 	user := &models.User{
-		Email:    email,
+		ID:       registerDTO.ID,
+		Name:     registerDTO.Name,
+		Address:  registerDTO.Address,
+		Birthday: time.Now(),
+		Email:    registerDTO.Email,
 		Password: hashedPassword,
-		Role:     role,
+		UserType: registerDTO.Role,
 	}
 
 	return s.userRepo.CreateUser(user)

@@ -1,6 +1,8 @@
 package services
 
+import "LeaseEase/internal/dtos"
+
 type UserService interface {
-	Register(email, password, role string) error
+	Register(registerDTO *dtos.RegisterDTO) error
 	Login(email, password string) (string, error)
 }
