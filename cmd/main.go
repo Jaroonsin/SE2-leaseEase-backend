@@ -45,6 +45,7 @@ func main() {
 	//Property
 	app.Get("/property", handlers.PropertyHandler.ListAllProperties)
 	app.Get("/property/:id", handlers.PropertyHandler.FindPropertyByID)
+	app.Get("/properties", handlers.PropertyHandler.ListPropertiesWithPagination)
 
 	// Auth routes
 	app.Post("/auth/register", handlers.UserHandler.Register)

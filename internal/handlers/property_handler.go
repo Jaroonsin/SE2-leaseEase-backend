@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"LeaseEase/internal/services"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -40,4 +41,14 @@ func (h *propertyHandler) FindPropertyByID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(property)
 }
 
-//pagination
+func (h *propertyHandler) ListPropertiesWithPagination(c *fiber.Ctx) error {
+	page, _ := strconv.Atoi(c.Query("page", "1"))    // Default page = 1
+	limit, _ := strconv.Atoi(c.Query("limit", "10")) // Default limit = 10
+
+	response, err := h.propertyService.ListPropertiesWithPagination(page, limit)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(response)
+}
