@@ -21,7 +21,7 @@ func (r *propertyRepository) CreateProperty(property *models.MarketSlot) error {
 }
 
 func (r *propertyRepository) UpdateProperty(property *models.MarketSlot) error {
-	return r.db.Save(property).Error
+	return r.db.Model(&property).Updates(*property).Error
 }
 
 func (r *propertyRepository) DeleteProperty(id uint) error {

@@ -48,8 +48,8 @@ type Advertisement struct {
 	BannerURL        string `gorm:"size:255"`
 	Link             string `gorm:"size:255"`
 	ClientName       string `gorm:"size:100"`
-	AdminID          uint
-	Admin            Admin `gorm:"foreignKey:AdminID"`
+	// AdminID          uint
+	// Admin            Admin `gorm:"foreignKey:AdminID"`
 }
 
 type MarketSlot struct {

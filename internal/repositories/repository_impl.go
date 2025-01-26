@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"LeaseEase/config"
+
 	"gorm.io/gorm"
 )
 
@@ -13,6 +14,7 @@ type repository struct {
 func NewRepository(cfg *config.Config, db *gorm.DB) Repository {
 	return &repository{
 		UserRepository: NewUserRepository(db),
+		PropertyRepository: NewPropertyRepository(db),
 	}
 }
 
