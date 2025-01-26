@@ -1,6 +1,6 @@
 package dtos
 
-type GetDTO struct {
+type GetPropertyDTO struct {
 	ID                 uint    `json:"id"`                  // Property/MarketSlot ID
 	LessorID           uint    `json:"lessor_id"`           //
 	Location           string  `json:"location"`            // Property's location
