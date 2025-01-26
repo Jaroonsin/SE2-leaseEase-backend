@@ -33,7 +33,7 @@ func (h *propertyHandler) CreateProperty(c *fiber.Ctx) error {
 }
 
 func (h *propertyHandler) UpdateProperty(c *fiber.Ctx) error {
-	MarketSlotID , err := strconv.Atoi(c.Params("id"))
+	PropertyID , err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -42,7 +42,7 @@ func (h *propertyHandler) UpdateProperty(c *fiber.Ctx) error {
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Failed to parse request body"})
 	}
-	req.MarketSlotID = uint(MarketSlotID)
+	req.PropertyID = uint(PropertyID)
 	err = h.propertyService.UpdateProperty(&req)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
