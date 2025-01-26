@@ -15,13 +15,13 @@ import (
 func main() {
 	// Load configuration
 	if err := godotenv.Load(); err != nil {
-        log.Println("No .env file found")
-    }
+		log.Println("No .env file found")
+	}
 	config.LoadEnvVars()
 	cfg := config.LoadConfig()
 
 	// Initialize database
-	db,err := database.ConnectDB(cfg)
+	db, err := database.ConnectDB(cfg)
 	if err != nil {
 		log.Printf("Failed to connect to database: %v", err)
 	}
@@ -41,7 +41,11 @@ func main() {
 			"message": "Service is up and running!",
 		})
 	})
-	
+
+	//Property
+	app.Get("/property", handlers.PropertyHandler.ListAllProperties)
+	app.Get("/property/:id", handlers.PropertyHandler.FindPropertyByID)
+
 	// Auth routes
 	app.Post("/auth/register", handlers.UserHandler.Register)
 
