@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"LeaseEase/config"
+
 	"gorm.io/gorm"
 )
 
