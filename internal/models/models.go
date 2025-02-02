@@ -53,7 +53,8 @@ type Advertisement struct {
 }
 
 type MarketSlot struct {
-	MarketSlotID       uint `gorm:"primaryKey"`
+	MarketSlotID       uint   `gorm:"primaryKey"`
+	Name               string `gorm:"size:50"`
 	LessorID           uint
 	Location           string `gorm:"size:255"`
 	Size               string `gorm:"size:50"`
