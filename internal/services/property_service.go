@@ -18,8 +18,8 @@ func NewPropertyService(propertyRepo repositories.PropertyRepository) PropertySe
 
 func (s *propertyService) CreateProperty(propertyDTO *dtos.CreateDTO) error {
 
-	property := &models.MarketSlot{
-		MarketSlotID : propertyDTO.MarketSlotID,
+	property := &models.Property{
+		ID : propertyDTO.PropertyID,
 		LessorID : propertyDTO.LessorID,
 		Location : propertyDTO.Location,
 		Size : propertyDTO.Size,
@@ -31,8 +31,8 @@ func (s *propertyService) CreateProperty(propertyDTO *dtos.CreateDTO) error {
 }
 
 func (s *propertyService) UpdateProperty(propertyDTO *dtos.UpdateDTO) error {
-	property := &models.MarketSlot{
-		MarketSlotID : propertyDTO.MarketSlotID,
+	property := &models.Property{
+		ID : propertyDTO.PropertyID,
 		Price : propertyDTO.Price,
 		AvailabilityStatus : propertyDTO.AvailabilityStatus,
 	}

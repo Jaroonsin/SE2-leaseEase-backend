@@ -16,14 +16,14 @@ func NewPropertyRepository(db *gorm.DB) PropertyRepository {
 	}
 }
 
-func (r *propertyRepository) CreateProperty(property *models.MarketSlot) error {
+func (r *propertyRepository) CreateProperty(property *models.Property) error {
 	return r.db.Create(property).Error
 }
 
-func (r *propertyRepository) UpdateProperty(property *models.MarketSlot) error {
-	return r.db.Save(property).Error
+func (r *propertyRepository) UpdateProperty(property *models.Property) error {
+	return r.db.Model(&property).Updates(*property).Error
 }
 
 func (r *propertyRepository) DeleteProperty(id uint) error {
-	return r.db.Delete(&models.MarketSlot{}, id).Error
+	return r.db.Delete(&models.Property{}, id).Error
 }

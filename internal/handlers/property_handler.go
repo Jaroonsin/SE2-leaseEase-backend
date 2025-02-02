@@ -18,9 +18,7 @@ func NewPropertyHandler(propertyService services.PropertyService) *propertyHandl
 	}
 }
 
-
 func (h *propertyHandler) CreateProperty(c *fiber.Ctx) error {
-
 	var req dtos.CreateDTO
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Failed to parse request body"})

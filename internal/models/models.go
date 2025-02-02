@@ -27,11 +27,11 @@ type Property struct {
 
 // Request struct with properly mapped fields
 type Request struct {
-	ID                     uint      `gorm:"primaryKey"`
-	Purpose                string    `gorm:"size:255;not null"`
-	ProposedMessage        string    `gorm:"type:text"`
-	Question               string    `gorm:"type:text"`
-	CreatedAt              time.Time `gorm:"autoCreateTime"`
+	ID                     uint   `gorm:"primaryKey"`
+	Purpose                string `gorm:"size:255"`
+	ProposedMessage        string `gorm:"type:text"`
+	Question               string `gorm:"type:text"`
+	CreateAt               time.Time
 	InterestedMarketSlotID uint
 	LesseeID               uint      `gorm:"not null"`
 	Lessee                 User      `gorm:"foreignKey:LesseeID;references:ID"`
