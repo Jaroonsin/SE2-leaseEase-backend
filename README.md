@@ -2,9 +2,8 @@
 
 📂 Project Setup
 
-1. Clone the Repository
+1. Clone the Repository, then
 
-git clone <repository-url>
 `cd LeaseEase`
 
 2. Initialize the Project
