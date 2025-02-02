@@ -41,8 +41,12 @@ func main() {
 			"message": "Service is up and running!",
 		})
 	})
-	// Auth routes
+	
+	// Define routes
 	app.Post("/auth/register", handlers.UserHandler.Register)
+	app.Post("/property/create", handlers.PropertyHandler.CreateProperty)
+	app.Put("/property/update/:id", handlers.PropertyHandler.UpdateProperty)
+	app.Delete("/property/delete/:id", handlers.PropertyHandler.DeleteProperty)
 
 	// Start server
 	app.Listen(":" + cfg.ServerPort)
