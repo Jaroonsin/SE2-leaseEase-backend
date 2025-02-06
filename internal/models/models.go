@@ -2,147 +2,153 @@ package models
 
 import "time"
 
+// User struct with proper GORM tags for relations and validations
 type User struct {
-	ID       uint   `gorm:"primaryKey"`
-	Name     string `gorm:"size:100"`
-	Address  string `gorm:"size:255"`
+	ID       uint      `gorm:"primaryKey"`
+	Name     string    `gorm:"size:100;not null"`
+	Address  string    `gorm:"size:255"`
 	Birthday time.Time
-	Email    string `gorm:"unique;size:100"`
-	Password string `gorm:"size:100"`
-	UserType string `gorm:"size:50"`
+	Email    string    `gorm:"uniqueIndex;size:100;not null"`
+	Password string    `gorm:"size:100;not null"`
+	UserType string    `gorm:"size:50;not null"`
+	Role     string    `gorm:"size:10;not null"` // lessor, lessee
 }
 
-type Customer struct {
-	ID           uint   `gorm:"primaryKey"`
-	CustomerType string `gorm:"size:50"`
+// Property struct with relationships and mapping
+type Property struct {
+	ID                 uint    `gorm:"primaryKey"`
+	LessorID           uint    `gorm:"not null"`
+	Location           string  `gorm:"size:255;not null"`
+	Size               string  `gorm:"size:50;not null"`
+	Price              float64 `gorm:"not null"`
+	AvailabilityStatus string  `gorm:"size:50;not null"`
+	Lessor             User    `gorm:"foreignKey:LessorID;references:ID"`
 }
 
-type Admin struct {
-	ID uint `gorm:"primaryKey"`
-}
-
-type Lessor struct {
-	ID      uint `gorm:"primaryKey"`
-	AdminID uint
-	Admin   Admin `gorm:"foreignKey:AdminID"`
-}
-
-type Lessee struct {
-	ID      uint `gorm:"primaryKey"`
-	AdminID uint
-	Admin   Admin `gorm:"foreignKey:AdminID"`
-}
-
-type PremiumLessor struct {
-	ID         uint `gorm:"primaryKey"`
-	ExpireDate time.Time
-	StartDate  time.Time
-}
-
-type Advertisement struct {
-	ID               uint   `gorm:"primaryKey"`
-	Title            string `gorm:"size:255"`
-	Description      string `gorm:"type:text"`
-	PublishStartDate time.Time
-	PublishEndDate   time.Time
-	BannerURL        string `gorm:"size:255"`
-	Link             string `gorm:"size:255"`
-	ClientName       string `gorm:"size:100"`
-	AdminID          uint
-	Admin            Admin `gorm:"foreignKey:AdminID"`
-}
-
-type MarketSlot struct {
-	MarketSlotID       uint   `gorm:"primaryKey"`
-	Name               string `gorm:"size:50"`
-	LessorID           uint
-	Location           string `gorm:"size:255"`
-	Size               string `gorm:"size:50"`
-	Price              float64
-	AvailabilityStatus string `gorm:"size:50"`
-	AdminID            uint
-	Admin              Admin `gorm:"foreignKey:AdminID"`
-}
-
+// Request struct with properly mapped fields
 type Request struct {
-	ID                     uint   `gorm:"primaryKey"`
-	Purpose                string `gorm:"size:255"`
-	ProposedMessage        string `gorm:"type:text"`
-	Question               string `gorm:"type:text"`
-	CreateAt               time.Time
+	ID                     uint      `gorm:"primaryKey"`
+	Purpose                string    `gorm:"size:255;not null"`
+	ProposedMessage        string    `gorm:"type:text"`
+	Question               string    `gorm:"type:text"`
+	CreatedAt              time.Time `gorm:"autoCreateTime"`
 	InterestedMarketSlotID uint
-	LesseeID               uint
-	Lessee                 Lessee `gorm:"foreignKey:LesseeID"`
+	LesseeID               uint      `gorm:"not null"`
+	Lessee                 User      `gorm:"foreignKey:LesseeID;references:ID"`
 }
 
-type Transaction struct {
-	TransactionID   uint   `gorm:"primaryKey"`
-	TransactionType string `gorm:"size:50"`
-	Currency        string `gorm:"size:10"`
-	PaymentMethod   string `gorm:"size:50"`
-	AccountID       string `gorm:"size:100"`
-	Status          string `gorm:"size:50"`
-	Amount          float64
-	DateAndTime     time.Time
-	LessorID        uint
-	Lessor          Lessor `gorm:"foreignKey:LessorID"`
-}
-
+// Review struct for reusable review fields
 type Review struct {
-	ReviewID      uint   `gorm:"primaryKey"`
-	ReviewMessage string `gorm:"type:text"`
-	Rating        int
-	TimeStamp     time.Time
+	ID            uint      `gorm:"primaryKey"`
+	ReviewMessage string    `gorm:"type:text;not null"`
+	Rating        int       `gorm:"not null"`
+	TimeStamp     time.Time `gorm:"autoCreateTime"`
 }
 
+// LessorReview struct linking reviews with lessors
 type LessorReview struct {
-	ReviewID uint
-	LessorID uint
-	LesseeID uint
-	Review   Review `gorm:"foreignKey:ReviewID"`
+	ReviewID uint   `gorm:"primaryKey"`
+	LessorID uint   `gorm:"not null"`
+	LesseeID uint   `gorm:"not null"`
+	Review   Review `gorm:"foreignKey:ReviewID;references:ID"`
+	Lessor   User   `gorm:"foreignKey:LessorID;references:ID"`
+	Lessee   User   `gorm:"foreignKey:LesseeID;references:ID"`
 }
 
-type SlotReview struct {
-	ReviewID     uint
-	LesseeID     uint
-	MarketSlotID uint
-	Review       Review `gorm:"foreignKey:ReviewID"`
+// PropertyReview struct linking reviews with properties
+type PropertyReview struct {
+	ReviewID   uint     `gorm:"primaryKey"`
+	LesseeID   uint     `gorm:"not null"`
+	PropertyID uint     `gorm:"not null"`
+	Review     Review   `gorm:"foreignKey:ReviewID;references:ID"`
+	Lessee     User     `gorm:"foreignKey:LesseeID;references:ID"`
+	Property   Property `gorm:"foreignKey:PropertyID;references:ID"`
 }
+// type Customer struct {
+// 	ID           uint   `gorm:"primaryKey"`
+// 	CustomerType string `gorm:"size:50"`
+// }
 
-type Problem struct {
-	ProblemID   uint   `gorm:"primaryKey"`
-	Subject     string `gorm:"size:255"`
-	Description string `gorm:"type:text"`
-	Status      string `gorm:"size:50"`
-	CreateAt    time.Time
-}
+// type Admin struct {
+// 	ID uint `gorm:"primaryKey"`
+// }
 
-type ProblemTag struct {
-	ProblemID  uint   `gorm:"primaryKey"`
-	ProblemTag string `gorm:"size:50"`
-}
+// type Lessor struct {
+// 	ID      uint `gorm:"primaryKey"`
+// 	AdminID uint
+// 	Admin   Admin `gorm:"foreignKey:AdminID"`
+// }
 
-type Solve struct {
-	AdminID   uint
-	ProblemID uint
-	Admin     Admin   `gorm:"foreignKey:AdminID"`
-	Problem   Problem `gorm:"foreignKey:ProblemID"`
-}
+// type Lessee struct {
+// 	ID      uint `gorm:"primaryKey"`
+// 	AdminID uint
+// 	Admin   Admin `gorm:"foreignKey:AdminID"`
+// }
 
-type ChatMessage struct {
-	MessageID        uint   `gorm:"primaryKey"`
-	Message          string `gorm:"type:text"`
-	ImageURL         string `gorm:"size:255"`
-	TimeStamp        time.Time
-	MessageDirection string `gorm:"size:50"`
-	LessorID         uint
-	Lessor           Lessor `gorm:"foreignKey:LessorID"`
-}
+// type PremiumLessor struct {
+// 	ID         uint `gorm:"primaryKey"`
+// 	ExpireDate time.Time
+// 	StartDate  time.Time
+// }
 
-type Report struct {
-	MessageID  uint
-	ProblemID  uint
-	CustomerID uint
-	Message    ChatMessage `gorm:"foreignKey:MessageID"`
-	Problem    Problem     `gorm:"foreignKey:ProblemID"`
-}
+// type Advertisement struct {
+// 	AdvertisementID  uint   `gorm:"primaryKey"`
+// 	Title            string `gorm:"size:255"`
+// 	Description      string `gorm:"type:text"`
+// 	PublishStartDate time.Time
+// 	PublishEndDate   time.Time
+// 	BannerURL        string `gorm:"size:255"`
+// 	Link             string `gorm:"size:255"`
+// 	ClientName       string `gorm:"size:100"`
+// }
+
+// type Transaction struct {
+// 	TransactionID   uint   `gorm:"primaryKey"`
+// 	TransactionType string `gorm:"size:50"`
+// 	Currency        string `gorm:"size:10"`
+// 	PaymentMethod   string `gorm:"size:50"`
+// 	AccountID       string `gorm:"size:100"`
+// 	Status          string `gorm:"size:50"`
+// 	Amount          float64
+// 	DateAndTime     time.Time
+// 	LessorID        uint
+// 	Lessor          User `gorm:"foreignKey:LessorID"`
+// }
+
+// type Problem struct {
+// 	ProblemID   uint   `gorm:"primaryKey"`
+// 	Subject     string `gorm:"size:255"`
+// 	Description string `gorm:"type:text"`
+// 	Status      string `gorm:"size:50"`
+// 	CreateAt    time.Time
+// }
+
+// type ProblemTag struct {
+// 	ProblemID  uint   `gorm:"primaryKey"`
+// 	ProblemTag string `gorm:"size:50"`
+// }
+
+// type Solve struct {
+// 	AdminID   uint
+// 	ProblemID uint
+// 	Admin     Admin   `gorm:"foreignKey:AdminID"`
+// 	Problem   Problem `gorm:"foreignKey:ProblemID"`
+// }
+
+// type ChatMessage struct {
+// 	MessageID        uint   `gorm:"primaryKey"`
+// 	Message          string `gorm:"type:text"`
+// 	ImageURL         string `gorm:"size:255"`
+// 	TimeStamp        time.Time
+// 	MessageDirection string `gorm:"size:50"`
+// 	LessorID         uint
+// 	Lessor           Lessor `gorm:"foreignKey:LessorID"`
+// }
+
+// type Report struct {
+// 	MessageID  uint
+// 	ProblemID  uint
+// 	CustomerID uint
+// 	Message    ChatMessage `gorm:"foreignKey:MessageID"`
+// 	Problem    Problem     `gorm:"foreignKey:ProblemID"`
+// }
