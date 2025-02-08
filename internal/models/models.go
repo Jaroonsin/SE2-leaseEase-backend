@@ -3,60 +3,56 @@ package models
 import "time"
 
 // User struct with proper GORM tags for relations and validations
-// User struct with proper GORM tags for relations and validations
 type User struct {
-	ID         uint   `gorm:"primaryKey"`
-	Name       string `gorm:"size:100;not null"`
-	Address    string `gorm:"size:255"`
-	Birthday   time.Time
-	Email      string     `gorm:"uniqueIndex;size:100;not null"`
-	Password   string     `gorm:"size:100;not null"`
-	UserType   string     `gorm:"size:50;not null"`
-	Role       string     `gorm:"size:10;not null"` // lessor, lessee
-	Properties []Property `gorm:"foreignKey:LessorID"`
+	ID       uint   `gorm:"primaryKey"`
+	Name     string `gorm:"size:100;not null"`
+	Address  string `gorm:"size:255"`
+	Birthday time.Time
+	Email    string `gorm:"uniqueIndex;size:100;not null"`
+	Password string `gorm:"size:100;not null"`
+	UserType string `gorm:"size:50;not null"`
+	Role     string `gorm:"size:10;not null"` // lessor, lessee
 }
 
 // Property struct with relationships and mapping
 type Property struct {
-	PropertyID         uint             `gorm:"primaryKey"`
-	LessorID           uint             `gorm:"not null"`
-	Location           string           `gorm:"size:255;not null"`
-	Size               string           `gorm:"size:50;not null"`
-	Price              float64          `gorm:"not null"`
-	AvailabilityStatus string           `gorm:"size:50;not null"`
-	Lessor             User             `gorm:"foreignKey:LessorID"`
-	PropertyReviews    []PropertyReview `gorm:"foreignKey:PropertyID"`
+	ID                 uint    `gorm:"primaryKey"`
+	LessorID           uint    `gorm:"not null"`
+	Location           string  `gorm:"size:255;not null"`
+	Size               string  `gorm:"size:50;not null"`
+	Price              float64 `gorm:"not null"`
+	AvailabilityStatus string  `gorm:"size:50;not null"`
+	Lessor             User    `gorm:"foreignKey:LessorID;references:ID"`
 }
 
 // Request struct with properly mapped fields
 type Request struct {
-	RequestID            uint      `gorm:"primaryKey"`
-	Purpose              string    `gorm:"size:255;not null"`
-	ProposedMessage      string    `gorm:"type:text"`
-	Question             string    `gorm:"type:text"`
-	CreatedAt            time.Time `gorm:"autoCreateTime"`
-	InterestedPropertyID uint
-	LesseeID             uint `gorm:"not null"`
-	Lessee               User `gorm:"foreignKey:LesseeID"`
+	ID                     uint      `gorm:"primaryKey"`
+	Purpose                string    `gorm:"size:255;not null"`
+	ProposedMessage        string    `gorm:"type:text"`
+	Question               string    `gorm:"type:text"`
+	CreatedAt              time.Time `gorm:"autoCreateTime"`
+	InterestedMarketSlotID uint
+	LesseeID               uint `gorm:"not null"`
+	Lessee                 User `gorm:"foreignKey:LesseeID;references:ID"`
 }
 
 // Review struct for reusable review fields
 type Review struct {
-	ReviewID      uint      `gorm:"primaryKey"`
+	ID            uint      `gorm:"primaryKey"`
 	ReviewMessage string    `gorm:"type:text;not null"`
 	Rating        int       `gorm:"not null"`
 	TimeStamp     time.Time `gorm:"autoCreateTime"`
 }
 
 // LessorReview struct linking reviews with lessors
-// A composite foreign key ensures proper mapping between tables
 type LessorReview struct {
 	ReviewID uint   `gorm:"primaryKey"`
-	LessorID uint   `gorm:"primaryKey"`
+	LessorID uint   `gorm:"not null"`
 	LesseeID uint   `gorm:"not null"`
-	Review   Review `gorm:"foreignKey:ReviewID"`
-	Lessor   User   `gorm:"foreignKey:LessorID"`
-	Lessee   User   `gorm:"foreignKey:LesseeID"`
+	Review   Review `gorm:"foreignKey:ReviewID;references:ID"`
+	Lessor   User   `gorm:"foreignKey:LessorID;references:ID"`
+	Lessee   User   `gorm:"foreignKey:LesseeID;references:ID"`
 }
 
 // PropertyReview struct linking reviews with properties
@@ -64,9 +60,9 @@ type PropertyReview struct {
 	ReviewID   uint     `gorm:"primaryKey"`
 	LesseeID   uint     `gorm:"not null"`
 	PropertyID uint     `gorm:"not null"`
-	Review     Review   `gorm:"foreignKey:ReviewID"`
-	Lessee     User     `gorm:"foreignKey:LesseeID"`
-	Property   Property `gorm:"foreignKey:PropertyID"`
+	Review     Review   `gorm:"foreignKey:ReviewID;references:ID"`
+	Lessee     User     `gorm:"foreignKey:LesseeID;references:ID"`
+	Property   Property `gorm:"foreignKey:PropertyID;references:ID"`
 }
 
 // type Customer struct {
