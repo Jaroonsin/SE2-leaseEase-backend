@@ -1,15 +1,15 @@
 package middleware
 
 import (
-	"os"
+	"LeaseEase/config"
 
 	"github.com/gofiber/fiber/v2"
 	jwtware "github.com/gofiber/jwt/v3"
 )
 
-func AuthorizationUserToken() fiber.Handler {
+func AuthorizationUserToken(cfg *config.Config) fiber.Handler {
     return jwtware.New(jwtware.Config{
-        SigningKey:   []byte(os.Getenv("JWT_SECRET")),
+        SigningKey:   []byte(cfg.JWTSecret),
         ErrorHandler: AuthError, 
         SuccessHandler: AuthSuccess, 
     })
