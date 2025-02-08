@@ -67,3 +67,21 @@ func (s *propertyService) GetAllProperty(page, pageSize int) ([]dtos.GetProperty
 
 	return propertyDTOs, nil
 }
+
+func (s *propertyService) GetPropertyByID(propertyID uint) (*dtos.GetPropertyDTO, error) {
+	property, err := s.propertyRepo.GetPropertyById(propertyID)
+	if err != nil {
+		return nil, err
+	}
+
+	propertyDTO := &dtos.GetPropertyDTO{
+		PropertyID:         property.ID,
+		LessorID:           property.LessorID,
+		Location:           property.Location,
+		Size:               property.Size,
+		Price:              property.Price,
+		AvailabilityStatus: property.AvailabilityStatus,
+	}
+
+	return propertyDTO, nil
+}
