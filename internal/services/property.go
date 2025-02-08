@@ -7,4 +7,5 @@ type PropertyService interface {
 	UpdateProperty(propertyDTO *dtos.UpdateDTO) error
 	DeleteProperty(propertyID *dtos.DeleteDTO) error
 	GetAllProperty(page, pageSize int) ([]dtos.GetPropertyDTO, error)
+	GetPropertyByID(propertyID uint) (*dtos.GetPropertyDTO, error)
 }

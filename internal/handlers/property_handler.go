@@ -84,3 +84,17 @@ func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(properties)
 }
+
+func (h *propertyHandler) GetPropertyByID(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid property ID"})
+	}
+
+	property, err := h.propertyService.GetPropertyByID(uint(id))
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(property)
+}

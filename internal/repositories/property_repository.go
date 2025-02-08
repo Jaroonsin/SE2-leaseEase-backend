@@ -36,3 +36,14 @@ func (r *propertyRepository) GetAllProperty(limit, offset int) ([]models.Propert
 	}
 	return properties, nil
 }
+
+func (r *propertyRepository) GetPropertyById(propertyID uint) (*models.Property, error) {
+	var property models.Property
+
+	err := r.db.First(&property, propertyID).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &property, nil
+}

@@ -112,4 +112,5 @@ func (s *FiberHttpServer) initPropertyRouter(router fiber.Router, httpHandler ha
 	propertyRouter.Put("/update/:id", httpHandler.Property().UpdateProperty)
 	propertyRouter.Delete("/delete/:id", httpHandler.Property().DeleteProperty)
 	propertyRouter.Get("/", httpHandler.Property().GetAllProperty)
+	propertyRouter.Get("/:id", httpHandler.Property().GetPropertyByID)
 }

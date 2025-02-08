@@ -7,4 +7,5 @@ type PropertyRepository interface {
 	UpdateProperty(property *models.Property) error
 	DeleteProperty(id uint) error
 	GetAllProperty(limit, offset int) ([]models.Property, error)
+	GetPropertyById(propertyID uint) (*models.Property, error)
 }
