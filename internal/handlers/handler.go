@@ -1,6 +1,6 @@
 package handlers
 
 type Handler interface {
-	User() *userHandler
+	Auth() *userHandler
 	Property() *propertyHandler
 }
