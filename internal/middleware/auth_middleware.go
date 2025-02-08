@@ -7,7 +7,7 @@ import (
 	jwtware "github.com/gofiber/jwt/v3"
 )
 
-func AuthorizationUserToken(cfg *config.Config) fiber.Handler {
+func AuthorizationUserToken(cfg *config.DBConfig) fiber.Handler {
     return jwtware.New(jwtware.Config{
         SigningKey:   []byte(cfg.JWTSecret),
         ErrorHandler: AuthError, 
