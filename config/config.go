@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-type Config struct {
+type DBConfig struct {
 	DBDriver   string
 	DBSource   string
 	JWTSecret  string
@@ -17,8 +17,8 @@ type Config struct {
 	DBName     string
 }
 
-func LoadConfig() *Config {
-	return &Config{
+func LoadDBConfig() *DBConfig {
+	return &DBConfig{
 		// DBDriver:   "sqlite",
 		// DBSource:   "rent-a-room.db",
 		JWTSecret:  os.Getenv("JWT_SECRET"),
@@ -29,6 +29,10 @@ func LoadConfig() *Config {
 		DBPassword: os.Getenv("DB_PASS"),
 		DBName:     os.Getenv("DB_NAME"),
 	}
+}
+
+func LoadEnv() string {
+	return os.Getenv("SERVER_ENV")
 }
 
 func LoadEnvVars() {

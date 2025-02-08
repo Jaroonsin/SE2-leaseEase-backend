@@ -1,14 +1,15 @@
 package main
 
 import (
+	"LeaseEase/cmd/server"
 	"LeaseEase/config"
 	"LeaseEase/internal/database"
 	"LeaseEase/internal/handlers"
+	"LeaseEase/internal/logs"
 	"LeaseEase/internal/repositories"
 	"LeaseEase/internal/services"
 	"log"
 
-	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 )
 
@@ -18,7 +19,8 @@ func main() {
 		log.Println("No .env file found")
 	}
 	config.LoadEnvVars()
-	cfg := config.LoadConfig()
+	cfg := config.LoadDBConfig()
+	logger := logs.NewLogger()
 
 	// Initialize database
 	db, err := database.ConnectDB(cfg)
@@ -31,23 +33,8 @@ func main() {
 	services := services.NewService(repositories)
 	handlers := handlers.NewHandler(services)
 
-	// Set up Fiber app
-	app := fiber.New()
-
-	// Health check
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"status":  "success",
-			"message": "Service is up and running!",
-		})
-	})
-	
-	// Define routes
-	app.Post("/auth/register", handlers.UserHandler.Register)
-	app.Post("/property/create", handlers.PropertyHandler.CreateProperty)
-	app.Put("/property/update/:id", handlers.PropertyHandler.UpdateProperty)
-	app.Delete("/property/delete/:id", handlers.PropertyHandler.DeleteProperty)
+	servers := server.NewFiberHttpServer(cfg, logger, handlers)
 
 	// Start server
-	app.Listen(":" + cfg.ServerPort)
+	servers.Start()
 }

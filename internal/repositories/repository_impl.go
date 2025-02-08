@@ -7,13 +7,13 @@ import (
 )
 
 type repository struct {
-	UserRepository UserRepository
+	UserRepository     UserRepository
 	PropertyRepository PropertyRepository
 }
 
-func NewRepository(cfg *config.Config, db *gorm.DB) Repository {
+func NewRepository(cfg *config.DBConfig, db *gorm.DB) Repository {
 	return &repository{
-		UserRepository: NewUserRepository(db),
+		UserRepository:     NewUserRepository(db),
 		PropertyRepository: NewPropertyRepository(db),
 	}
 }
