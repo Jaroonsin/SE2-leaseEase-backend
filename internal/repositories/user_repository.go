@@ -1,8 +1,6 @@
 package repositories
 
 import (
-	"LeaseEase/internal/models"
-
 	"gorm.io/gorm"
 )
 
@@ -16,12 +14,4 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	}
 }
 
-func (r *userRepository) CreateUser(user *models.User) error {
-	return r.db.Create(user).Error
-}
 
-func (r *userRepository) GetUserByEmail(email string) (*models.User, error) {
-	var user models.User
-	err := r.db.Where("email = ?", email).First(&user).Error
-	return &user, err
-}
