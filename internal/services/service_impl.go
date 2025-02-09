@@ -3,16 +3,16 @@ package services
 import "LeaseEase/internal/repositories"
 
 type service struct {
-	UserService UserService
+	UserService     UserService
 	PropertyService PropertyService
-	AuthService AuthService
+	AuthService     AuthService
 }
 
 func NewService(repo repositories.Repository) Service {
 	return &service{
-		UserService: NewUserService(repo.User()),
+		UserService:     NewUserService(repo.User()),
 		PropertyService: NewPropertyService(repo.Property()),
-		AuthService: NewAuthService(repo.Auth()),
+		AuthService:     NewAuthService(repo.Auth()),
 	}
 }
 

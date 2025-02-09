@@ -13,5 +13,3 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 		db: db,
 	}
 }
-
-

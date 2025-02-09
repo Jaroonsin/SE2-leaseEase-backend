@@ -9,7 +9,7 @@ import (
 type repository struct {
 	UserRepository     UserRepository
 	PropertyRepository PropertyRepository
-	AuthRepository AuthRepository
+	AuthRepository     AuthRepository
 }
 
 func NewRepository(cfg *config.DBConfig, db *gorm.DB) Repository {

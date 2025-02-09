@@ -40,7 +40,7 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Failed to parse request body"})
 	}
 
-	token,err := h.authService.Login(&req)
+	token, err := h.authService.Login(&req)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -48,13 +48,12 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 	c.Cookie(&fiber.Cookie{
 		Name:     "auth_token",
 		Value:    token,
-		HTTPOnly: true, 
+		HTTPOnly: true,
 		Secure:   false, // Requires HTTPS ? true for Prod
 		SameSite: "Strict",
-		Path:     "/", 
-		Expires:  time.Now().Add(time.Hour * 3), 
+		Path:     "/",
+		Expires:  time.Now().Add(time.Hour * 3),
 	})
-	
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "User login successfully"})
 }

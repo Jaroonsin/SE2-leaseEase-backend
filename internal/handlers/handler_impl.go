@@ -5,14 +5,14 @@ import "LeaseEase/internal/services"
 type handler struct {
 	UserHandler     *userHandler
 	PropertyHandler *propertyHandler
-	AuthHandler		*authHandler
+	AuthHandler     *authHandler
 }
 
 func NewHandler(service services.Service) Handler {
 	return &handler{
 		UserHandler:     NewUserHandler(service.User()),
 		PropertyHandler: NewPropertyHandler(service.Property()),
-		AuthHandler: NewAuthHandler(service.Auth()),
+		AuthHandler:     NewAuthHandler(service.Auth()),
 	}
 }
 

@@ -103,7 +103,7 @@ func (s *FiberHttpServer) initAuthRouter(router fiber.Router, httpHandler handle
 	authRouter := router.Group("/auth")
 
 	authRouter.Post("/register", httpHandler.Auth().Register)
-	authRouter.Post("/login",httpHandler.Auth().Login)
+	authRouter.Post("/login", httpHandler.Auth().Login)
 }
 
 func (s *FiberHttpServer) initPropertyRouter(router fiber.Router, httpHandler handlers.Handler) {
