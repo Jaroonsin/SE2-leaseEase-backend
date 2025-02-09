@@ -14,7 +14,7 @@ func GenerateJWT(userID uint) (string, error) {
 	// Define token claims
 	claims := jwt.MapClaims{
 		"user_id": userID,
-		"exp":     time.Now().Add(time.Hour * 24).Unix(), // Token expiration: 24 hours
+		"exp":     time.Now().Add(time.Hour * 3).Unix(), // Token expiration: 24 hours
 		"iat":     time.Now().Unix(),                     // Issued at time
 	}
 

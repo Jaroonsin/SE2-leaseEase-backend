@@ -3,6 +3,7 @@ package server
 import (
 	"LeaseEase/config"
 	"LeaseEase/internal/handlers"
+	"LeaseEase/internal/middleware"
 	"context"
 	"os"
 	"os/signal"
@@ -70,7 +71,7 @@ func (s *FiberHttpServer) Start() {
 
 	// init modules
 	s.initAuthRouter(router, s.handlers)
-	s.initPropertyRouter(router, s.handlers)
+	s.initPropertyRouter(router, s.handlers, s.cfg)
 
 	// Setup signal capturing for graceful shutdown
 	quit := make(chan os.Signal, 1)
@@ -106,8 +107,8 @@ func (s *FiberHttpServer) initAuthRouter(router fiber.Router, httpHandler handle
 	authRouter.Post("/login", httpHandler.Auth().Login)
 }
 
-func (s *FiberHttpServer) initPropertyRouter(router fiber.Router, httpHandler handlers.Handler) {
-	propertyRouter := router.Group("/properties")
+func (s *FiberHttpServer) initPropertyRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.DBConfig) {
+	propertyRouter := router.Group("/properties", middleware.AuthorizationUserToken(cfg))
 
 	propertyRouter.Post("/create", httpHandler.Property().CreateProperty)
 	propertyRouter.Put("/update/:id", httpHandler.Property().UpdateProperty)
