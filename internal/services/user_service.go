@@ -38,13 +38,13 @@ func (s *userService) Register(registerDTO *dtos.RegisterDTO) error {
 	return s.userRepo.CreateUser(user)
 }
 
-func (s *userService) Login(email, password string) (string, error) {
-	user, err := s.userRepo.GetUserByEmail(email)
+func (s *userService) Login(loginDTO *dtos.LoginDTO) (string, error) {
+	user, err := s.userRepo.GetUserByEmail(loginDTO.Email)
 	if err != nil {
 		return "", errors.New("user not found")
 	}
 
-	if !utils.CheckPasswordHash(password, user.Password) {
+	if !utils.CheckPasswordHash(loginDTO.Password, user.Password) {
 		return "", errors.New("invalid password")
 	}
 
