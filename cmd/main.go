@@ -18,7 +18,7 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")
 	}
-	config.LoadEnvVars()
+	config.LoadEnvVars() //hardcode jwt secret
 	cfg := config.LoadDBConfig()
 	logger := logs.NewLogger()
 
