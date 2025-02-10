@@ -79,7 +79,7 @@ func (s *FiberHttpServer) Start() {
 
 	// Run the server in a goroutine so it doesn't block
 	go func() {
-		if err := s.app.Listen(":3000"); err != nil {
+		if err := s.app.Listen(":8000"); err != nil {
 			s.logger.Sugar().Fatalf("Error while starting server: %v", err)
 		}
 	}()
