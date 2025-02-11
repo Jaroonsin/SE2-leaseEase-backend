@@ -52,7 +52,7 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 		Value:    token,
 		HTTPOnly: true,
 		Secure:   false, // Requires HTTPS ? true for Prod
-		SameSite: "Lax",
+		SameSite: "Strict",
 		Path:     "/",
 		Expires:  time.Now().Add(time.Hour * 3),
 	})
