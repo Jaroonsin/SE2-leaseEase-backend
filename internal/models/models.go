@@ -15,6 +15,7 @@ type User struct {
 
 // Property struct with relationships and mapping
 type Property struct {
+	Name			   string  `gorm:"size:100;not null"` // name of the property
 	ID                 uint    `gorm:"primaryKey;autoIncrement"`
 	LessorID           uint    `gorm:"not null"`
 	Location           string  `gorm:"size:255;not null"`

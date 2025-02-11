@@ -19,7 +19,7 @@ func NewPropertyService(propertyRepo repositories.PropertyRepository) PropertySe
 func (s *propertyService) CreateProperty(propertyDTO *dtos.CreateDTO) error {
 
 	property := &models.Property{
-		// ID:                 propertyDTO.PropertyID,
+		Name:               propertyDTO.Name,
 		LessorID:           propertyDTO.LessorID,
 		Location:           propertyDTO.Location,
 		Size:               propertyDTO.Size,
