@@ -22,7 +22,7 @@ func LoadDBConfig() *DBConfig {
 		// DBDriver:   "sqlite",
 		// DBSource:   "rent-a-room.db",
 		JWTSecret:  os.Getenv("JWT_SECRET"),
-		ServerPort: os.Getenv("PORT"),
+		ServerPort: os.Getenv("SERVER_PORT"),
 		DBHost:     os.Getenv("DB_HOST"),
 		DBPort:     os.Getenv("DB_PORT"),
 		DBUser:     os.Getenv("DB_USER"),
@@ -38,8 +38,5 @@ func LoadEnv() string {
 func LoadEnvVars() {
 	if err := os.Setenv("JWT_SECRET", "your-secret-key"); err != nil {
 		log.Fatal("Failed to set JWT_SECRET")
-	}
-	if err := os.Setenv("PORT", "3000"); err != nil {
-		log.Fatal("Failed to set PORT")
 	}
 }
