@@ -3,6 +3,7 @@ package handlers
 import (
 	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/services"
+	"LeaseEase/utils"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -21,49 +22,49 @@ func NewPropertyHandler(propertyService services.PropertyService) *propertyHandl
 func (h *propertyHandler) CreateProperty(c *fiber.Ctx) error {
 	var req dtos.CreateDTO
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Failed to parse request body"})
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to parse request body")
 	}
 
 	err := h.propertyService.CreateProperty(&req)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
-
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Property registered successfully"})
+	
+	return utils.SuccessResponse(c, fiber.StatusCreated, "Property created successfully", nil)
 }
 
 func (h *propertyHandler) UpdateProperty(c *fiber.Ctx) error {
 	PropertyID, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid property ID")
 	}
 
 	var req dtos.UpdateDTO
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Failed to parse request body"})
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to parse request body")
 	}
 	req.PropertyID = uint(PropertyID)
 	err = h.propertyService.UpdateProperty(&req)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Property updated successfully"})
+	return utils.SuccessResponse(c, fiber.StatusOK, "Property updated successfully", nil)
 }
 
 func (h *propertyHandler) DeleteProperty(c *fiber.Ctx) error {
 	var req dtos.DeleteDTO
 	propertyID, err := strconv.Atoi(c.Params("id"))
-
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid property ID")
 	}
+
 	req.PropertyID = uint(propertyID)
 	err = h.propertyService.DeleteProperty(&req)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Property deleted successfully"})
+	return utils.SuccessResponse(c, fiber.StatusOK, "Property deleted successfully", nil)
 }
 
 func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
@@ -96,22 +97,20 @@ func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
 
 	properties, err := h.propertyService.GetAllProperty(page, pageSize)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
-
-	return c.Status(fiber.StatusOK).JSON(properties)
+	return utils.SuccessResponse(c, fiber.StatusOK, "Properties retrieved successfully", properties)
 }
 
 func (h *propertyHandler) GetPropertyByID(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid property ID"})
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid property ID")
 	}
 
 	property, err := h.propertyService.GetPropertyByID(uint(id))
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+		return utils.ErrorResponse(c, fiber.StatusNotFound, err.Error())
 	}
 
-	return c.Status(fiber.StatusOK).JSON(property)
-}
+	return utils.SuccessResponse(c, fiber.StatusOK, "Property retrieved successfully", property)}
