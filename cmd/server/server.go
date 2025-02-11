@@ -14,6 +14,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"go.uber.org/zap"
 
+	_ "LeaseEase/cmd/docs"
+
 	swagger "github.com/arsmn/fiber-swagger/v2"
 )
 
@@ -39,11 +41,11 @@ func (s *FiberHttpServer) initHttpServer() fiber.Router {
 
 	// enable cors
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:3000",
+		AllowOrigins:     "*",
 		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS,PATCH",
 		AllowHeaders:     "Origin,X-PINGOTHER,Accept,Authorization,Content-Type,X-CSRF-Token",
 		ExposeHeaders:    "Link",
-		AllowCredentials: true,
+		// AllowCredentials: true,
 		MaxAge:           300,
 	}))
 

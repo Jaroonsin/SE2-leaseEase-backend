@@ -1,0 +1,324 @@
+basePath: /
+definitions:
+  dtos.CreateDTO:
+    properties:
+      lessorid:
+        description: PropertyID         uint    `json:"id"`       // market slot id
+        type: integer
+      location:
+        description: location of the property
+        type: string
+      price:
+        description: price of the property
+        type: number
+      size:
+        description: size of the property
+        type: string
+      status:
+        description: availability status of the property
+        type: string
+    type: object
+  dtos.LoginDTO:
+    properties:
+      email:
+        description: user's email
+        type: string
+      password:
+        description: user's password
+        type: string
+    type: object
+  dtos.RegisterDTO:
+    properties:
+      address:
+        description: user's address
+        type: string
+      email:
+        description: user's email
+        type: string
+      id:
+        description: student id
+        type: integer
+      name:
+        description: user's first name
+        type: string
+      password:
+        description: user's password
+        type: string
+      role:
+        description: 'role: lessor, lessee'
+        type: string
+    type: object
+  dtos.UpdateDTO:
+    properties:
+      id:
+        description: market slot id
+        type: integer
+      price:
+        description: price of the property
+        type: number
+      status:
+        description: availability status of the property
+        type: string
+    type: object
+host: localhost:5000/api/v1
+info:
+  contact:
+    email: support@example.com
+    name: API Support
+    url: http://www.example.com/support
+  description: API documentation for LeaseEase.
+  title: LeaseEase API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and set an authentication cookie.
+      parameters:
+      - description: Login request payload
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.LoginDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User login successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request payload
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login an existing user
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user account with the provided details.
+      parameters:
+      - description: Register request payload
+        in: body
+        name: register
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.RegisterDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User registered successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request payload
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Register a new user
+      tags:
+      - auth
+  /properties:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve list of all properties with pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Page size
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Properties retrieved successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get all properties
+      tags:
+      - Property
+    post:
+      consumes:
+      - application/json
+      description: Create a new property
+      parameters:
+      - description: Property Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Property created successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Create a property
+      tags:
+      - Property
+  /properties/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a property by ID
+      parameters:
+      - description: Property ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Property deleted successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a property
+      tags:
+      - Property
+    get:
+      consumes:
+      - application/json
+      description: Retrieve property details by its ID
+      parameters:
+      - description: Property ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Property retrieved successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get property by ID
+      tags:
+      - Property
+    put:
+      consumes:
+      - application/json
+      description: Update existing property data
+      parameters:
+      - description: Property ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated property data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Property updated successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Update a property
+      tags:
+      - Property
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
