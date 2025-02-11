@@ -75,9 +75,9 @@ func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
 	if pageStr == "" && pageSizeStr == "" {
 		properties, err := h.propertyService.GetAllProperty(0, 0) // 0 means fetch all
 		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+			return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 		}
-		return c.Status(fiber.StatusOK).JSON(properties)
+		return utils.SuccessResponse(c, fiber.StatusOK, "Properties retrieved successfully", properties)
 	}
 
 	// Parse page number (default to 1)

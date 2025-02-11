@@ -3,6 +3,7 @@ package handlers
 import (
 	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/services"
+	"LeaseEase/utils"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -22,27 +23,27 @@ func (h *authHandler) Register(c *fiber.Ctx) error {
 
 	var req dtos.RegisterDTO
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Failed to parse request body"})
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to parse request body")
 	}
 
 	err := h.authService.Register(&req)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "User registered successfully"})
+	return utils.SuccessResponse(c, fiber.StatusCreated, "User registered successfully", nil)
 }
 
 func (h *authHandler) Login(c *fiber.Ctx) error {
 
 	var req dtos.LoginDTO
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Failed to parse request body"})
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to parse request body")
 	}
 
 	token, err := h.authService.Login(&req)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
 
