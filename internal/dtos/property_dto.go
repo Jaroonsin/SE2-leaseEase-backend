@@ -1,7 +1,7 @@
 package dtos
 
 type CreateDTO struct {
-	// PropertyID         uint    `json:"id"`       // market slot id
+	Name               string  `json:"name"`     // name of the property
 	LessorID           uint    `json:"lessorid"` // lessor id
 	Location           string  `json:"location"` // location of the property
 	Size               string  `json:"size"`     // size of the property
