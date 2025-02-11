@@ -3,7 +3,6 @@ package handlers
 import (
 	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/services"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -45,15 +44,8 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	c.Cookie(&fiber.Cookie{
-		Name:     "auth_token",
-		Value:    token,
-		HTTPOnly: true,
-		Secure:   false, // Requires HTTPS ? true for Prod
-		SameSite: "Lax",
-		Path:     "/",
-		Expires:  time.Now().Add(time.Hour * 3),
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"message": "User login successfully",
+		"token":   token,
 	})
-
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "User login successfully"})
 }
