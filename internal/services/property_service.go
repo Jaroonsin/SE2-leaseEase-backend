@@ -87,6 +87,7 @@ func (s *propertyService) GetPropertyByID(propertyID uint) (*dtos.GetPropertyDTO
 	}
 
 	propertyDTO := &dtos.GetPropertyDTO{
+		Name:               property.Name,
 		PropertyID:         property.ID,
 		LessorID:           property.LessorID,
 		Location:           property.Location,
