@@ -20,6 +20,7 @@ type DeleteDTO struct {
 }
 
 type GetPropertyDTO struct {
+	Name               string  `json:"name"`                // name of the property
 	PropertyID         uint    `json:"id"`                  // Property/MarketSlot ID
 	LessorID           uint    `json:"lessor_id"`           //
 	Location           string  `json:"location"`            // Property's location

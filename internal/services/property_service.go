@@ -44,17 +44,29 @@ func (s *propertyService) DeleteProperty(propertyDTO *dtos.DeleteDTO) error {
 	return s.propertyRepo.DeleteProperty(propertyDTO.PropertyID)
 }
 func (s *propertyService) GetAllProperty(page, pageSize int) ([]dtos.GetPropertyDTO, error) {
-	offset := (page - 1) * pageSize
+	var properties []models.Property
+	var err error
 
-	properties, err := s.propertyRepo.GetAllProperty(pageSize, offset)
-	if err != nil {
-		return nil, err
+	// Case 1: Fetch all properties (when page and pageSize are 0)
+	if page == 0 || pageSize == 0 {
+		properties, err = s.propertyRepo.GetAllProperty()
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		// Case 2: Apply pagination
+		offset := (page - 1) * pageSize
+		properties, err = s.propertyRepo.GetPaginatedProperty(pageSize, offset)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// Convert to DTO
 	var propertyDTOs []dtos.GetPropertyDTO
 	for _, property := range properties {
 		propertyDTO := dtos.GetPropertyDTO{
+			Name:               property.Name,
 			PropertyID:         property.ID,
 			LessorID:           property.LessorID,
 			Location:           property.Location,
