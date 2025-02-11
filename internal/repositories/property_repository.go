@@ -28,7 +28,16 @@ func (r *propertyRepository) DeleteProperty(id uint) error {
 	return r.db.Delete(&models.Property{}, id).Error
 }
 
-func (r *propertyRepository) GetAllProperty(limit, offset int) ([]models.Property, error) {
+func (r *propertyRepository) GetAllProperty() ([]models.Property, error) {
+	var properties []models.Property
+	err := r.db.Find(&properties).Error
+	if err != nil {
+		return nil, err
+	}
+	return properties, nil
+}
+
+func (r *propertyRepository) GetPaginatedProperty(limit, offset int) ([]models.Property, error) {
 	var properties []models.Property
 	err := r.db.Limit(limit).Offset(offset).Find(&properties).Error
 	if err != nil {

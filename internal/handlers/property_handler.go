@@ -67,14 +67,31 @@ func (h *propertyHandler) DeleteProperty(c *fiber.Ctx) error {
 }
 
 func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
-	page, err := strconv.Atoi(c.Query("page", "1")) // Default to page 1
+	pageStr := c.Query("page", "")
+	pageSizeStr := c.Query("pageSize", "")
+
+	// Case 1: No pagination parameters → Fetch all properties
+	if pageStr == "" && pageSizeStr == "" {
+		properties, err := h.propertyService.GetAllProperty(0, 0) // 0 means fetch all
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		}
+		return c.Status(fiber.StatusOK).JSON(properties)
+	}
+
+	// Parse page number (default to 1)
+	page, err := strconv.Atoi(pageStr)
 	if err != nil || page < 1 {
 		page = 1
 	}
 
-	pageSize, err := strconv.Atoi(c.Query("pageSize", "10")) // Default to 10 items per page
-	if err != nil || pageSize < 1 {
-		pageSize = 10
+	// Parse page size (default to 10)
+	pageSize := 10
+	if pageSizeStr != "" {
+		pageSize, err = strconv.Atoi(pageSizeStr)
+		if err != nil || pageSize < 1 {
+			pageSize = 10
+		}
 	}
 
 	properties, err := h.propertyService.GetAllProperty(page, pageSize)
