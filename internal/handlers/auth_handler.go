@@ -18,7 +18,17 @@ func NewAuthHandler(authService services.AuthService) *authHandler {
 		authService: authService,
 	}
 }
-
+// Register godoc
+// @Summary Register a new user
+// @Description Register a new user account with the provided details.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param register body dtos.RegisterDTO true "Register request payload"
+// @Success 201  "User registered successfully"
+// @Failure 400  "Invalid request payload"
+// @Failure 500  "Internal server error"
+// @Router /auth/register [post]
 func (h *authHandler) Register(c *fiber.Ctx) error {
 
 	var req dtos.RegisterDTO
@@ -34,6 +44,17 @@ func (h *authHandler) Register(c *fiber.Ctx) error {
 	return utils.SuccessResponse(c, fiber.StatusCreated, "User registered successfully", nil)
 }
 
+// Login godoc
+// @Summary Login an existing user
+// @Description Authenticate user and set an authentication cookie.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param login body dtos.LoginDTO true "Login request payload"
+// @Success 201 {array} utils.Response "User login successfully"
+// @Failure 400  "Invalid request payload"
+// @Failure 500  "Internal server error"
+// @Router /auth/login [post]
 func (h *authHandler) Login(c *fiber.Ctx) error {
 
 	var req dtos.LoginDTO
