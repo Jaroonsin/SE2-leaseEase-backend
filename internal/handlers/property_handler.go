@@ -28,12 +28,12 @@ func NewPropertyHandler(propertyService services.PropertyService) *propertyHandl
 // @Tags Property
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security cookieAuth
 // @Param request body dtos.CreateDTO true "Property Data"
-// @Success 201 {object} map[string]interface{} "Property created successfully"
-// @Failure 400 {object} map[string]interface{} "Bad Request"
-// @Failure 500 {object} map[string]interface{} "Internal Server Error"
-// @Router /properties [post]
+// @Success 201 {object} utils.Response "Property created successfully"
+// @Failure 400 {object} utils.Response "Bad Request"
+// @Failure 500 {object} utils.Response "Internal Server Error"
+// @Router /properties/create [post]
 func (h *propertyHandler) CreateProperty(c *fiber.Ctx) error {
 	var req dtos.CreateDTO
 	if err := c.BodyParser(&req); err != nil {
@@ -55,13 +55,13 @@ func (h *propertyHandler) CreateProperty(c *fiber.Ctx) error {
 // @Tags Property
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security cookieAuth
 // @Param id path int true "Property ID"
 // @Param request body dtos.UpdateDTO true "Updated property data"
-// @Success 200 {object} map[string]interface{} "Property updated successfully"
-// @Failure 400 {object} map[string]interface{} "Bad Request"
-// @Failure 500 {object} map[string]interface{} "Internal Server Error"
-// @Router /properties/{id} [put]
+// @Success 200 {object} utils.Response "Property updated successfully"
+// @Failure 400 {object} utils.Response "Bad Request"
+// @Failure 500 {object} utils.Response "Internal Server Error"
+// @Router /properties/update/{id} [put]
 func (h *propertyHandler) UpdateProperty(c *fiber.Ctx) error {
 	PropertyID, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -87,12 +87,12 @@ func (h *propertyHandler) UpdateProperty(c *fiber.Ctx) error {
 // @Tags Property
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security cookieAuth
 // @Param id path int true "Property ID"
-// @Success 200 {object} map[string]interface{} "Property deleted successfully"
-// @Failure 400 {object} map[string]interface{} "Bad Request"
-// @Failure 500 {object} map[string]interface{} "Internal Server Error"
-// @Router /properties/{id} [delete]
+// @Success 200 {object} utils.Response "Property deleted successfully"
+// @Failure 400 {object} utils.Response "Bad Request"
+// @Failure 500 {object} utils.Response "Internal Server Error"
+// @Router /properties/delete/{id} [delete]
 func (h *propertyHandler) DeleteProperty(c *fiber.Ctx) error {
 	var req dtos.DeleteDTO
 	propertyID, err := strconv.Atoi(c.Params("id"))
@@ -114,11 +114,11 @@ func (h *propertyHandler) DeleteProperty(c *fiber.Ctx) error {
 // @Tags Property
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security cookieAuth
 // @Param page query int false "Page number" default(1)
 // @Param pageSize query int false "Page size" default(10)
-// @Success 200 {object} map[string]interface{} "Properties retrieved successfully"
-// @Failure 500 {object} map[string]interface{} "Internal Server Error"
+// @Success 200 {object} utils.Response "Properties retrieved successfully"
+// @Failure 500 {object} utils.Response "Internal Server Error"
 // @Router /properties [get]
 func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
 	pageStr := c.Query("page", "")
@@ -161,11 +161,11 @@ func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
 // @Tags Property
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security cookieAuth
 // @Param id path int true "Property ID"
-// @Success 200 {object} map[string]interface{} "Property retrieved successfully"
-// @Failure 400 {object} map[string]interface{} "Bad Request"
-// @Failure 404 {object} map[string]interface{} "Not Found"
+// @Success 200 {array} utils.Response "Property retrieved successfully"
+// @Failure 400 {array} utils.Response "Bad Request"
+// @Failure 404 {array} utils.Response "Not Found"
 // @Router /properties/{id} [get]
 func (h *propertyHandler) GetPropertyByID(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")

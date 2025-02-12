@@ -41,11 +41,11 @@ func (s *FiberHttpServer) initHttpServer() fiber.Router {
 
 	// enable cors
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     "*",
+		AllowOrigins:     "http://127.0.0.1:5000,http://localhost:3000",
 		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS,PATCH",
 		AllowHeaders:     "Origin,X-PINGOTHER,Accept,Authorization,Content-Type,X-CSRF-Token",
 		ExposeHeaders:    "Link",
-		// AllowCredentials: true,
+		AllowCredentials: true,
 		MaxAge:           300,
 	}))
 
@@ -57,7 +57,10 @@ func (s *FiberHttpServer) initHttpServer() fiber.Router {
 	// }))
 
 	// swagger
-	router.Get("/swagger/*", swagger.HandlerDefault)
+	router.Get("/swagger/*", swagger.New(swagger.Config{
+		URL:             "http://localhost:5000/api/v1/swagger/doc.json",
+		WithCredentials: true,
+	}))
 
 	// healthcheck
 	router.Get("/", func(c *fiber.Ctx) error {
