@@ -10,6 +10,7 @@ type CreateDTO struct {
 }
 
 type UpdateDTO struct {
+	Name               string  `json:"name"`
 	PropertyID         uint    `json:"id"`     // market slot id
 	Price              float64 `json:"price"`  // price of the property
 	AvailabilityStatus string  `json:"status"` // availability status of the property

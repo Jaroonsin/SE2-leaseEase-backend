@@ -32,6 +32,7 @@ func (s *propertyService) CreateProperty(propertyDTO *dtos.CreateDTO) error {
 
 func (s *propertyService) UpdateProperty(propertyDTO *dtos.UpdateDTO) error {
 	property := &models.Property{
+		Name:               propertyDTO.Name,
 		ID:                 propertyDTO.PropertyID,
 		Price:              propertyDTO.Price,
 		AvailabilityStatus: propertyDTO.AvailabilityStatus,
