@@ -108,7 +108,7 @@ func (s *FiberHttpServer) initAuthRouter(router fiber.Router, httpHandler handle
 }
 
 func (s *FiberHttpServer) initPropertyRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
-	propertyRouter := router.Group("/properties", middleware.AuthorizationUserToken(cfg))
+	propertyRouter := router.Group("/properties", middleware.AuthRequired(cfg))
 
 	propertyRouter.Post("/create", httpHandler.Property().CreateProperty)
 	propertyRouter.Put("/update/:id", httpHandler.Property().UpdateProperty)
