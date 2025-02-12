@@ -3,18 +3,20 @@ package utils
 import (
 	"time"
 
+	"LeaseEase/config"
+
 	"github.com/golang-jwt/jwt/v4"
 )
 
 // GenerateJWT generates a JWT token for a user with a given user ID
 func GenerateJWT(userID uint) (string, error) {
 	// Define the secret key (should come from environment variables for security)
-	secretKey := "your-secret-key" // Replace with config.LoadConfig().JWTSecret in your app
+	secretKey := config.LoadConfig().JWTApiSecret
 
 	// Define token claims
 	claims := jwt.MapClaims{
 		"user_id": userID,
-		"exp":     time.Now().Add(time.Hour * 24).Unix(), // Token expiration: 24 hours
+		"exp":     time.Now().Add(time.Hour * 3).Unix(), // Token expiration: 24 hours
 		"iat":     time.Now().Unix(),                     // Issued at time
 	}
 
@@ -33,7 +35,7 @@ func GenerateJWT(userID uint) (string, error) {
 // ParseJWT parses and validates a JWT token, returning the claims if valid
 func ParseJWT(tokenString string) (jwt.MapClaims, error) {
 	// Define the secret key
-	secretKey := "your-secret-key" // Replace with config.LoadConfig().JWTSecret in your app
+	secretKey := config.LoadConfig().JWTApiSecret
 
 	// Parse the token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {

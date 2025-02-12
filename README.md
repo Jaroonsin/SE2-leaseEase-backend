@@ -1,6 +1,6 @@
 # SE2-leaseEase-backend
 
-📂 Project Setup
+## 📂 Project Setup
 
 1. Clone the Repository, then
 
@@ -13,12 +13,39 @@
 3. Install Dependencies
    Run the following commands to install the necessary dependencies:
 
-```go
-go get -u github.com/gofiber/fiber/v2
-go get -u gorm.io/gorm
-go get -u gorm.io/driver/sqlite
-go get -u github.com/swaggo/swag/cmd/swag
-go get -u github.com/gofiber/swagger
-go get -u github.com/golang-jwt/jwt/v4
-go get -u golang.org/x/crypto/bcrypt
+## Docker Setup
+
+1. Create a Docker Compose file  
+Create a file named `docker-compose.yml` in the project root with content similar to the example below:
+```yaml
+
+```
+
+2. Launch the Container  
+Run the following command to build and start the container:
+```bash
+docker-compose up --build
+```
+
+## Environment Setup
+
+Copy the example environment file and update your environment variables accordingly.
+
+For Bash (Linux/macOS Terminal):
+```bash
+cp .env.example .env
+```
+For Windows PowerShell:
+```powershell
+Copy-Item .env.example .env
+```
+
+Then, open the `.env` file and configure your environment variables as needed.
+
+## Run Application
+
+To run the main application, execute the following command:
+
+```bash
+go run cmd/main.go
 ```

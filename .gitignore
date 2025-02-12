@@ -1,6 +1,9 @@
 docker-compose*.yml
 docker-compose*.yaml
+go.mod
+go.sum
 Dockerfile
 *.env
 tmp
 *.db
+docs/
