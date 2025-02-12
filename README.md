@@ -1,6 +1,6 @@
 # SE2-leaseEase-backend
 
-📂 Project Setup
+## 📂 Project Setup
 
 1. Clone the Repository, then
 
@@ -13,7 +13,19 @@
 3. Install Dependencies
    Run the following commands to install the necessary dependencies:
 
-`go mod tidy`
+## Docker Setup
+
+1. Create a Docker Compose file  
+Create a file named `docker-compose.yml` in the project root with content similar to the example below:
+```yaml
+
+```
+
+2. Launch the Container  
+Run the following command to build and start the container:
+```bash
+docker-compose up --build
+```
 
 ## Environment Setup
 
@@ -29,3 +41,11 @@ Copy-Item .env.example .env
 ```
 
 Then, open the `.env` file and configure your environment variables as needed.
+
+## Run Application
+
+To run the main application, execute the following command:
+
+```bash
+go run cmd/main.go
+```
