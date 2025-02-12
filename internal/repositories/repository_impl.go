@@ -12,7 +12,7 @@ type repository struct {
 	AuthRepository     AuthRepository
 }
 
-func NewRepository(cfg *config.DBConfig, db *gorm.DB) Repository {
+func NewRepository(cfg *config.Config, db *gorm.DB) Repository {
 	return &repository{
 		UserRepository:     NewUserRepository(db),
 		PropertyRepository: NewPropertyRepository(db),
