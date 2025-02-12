@@ -57,10 +57,7 @@ func (s *FiberHttpServer) initHttpServer() fiber.Router {
 	// }))
 
 	// swagger
-	router.Get("/swagger/*", swagger.New(swagger.Config{
-		URL:             "http://localhost:5000/api/v1/swagger/doc.json",
-		WithCredentials: true,
-	}))
+	router.Get("/swagger/*", swagger.HandlerDefault)
 
 	// healthcheck
 	router.Get("/", func(c *fiber.Ctx) error {

@@ -3,7 +3,6 @@ package middleware
 import (
 	"LeaseEase/config"
 	"LeaseEase/utils"
-	"log"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -11,7 +10,6 @@ import (
 func AuthRequired(cfg *config.Config) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		cookie := c.Cookies("auth_token")
-		log.Print(cookie)
 		if claims, err := utils.ParseJWT(cookie); err != nil {
 			return utils.ErrorResponse(c, fiber.StatusUnauthorized, "Invalid token")
 		} else {

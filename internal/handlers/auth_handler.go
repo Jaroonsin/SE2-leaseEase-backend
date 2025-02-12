@@ -25,9 +25,9 @@ func NewAuthHandler(authService services.AuthService) *authHandler {
 // @Accept json
 // @Produce json
 // @Param register body dtos.RegisterDTO true "Register request payload"
-// @Success 201 {object} utils.Response "User registered successfully"
-// @Failure 400 {object} utils.Response "Invalid request payload"
-// @Failure 500 {object} utils.Response "Internal server error"
+// @Success 201  "User registered successfully"
+// @Failure 400  "Invalid request payload"
+// @Failure 500  "Internal server error"
 // @Router /auth/register [post]
 func (h *authHandler) Register(c *fiber.Ctx) error {
 
@@ -51,9 +51,9 @@ func (h *authHandler) Register(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param login body dtos.LoginDTO true "Login request payload"
-// @Success 201 {object} utils.Response "User login successfully"
-// @Failure 400 {object} utils.Response "Invalid request payload"
-// @Failure 500 {object} utils.Response "Internal server error"
+// @Success 201 {array} utils.Response "User login successfully"
+// @Failure 400  "Invalid request payload"
+// @Failure 500  "Internal server error"
 // @Router /auth/login [post]
 func (h *authHandler) Login(c *fiber.Ctx) error {
 
@@ -74,7 +74,7 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 		Value:    token,
 		HTTPOnly: true,
 		Secure:   false, // Requires HTTPS ? true for Prod
-		SameSite: "None",
+		SameSite: "Strict",
 		Path:     "/",
 		Expires:  time.Now().Add(time.Hour * 3),
 	})
