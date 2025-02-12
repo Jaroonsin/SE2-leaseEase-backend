@@ -19,12 +19,12 @@ import (
 
 type FiberHttpServer struct {
 	app      *fiber.App
-	cfg      *config.DBConfig
+	cfg      *config.Config
 	logger   *zap.Logger
 	handlers handlers.Handler
 }
 
-func NewFiberHttpServer(cfg *config.DBConfig, logger *zap.Logger, handlers handlers.Handler) *FiberHttpServer {
+func NewFiberHttpServer(cfg *config.Config, logger *zap.Logger, handlers handlers.Handler) *FiberHttpServer {
 	return &FiberHttpServer{
 		app:      fiber.New(),
 		cfg:      cfg,
@@ -107,7 +107,7 @@ func (s *FiberHttpServer) initAuthRouter(router fiber.Router, httpHandler handle
 	authRouter.Post("/login", httpHandler.Auth().Login)
 }
 
-func (s *FiberHttpServer) initPropertyRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.DBConfig) {
+func (s *FiberHttpServer) initPropertyRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
 	propertyRouter := router.Group("/properties", middleware.AuthorizationUserToken(cfg))
 
 	propertyRouter.Post("/create", httpHandler.Property().CreateProperty)
