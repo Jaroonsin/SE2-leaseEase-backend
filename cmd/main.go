@@ -11,8 +11,22 @@ import (
 	"log"
 
 	"github.com/joho/godotenv"
+
+	_ "LeaseEase/cmd/docs"
 )
 
+// @title LeaseEase API
+// @version 1.0
+// @description API documentation for LeaseEase.
+
+// @contact.name API Support
+// @contact.url http://www.example.com/support
+// @contact.email support@example.com
+// @host localhost:5000/api/v1
+// @BasePath /
+// @securityDefinitions.apikey cookieAuth
+// @in cookie
+// @name auth_token
 func main() {
 	// Load configuration
 	if err := godotenv.Load(); err != nil {

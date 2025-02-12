@@ -10,7 +10,6 @@ import (
 func AuthRequired(cfg *config.Config) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		cookie := c.Cookies("auth_token")
-		
 		if claims, err := utils.ParseJWT(cookie); err != nil {
 			return utils.ErrorResponse(c, fiber.StatusUnauthorized, "Invalid token")
 		} else {

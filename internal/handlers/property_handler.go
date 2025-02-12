@@ -10,16 +10,30 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
+// propertyHandler handles property endpoints.
 type propertyHandler struct {
 	propertyService services.PropertyService
 }
 
+// NewPropertyHandler creates a new property handler.
 func NewPropertyHandler(propertyService services.PropertyService) *propertyHandler {
 	return &propertyHandler{
 		propertyService: propertyService,
 	}
 }
 
+// CreateProperty godoc
+// @Summary Create a property
+// @Description Create a new property
+// @Tags Property
+// @Accept json
+// @Produce json
+// @Security cookieAuth
+// @Param request body dtos.CreateDTO true "Property Data"
+// @Success 201  "Property created successfully"
+// @Failure 400  "Bad Request"
+// @Failure 500  "Internal Server Error"
+// @Router /properties/create [post]
 func (h *propertyHandler) CreateProperty(c *fiber.Ctx) error {
 	var req dtos.CreateDTO
 	if err := c.BodyParser(&req); err != nil {
@@ -35,6 +49,19 @@ func (h *propertyHandler) CreateProperty(c *fiber.Ctx) error {
 	return utils.SuccessResponse(c, fiber.StatusCreated, "Property created successfully", nil)
 }
 
+// UpdateProperty godoc
+// @Summary Update a property
+// @Description Update existing property data
+// @Tags Property
+// @Accept json
+// @Produce json
+// @Security cookieAuth
+// @Param id path int true "Property ID"
+// @Param request body dtos.UpdateDTO true "Updated property data"
+// @Success 200  "Property updated successfully"
+// @Failure 400  "Bad Request"
+// @Failure 500  "Internal Server Error"
+// @Router /properties/update/{id} [put]
 func (h *propertyHandler) UpdateProperty(c *fiber.Ctx) error {
 	PropertyID, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -54,6 +81,18 @@ func (h *propertyHandler) UpdateProperty(c *fiber.Ctx) error {
 	return utils.SuccessResponse(c, fiber.StatusOK, "Property updated successfully", nil)
 }
 
+// DeleteProperty godoc
+// @Summary Delete a property
+// @Description Delete a property by ID
+// @Tags Property
+// @Accept json
+// @Produce json
+// @Security cookieAuth
+// @Param id path int true "Property ID"
+// @Success 200  "Property deleted successfully"
+// @Failure 400  "Bad Request"
+// @Failure 500  "Internal Server Error"
+// @Router /properties/delete/{id} [delete]
 func (h *propertyHandler) DeleteProperty(c *fiber.Ctx) error {
 	var req dtos.DeleteDTO
 	propertyID, err := strconv.Atoi(c.Params("id"))
@@ -69,6 +108,18 @@ func (h *propertyHandler) DeleteProperty(c *fiber.Ctx) error {
 	return utils.SuccessResponse(c, fiber.StatusOK, "Property deleted successfully", nil)
 }
 
+// GetAllProperty godoc
+// @Summary Get all properties
+// @Description Retrieve list of all properties with pagination
+// @Tags Property
+// @Accept json
+// @Produce json
+// @Security cookieAuth
+// @Param page query int false "Page number" default(1)
+// @Param pageSize query int false "Page size" default(10)
+// @Success 200  "Properties retrieved successfully"
+// @Failure 500  "Internal Server Error"
+// @Router /properties [get]
 func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
 	pageStr := c.Query("page", "")
 	pageSizeStr := c.Query("pageSize", "")
@@ -104,6 +155,18 @@ func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
 	return utils.SuccessResponse(c, fiber.StatusOK, "Properties retrieved successfully", properties)
 }
 
+// GetPropertyByID godoc
+// @Summary Get property by ID
+// @Description Retrieve property details by its ID
+// @Tags Property
+// @Accept json
+// @Produce json
+// @Security cookieAuth
+// @Param id path int true "Property ID"
+// @Success 200 "Property retrieved successfully"
+// @Failure 400 "Bad Request"
+// @Failure 404 "Not Found"
+// @Router /properties/{id} [get]
 func (h *propertyHandler) GetPropertyByID(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
@@ -115,4 +178,5 @@ func (h *propertyHandler) GetPropertyByID(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusNotFound, err.Error())
 	}
 
-	return utils.SuccessResponse(c, fiber.StatusOK, "Property retrieved successfully", property)}
+	return utils.SuccessResponse(c, fiber.StatusOK, "Property retrieved successfully", property)
+}
