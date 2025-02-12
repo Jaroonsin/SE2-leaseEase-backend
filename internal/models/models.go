@@ -13,10 +13,11 @@ type User struct {
 	UserType string `gorm:"size:50;not null"` // lessor lessee
 }
 
-// Property struct with relationships and mapping
 type Property struct {
-	Name			   string  `gorm:"size:100;not null"` // name of the property
 	ID                 uint    `gorm:"primaryKey;autoIncrement"`
+    CreatedAt 		   time.Time
+    UpdatedAt 		   time.Time
+	Name			   string  `gorm:"size:100;not null"` // name of the property
 	LessorID           uint    `gorm:"not null"`
 	Location           string  `gorm:"size:255;not null"`
 	Size               string  `gorm:"size:50;not null"`
