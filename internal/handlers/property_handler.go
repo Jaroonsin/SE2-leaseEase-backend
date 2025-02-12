@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 type propertyHandler struct {
@@ -24,6 +25,7 @@ func (h *propertyHandler) CreateProperty(c *fiber.Ctx) error {
 	if err := c.BodyParser(&req); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to parse request body")
 	}
+	req.LessorID = uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
 
 	err := h.propertyService.CreateProperty(&req)
 	if err != nil {

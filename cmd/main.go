@@ -20,7 +20,7 @@ func main() {
 	}
 	cfg := config.LoadConfig()
 	logger := logs.NewLogger()
-
+	
 	// Initialize database
 	db, err := database.ConnectDB(cfg)
 	if err != nil {
