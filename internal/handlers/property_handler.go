@@ -29,19 +29,19 @@ func NewPropertyHandler(propertyService services.PropertyService) *propertyHandl
 // @Accept json
 // @Produce json
 // @Security cookieAuth
-// @Param request body dtos.CreateDTO true "Property Data"
-// @Success 201  "Property created successfully"
-// @Failure 400  "Bad Request"
-// @Failure 500  "Internal Server Error"
+// @Param request body dtos.PropertyDTO true "Property Data"
+// @Success 201 {array} utils.Response "Property created successfully"
+// @Failure 400 {array} utils.Response "Bad Request"
+// @Failure 500 {array} utils.Response"Internal Server Error"
 // @Router /properties/create [post]
 func (h *propertyHandler) CreateProperty(c *fiber.Ctx) error {
-	var req dtos.CreateDTO
+	var req dtos.PropertyDTO
 	if err := c.BodyParser(&req); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to parse request body")
 	}
-	req.LessorID = uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
+	LessorID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
 
-	err := h.propertyService.CreateProperty(&req)
+	err := h.propertyService.CreateProperty(&req, LessorID)
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
@@ -57,10 +57,10 @@ func (h *propertyHandler) CreateProperty(c *fiber.Ctx) error {
 // @Produce json
 // @Security cookieAuth
 // @Param id path int true "Property ID"
-// @Param request body dtos.UpdateDTO true "Updated property data"
-// @Success 200  "Property updated successfully"
-// @Failure 400  "Bad Request"
-// @Failure 500  "Internal Server Error"
+// @Param request body dtos.PropertyDTO true "Updated property data"
+// @Success 200 {array} utils.Response "Property updated successfully"
+// @Failure 400 {array} utils.Response "Bad Request"
+// @Failure 500 {array} utils.Response "Internal Server Error"
 // @Router /properties/update/{id} [put]
 func (h *propertyHandler) UpdateProperty(c *fiber.Ctx) error {
 	PropertyID, err := strconv.Atoi(c.Params("id"))
@@ -68,12 +68,12 @@ func (h *propertyHandler) UpdateProperty(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid property ID")
 	}
 
-	var req dtos.UpdateDTO
+	var req dtos.PropertyDTO
 	if err := c.BodyParser(&req); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to parse request body")
 	}
-	req.PropertyID = uint(PropertyID)
-	err = h.propertyService.UpdateProperty(&req)
+
+	err = h.propertyService.UpdateProperty(&req, uint(PropertyID))
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
@@ -88,20 +88,18 @@ func (h *propertyHandler) UpdateProperty(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Security cookieAuth
-// @Param id path int true "Property ID"
-// @Success 200  "Property deleted successfully"
-// @Failure 400  "Bad Request"
-// @Failure 500  "Internal Server Error"
+// @Param id path uint true "Property ID"
+// @Success 200 {array} utils.Response "Property deleted successfully"
+// @Failure 400 {array} utils.Response "Bad Request"
+// @Failure 500 {array} utils.Response "Internal Server Error"
 // @Router /properties/delete/{id} [delete]
 func (h *propertyHandler) DeleteProperty(c *fiber.Ctx) error {
-	var req dtos.DeleteDTO
 	propertyID, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid property ID")
 	}
 
-	req.PropertyID = uint(propertyID)
-	err = h.propertyService.DeleteProperty(&req)
+	err = h.propertyService.DeleteProperty(uint(propertyID))
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
@@ -117,8 +115,8 @@ func (h *propertyHandler) DeleteProperty(c *fiber.Ctx) error {
 // @Security cookieAuth
 // @Param page query int false "Page number" default(1)
 // @Param pageSize query int false "Page size" default(10)
-// @Success 200  "Properties retrieved successfully"
-// @Failure 500  "Internal Server Error"
+// @Success 200 {array} utils.Response{data=[]dtos.GetPropertyDTO} "Properties retrieved successfully"
+// @Failure 500 {array} utils.Response "Internal Server Error"
 // @Router /properties [get]
 func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
 	pageStr := c.Query("page", "")
@@ -163,9 +161,9 @@ func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
 // @Produce json
 // @Security cookieAuth
 // @Param id path int true "Property ID"
-// @Success 200 "Property retrieved successfully"
-// @Failure 400 "Bad Request"
-// @Failure 404 "Not Found"
+// @Success 200 {array} utils.Response{data=dtos.GetPropertyDTO} "Property retrieved successfully"
+// @Failure 400 {array} utils.Response "Bad Request"
+// @Failure 404 {array} utils.Response "Not Found"
 // @Router /properties/{id} [get]
 func (h *propertyHandler) GetPropertyByID(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")

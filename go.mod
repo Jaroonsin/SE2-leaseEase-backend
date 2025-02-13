@@ -13,6 +13,8 @@ require (
 	gorm.io/gorm v1.25.12
 )
 
+require github.com/pakornv/scalar-go v0.0.0-20250123093844-ce2e1fb1a762 // indirect
+
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
