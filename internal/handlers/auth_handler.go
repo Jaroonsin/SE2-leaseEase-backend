@@ -21,13 +21,14 @@ func NewAuthHandler(authService services.AuthService) *authHandler {
 // Register godoc
 // @Summary Register a new user
 // @Description Register a new user account with the provided details.
+// @ID 1
 // @Tags auth
 // @Accept json
 // @Produce json
 // @Param register body dtos.RegisterDTO true "Register request payload"
-// @Success 201  "User registered successfully"
-// @Failure 400  "Invalid request payload"
-// @Failure 500  "Internal server error"
+// @Success 201 {object} utils.Response "User registered successfully"  example({"staus_code": 201, "message": "User registered successfully", "data": nil})
+// @Failure 400 {array} utils.Response "Invalid request payload"
+// @Failure 500 {array} utils.Response "Internal server error"
 // @Router /auth/register [post]
 func (h *authHandler) Register(c *fiber.Ctx) error {
 
@@ -47,13 +48,14 @@ func (h *authHandler) Register(c *fiber.Ctx) error {
 // Login godoc
 // @Summary Login an existing user
 // @Description Authenticate user and set an authentication cookie.
+// @ID 2
 // @Tags auth
 // @Accept json
 // @Produce json
 // @Param login body dtos.LoginDTO true "Login request payload"
 // @Success 201 {array} utils.Response "User login successfully"
-// @Failure 400  "Invalid request payload"
-// @Failure 500  "Internal server error"
+// @Failure 400 {array} utils.Response "Invalid request payload"
+// @Failure 500 {array} utils.Response "Internal server error"
 // @Router /auth/login [post]
 func (h *authHandler) Login(c *fiber.Ctx) error {
 
@@ -79,8 +81,5 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 		Expires:  time.Now().Add(time.Hour * 3),
 	})
 	
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"message": "User login successfully",
-		"token":   token,
-	})
+	return utils.SuccessResponse(c, fiber.StatusCreated, "User login successfully", nil)
 }

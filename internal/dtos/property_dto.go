@@ -1,33 +1,25 @@
 package dtos
 
-type CreateDTO struct {
-	Name               string  `json:"name"`     // name of the property
-	LessorID           uint    `json:"lessorid"` // lessor id
-	Location           string  `json:"location"` // location of the property
-	Size               string  `json:"size"`     // size of the property
-	Price              float64 `json:"price"`    // price of the property
-	AvailabilityStatus string  `json:"status"`   // availability status of the property
+import (
+	_ "LeaseEase/cmd/docs"
+)
+
+// @Description PropertyDTO represents a property.
+type PropertyDTO struct {
+	Name               string  `json:"name" example:"Sunset Villa"`    // name of the property
+	Location           string  `json:"location" example:"California"`  // property location
+	Size               string  `json:"size" example:"3500 sqft"`       // property size
+	Price              float64 `json:"price" example:"1200000.50"`       // property price
+	AvailabilityStatus string  `json:"status" example:"available"`     // availability status
 }
 
-type UpdateDTO struct {
-	Name               string  `json:"name"`     // name of the property
-	PropertyID         uint    `json:"id"`       // property id
-	Location           string  `json:"location"` // location of the property
-	Size               string  `json:"size"`     // size of the property
-	Price              float64 `json:"price"`    // price of the property
-	AvailabilityStatus string  `json:"status"`   // availability status of the property
-}
-
-type DeleteDTO struct {
-	PropertyID uint `json:"id"` // property id
-}
-
+// @Description GetPropertyDTO represents the details of a property along with identifier information.
 type GetPropertyDTO struct {
-	Name               string  `json:"name"`                // name of the property
-	PropertyID         uint    `json:"id"`                  // Property/MarketSlot ID
-	LessorID           uint    `json:"lessor_id"`           //
-	Location           string  `json:"location"`            // Property's location
-	Size               string  `json:"size"`                // Property's size
-	Price              float64 `json:"price"`               // Property's price
-	AvailabilityStatus string  `json:"availability_status"` // Property's status
+	PropertyID         uint    `json:"id" example:"1"`                  // Property ID
+	LessorID           uint    `json:"lessor_id" example:"10"`           // Lessor ID
+	Name               string  `json:"name" example:"Sunset Villa"`      // name of the property
+	Location           string  `json:"location" example:"California"`    // property's location
+	Size               string  `json:"size" example:"3500 sqft"`         // property's size
+	Price              float64 `json:"price" example:"1200000.50"`         // property's price
+	AvailabilityStatus string  `json:"availability_status" example:"available"` // property's availability status
 }

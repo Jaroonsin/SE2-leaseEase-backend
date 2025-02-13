@@ -24,9 +24,6 @@ import (
 // @contact.email support@example.com
 // @host localhost:5000/api/v1
 // @BasePath /
-// @securityDefinitions.apikey cookieAuth
-// @in cookie
-// @name auth_token
 func main() {
 	// Load configuration
 	if err := godotenv.Load(); err != nil {

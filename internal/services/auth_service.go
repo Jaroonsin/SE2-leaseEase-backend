@@ -26,12 +26,11 @@ func (s *authService) Register(registerDTO *dtos.RegisterDTO) error {
 	}
 
 	user := &models.User{
-		ID:       registerDTO.ID,
+		Email:    registerDTO.Email,
+		Password: hashedPassword,
 		Name:     registerDTO.Name,
 		Address:  registerDTO.Address,
 		Birthday: time.Now(),
-		Email:    registerDTO.Email,
-		Password: hashedPassword,
 		UserType: registerDTO.Role,
 	}
 
