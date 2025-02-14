@@ -10,11 +10,12 @@ import (
 	"syscall"
 	"time"
 
+	_ "LeaseEase/cmd/docs"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/pakornv/scalar-go"
 	"go.uber.org/zap"
-
-	_ "LeaseEase/cmd/docs"
 
 	swagger "github.com/arsmn/fiber-swagger/v2"
 )
@@ -41,7 +42,7 @@ func (s *FiberHttpServer) initHttpServer() fiber.Router {
 
 	// enable cors
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://127.0.0.1:5000,http://localhost:3000",
+		AllowOrigins:     "http://localhost:3000",
 		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS,PATCH",
 		AllowHeaders:     "Origin,X-PINGOTHER,Accept,Authorization,Content-Type,X-CSRF-Token",
 		ExposeHeaders:    "Link",
@@ -56,7 +57,21 @@ func (s *FiberHttpServer) initHttpServer() fiber.Router {
 	// 	TimeZone:   "Asia/Bangkok",
 	// }))
 
-	// swagger
+	// swagger with scalar
+	apiRef, err := scalar.New(`.\cmd\docs\swagger.yaml`,&scalar.Config{
+		Theme: scalar.ThemeElysiajs,
+	})
+	if err != nil {
+		panic(err)
+	}	
+	router.Get("/reference", func(c *fiber.Ctx) error {
+		htmlContent, err := apiRef.RenderHTML()
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+		}
+		return c.Type("html").SendString(htmlContent)
+	})
+
 	router.Get("/swagger/*", swagger.HandlerDefault)
 
 	// healthcheck

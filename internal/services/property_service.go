@@ -16,11 +16,11 @@ func NewPropertyService(propertyRepo repositories.PropertyRepository) PropertySe
 	}
 }
 
-func (s *propertyService) CreateProperty(propertyDTO *dtos.CreateDTO) error {
+func (s *propertyService) CreateProperty(propertyDTO *dtos.PropertyDTO, lessorID uint) error {
 
 	property := &models.Property{
+		LessorID:           lessorID,
 		Name:               propertyDTO.Name,
-		LessorID:           propertyDTO.LessorID,
 		Location:           propertyDTO.Location,
 		Size:               propertyDTO.Size,
 		Price:              propertyDTO.Price,
@@ -30,9 +30,9 @@ func (s *propertyService) CreateProperty(propertyDTO *dtos.CreateDTO) error {
 	return s.propertyRepo.CreateProperty(property)
 }
 
-func (s *propertyService) UpdateProperty(propertyDTO *dtos.UpdateDTO) error {
+func (s *propertyService) UpdateProperty(propertyDTO *dtos.PropertyDTO, propertyID uint) error {
 	property := &models.Property{
-		ID:                 propertyDTO.PropertyID,
+		ID:                 propertyID,
 		Name:               propertyDTO.Name,
 		Location:           propertyDTO.Location,
 		Size:               propertyDTO.Size,
@@ -43,8 +43,8 @@ func (s *propertyService) UpdateProperty(propertyDTO *dtos.UpdateDTO) error {
 	return s.propertyRepo.UpdateProperty(property)
 }
 
-func (s *propertyService) DeleteProperty(propertyDTO *dtos.DeleteDTO) error {
-	return s.propertyRepo.DeleteProperty(propertyDTO.PropertyID)
+func (s *propertyService) DeleteProperty(propertyID uint) error {
+	return s.propertyRepo.DeleteProperty(propertyID)
 }
 func (s *propertyService) GetAllProperty(page, pageSize int) ([]dtos.GetPropertyDTO, error) {
 	var properties []models.Property

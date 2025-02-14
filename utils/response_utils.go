@@ -4,12 +4,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// Account model info
-// @Description User account information
-// @Description with user id and username
 type Response struct {
-	StatusCode int         `json:"status_code"`
-	Message    string      `json:"message"`
+	StatusCode int         `json:"status_code" example:"888"`
+	Message    string      `json:"message" example:"message"`
 	Data       interface{} `json:"data,omitempty"`
 }
 
