@@ -4,6 +4,7 @@ import (
 	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/services"
 	"LeaseEase/utils"
+	"LeaseEase/utils/constant"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -18,6 +19,7 @@ func NewAuthHandler(authService services.AuthService) *authHandler {
 		authService: authService,
 	}
 }
+
 // Register godoc
 // @Summary Register a new user
 // @Description Register a new user account with the provided details.
@@ -34,7 +36,7 @@ func (h *authHandler) Register(c *fiber.Ctx) error {
 
 	var req dtos.RegisterDTO
 	if err := c.BodyParser(&req); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to parse request body")
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, constant.ErrParsebody)
 	}
 
 	err := h.authService.Register(&req)
@@ -42,7 +44,7 @@ func (h *authHandler) Register(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return utils.SuccessResponse(c, fiber.StatusCreated, "User registered successfully", nil)
+	return utils.SuccessResponse(c, fiber.StatusCreated, constant.SuccessRegister, nil)
 }
 
 // Login godoc
@@ -61,15 +63,13 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 
 	var req dtos.LoginDTO
 	if err := c.BodyParser(&req); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to parse request body")
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, constant.ErrParsebody)
 	}
 
 	token, err := h.authService.Login(&req)
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
-
-
 
 	c.Cookie(&fiber.Cookie{
 		Name:     "auth_token",
@@ -80,6 +80,6 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 		Path:     "/",
 		Expires:  time.Now().Add(time.Hour * 3),
 	})
-	
-	return utils.SuccessResponse(c, fiber.StatusCreated, "User login successfully", nil)
+
+	return utils.SuccessResponse(c, fiber.StatusCreated, constant.SuccessLogin, nil)
 }
