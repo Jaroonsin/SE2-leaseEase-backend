@@ -8,4 +8,6 @@ type PropertyService interface {
 	DeleteProperty(propertyID uint) error
 	GetAllProperty(page, pageSize int) ([]dtos.GetPropertyDTO, error)
 	GetPropertyByID(propertyID uint) (*dtos.GetPropertyDTO, error)
+	SearchProperty(query map[string]string) ([]dtos.GetPropertyDTO, error)
+	AutoComplete(query string) ([]string, error)
 }
