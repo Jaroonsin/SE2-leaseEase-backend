@@ -19,3 +19,7 @@ type JWTDTO struct {
 	UserID uint   `json:"user_id" example:"1"`
 	Role   string `json:"role" example:"lessee" `
 }
+type AuthCheckDTO struct {
+	UserID uint   `json:"user_id" example:"1"`
+	Role   string `json:"role" example:"lessee" `
+}

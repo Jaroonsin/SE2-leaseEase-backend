@@ -73,3 +73,33 @@ func (s *authService) Login(loginDTO *dtos.LoginDTO) (string, error) {
 	logger.Info(constant.SuccessLogin, zap.String("token", token))
 	return token, nil
 }
+
+// AuthCheck validates a JWT token and returns user information
+func (s *authService) AuthCheck(token string) (*dtos.AuthCheckDTO, error) {
+	if token == "" {
+		return nil, errors.New("no token provided")
+	}
+
+	claims, err := utils.ParseJWT(token)
+	if err != nil {
+		return nil, errors.New("invalid or expired token")
+	}
+
+	// Extract user ID as uint (JWT claims are usually float64)
+	userIDFloat, ok1 := claims["user_id"].(float64)
+	role, ok2 := claims["role"].(string)
+	if !ok1 || !ok2 {
+		return nil, errors.New("invalid token payload")
+	}
+	if role != "lessor" && role != "lessee" {
+		return nil, errors.New("invalid role")
+	}
+
+	// Convert user ID from float64 to uint
+	userID := uint(userIDFloat)
+
+	return &dtos.AuthCheckDTO{
+		UserID: userID,
+		Role:   role,
+	}, nil
+}

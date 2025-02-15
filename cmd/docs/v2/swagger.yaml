@@ -143,6 +143,24 @@ info:
   title: LeaseEase API
   version: "2.0"
 paths:
+  /auth/check:
+    get:
+      description: Validates JWT token and returns authentication status.
+      operationId: "3"
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User is authenticated
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized - Invalid token
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Check authentication status
+      tags:
+      - auth
   /auth/login:
     post:
       consumes:

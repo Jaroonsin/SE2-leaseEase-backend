@@ -127,6 +127,7 @@ func (s *FiberHttpServer) initAuthRouter(router fiber.Router, httpHandler handle
 
 	authRouter.Post("/register", httpHandler.Auth().Register)
 	authRouter.Post("/login", httpHandler.Auth().Login)
+	authRouter.Get("/check", httpHandler.Auth().AuthCheck)
 }
 
 func (s *FiberHttpServer) initPropertyRouter(version string, router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {

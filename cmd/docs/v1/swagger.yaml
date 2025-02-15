@@ -1,5 +1,23 @@
 basePath: /
 definitions:
+  dtos.CreateRequest:
+    properties:
+      interestedProperty:
+        example: 1
+        type: integer
+      lesseeID:
+        example: 1
+        type: integer
+      proposedMessage:
+        example: I am very interested in leasing this property.
+        type: string
+      purpose:
+        example: Lease agreement for residential property
+        type: string
+      question:
+        example: Could you provide more details about the lease duration?
+        type: string
+    type: object
   dtos.GetPropertyDTO:
     description: GetPropertyDTO represents the details of a property along with identifier
       information.
@@ -93,6 +111,18 @@ definitions:
         example: lessee
         type: string
     type: object
+  dtos.UpdateRequest:
+    properties:
+      proposedMessage:
+        example: I would like to update my earlier message.
+        type: string
+      purpose:
+        example: Updated lease purpose
+        type: string
+      question:
+        example: Is there any flexibility in the lease terms?
+        type: string
+    type: object
   utils.Response:
     properties:
       data: {}
@@ -103,7 +133,7 @@ definitions:
         example: 888
         type: integer
     type: object
-host: localhost:5000/api/v1
+host: localhost:5000/api/v2
 info:
   contact:
     email: support@example.com
@@ -111,8 +141,26 @@ info:
     url: http://www.example.com/support
   description: API documentation for LeaseEase.
   title: LeaseEase API
-  version: "1.0"
+  version: "2.0"
 paths:
+  /auth/check:
+    get:
+      description: Validates JWT token and returns authentication status.
+      operationId: "3"
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User is authenticated
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized - Invalid token
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Check authentication status
+      tags:
+      - auth
   /auth/login:
     post:
       consumes:
@@ -186,89 +234,35 @@ paths:
       summary: Register a new user
       tags:
       - auth
-  /properties:
+  /properties/autocomplete:
     get:
       consumes:
       - application/json
-      description: Retrieve list of all properties with pagination
+      description: Retrieve property suggestions based on a partial search query
       parameters:
-      - default: 1
-        description: Page number
+      - description: Partial property name
         in: query
-        name: page
-        type: integer
-      - default: 10
-        description: Page size
-        in: query
-        name: pageSize
-        type: integer
+        name: query
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: Properties retrieved successfully
           schema:
-            items:
-              allOf:
-              - $ref: '#/definitions/utils.Response'
-              - properties:
-                  data:
-                    items:
-                      $ref: '#/definitions/dtos.GetPropertyDTO'
-                    type: array
-                type: object
-            type: array
-        "500":
-          description: Internal Server Error
-          schema:
-            items:
-              $ref: '#/definitions/utils.Response'
-            type: array
-      security:
-      - cookieAuth: []
-      summary: Get all properties
-      tags:
-      - Property
-  /properties/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Retrieve property details by its ID
-      parameters:
-      - description: Property ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Property retrieved successfully
-          schema:
-            items:
-              allOf:
-              - $ref: '#/definitions/utils.Response'
-              - properties:
-                  data:
-                    $ref: '#/definitions/dtos.GetPropertyDTO'
-                type: object
-            type: array
+            $ref: '#/definitions/utils.Response'
         "400":
           description: Bad Request
           schema:
-            items:
-              $ref: '#/definitions/utils.Response'
-            type: array
-        "404":
-          description: Not Found
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error
           schema:
-            items:
-              $ref: '#/definitions/utils.Response'
-            type: array
+            $ref: '#/definitions/utils.Response'
       security:
       - cookieAuth: []
-      summary: Get property by ID
+      summary: Auto complete property search
       tags:
       - Property
   /properties/create:
@@ -335,6 +329,12 @@ paths:
             items:
               $ref: '#/definitions/utils.Response'
             type: array
+        "404":
+          description: Property not found
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
         "500":
           description: Internal Server Error
           schema:
@@ -344,6 +344,172 @@ paths:
       security:
       - cookieAuth: []
       summary: Delete a property
+      tags:
+      - Property
+  /properties/get:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve list of all properties with pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Page size
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Properties retrieved successfully
+          schema:
+            items:
+              allOf:
+              - $ref: '#/definitions/utils.Response'
+              - properties:
+                  data:
+                    items:
+                      $ref: '#/definitions/dtos.GetPropertyDTO'
+                    type: array
+                type: object
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+      security:
+      - cookieAuth: []
+      summary: Get all properties
+      tags:
+      - Property
+  /properties/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve property details by its ID
+      parameters:
+      - description: Property ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Property retrieved successfully
+          schema:
+            items:
+              allOf:
+              - $ref: '#/definitions/utils.Response'
+              - properties:
+                  data:
+                    $ref: '#/definitions/dtos.GetPropertyDTO'
+                type: object
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+      security:
+      - cookieAuth: []
+      summary: Get property by ID
+      tags:
+      - Property
+  /properties/search:
+    get:
+      consumes:
+      - application/json
+      description: Search properties using query parameters
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: Page size
+        in: query
+        name: pagesize
+        required: true
+        type: integer
+      - description: Property name keyword
+        in: query
+        name: name
+        type: string
+      - description: Minimum price
+        in: query
+        name: minprice
+        type: number
+      - description: Maximum price
+        in: query
+        name: maxprice
+        type: number
+      - description: Minimum size
+        in: query
+        name: minsize
+        type: number
+      - description: Maximum size
+        in: query
+        name: maxsize
+        type: number
+      - description: Order field (price or size)
+        in: query
+        name: sortby
+        type: string
+      - description: Order direction (asc or desc)
+        in: query
+        name: order
+        type: string
+      - description: Availability status
+        in: query
+        name: availability
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Properties retrieved successfully
+          schema:
+            items:
+              allOf:
+              - $ref: '#/definitions/utils.Response'
+              - properties:
+                  data:
+                    items:
+                      $ref: '#/definitions/dtos.GetPropertyDTO'
+                    type: array
+                type: object
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+      security:
+      - cookieAuth: []
+      summary: Search properties
       tags:
       - Property
   /properties/update/{id}:
@@ -378,6 +544,12 @@ paths:
             items:
               $ref: '#/definitions/utils.Response'
             type: array
+        "404":
+          description: Property not found
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
         "500":
           description: Internal Server Error
           schema:
@@ -389,4 +561,108 @@ paths:
       summary: Update a property
       tags:
       - Property
+  /request/create:
+    post:
+      consumes:
+      - application/json
+      description: Parses the request body and creates a new lease request using the
+        lessee ID from the JWT token.
+      parameters:
+      - description: Lease Request Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Request created successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Failed to parse request body
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Create a New Lease Request
+      tags:
+      - Request
+  /requests/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a lease request using the request ID provided in the URL.
+      parameters:
+      - description: Request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Request deleted successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request ID
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Request not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Delete a Lease Request
+      tags:
+      - Request
+  /requests/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Parses the request body and updates an existing lease request identified
+        by its ID.
+      parameters:
+      - description: Request ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Lease Request Update Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Request updated successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Failed to parse request body or invalid request ID
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Request not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Update an Existing Lease Request
+      tags:
+      - Request
 swagger: "2.0"
