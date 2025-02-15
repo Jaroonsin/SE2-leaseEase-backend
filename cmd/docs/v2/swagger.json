@@ -624,9 +624,189 @@
                     }
                 }
             }
+        },
+        "/request/create": {
+            "post": {
+                "description": "Parses the request body and creates a new lease request using the lessee ID from the JWT token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Request"
+                ],
+                "summary": "Create a New Lease Request",
+                "parameters": [
+                    {
+                        "description": "Lease Request Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.CreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Request created successfully",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed to parse request body",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/requests/delete/{id}": {
+            "delete": {
+                "description": "Deletes a lease request using the request ID provided in the URL.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Request"
+                ],
+                "summary": "Delete a Lease Request",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Request ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request deleted successfully",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request ID",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Request not found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/requests/update/{id}": {
+            "put": {
+                "description": "Parses the request body and updates an existing lease request identified by its ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Request"
+                ],
+                "summary": "Update an Existing Lease Request",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Request ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Lease Request Update Data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request updated successfully",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Failed to parse request body or invalid request ID",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Request not found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "dtos.CreateRequest": {
+            "type": "object",
+            "properties": {
+                "interestedProperty": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "lesseeID": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "proposedMessage": {
+                    "type": "string",
+                    "example": "I am very interested in leasing this property."
+                },
+                "purpose": {
+                    "type": "string",
+                    "example": "Lease agreement for residential property"
+                },
+                "question": {
+                    "type": "string",
+                    "example": "Could you provide more details about the lease duration?"
+                }
+            }
+        },
         "dtos.GetPropertyDTO": {
             "description": "GetPropertyDTO represents the details of a property along with identifier information.",
             "type": "object",
@@ -743,6 +923,23 @@
                     "description": "role: lessor, lessee",
                     "type": "string",
                     "example": "lessee"
+                }
+            }
+        },
+        "dtos.UpdateRequest": {
+            "type": "object",
+            "properties": {
+                "proposedMessage": {
+                    "type": "string",
+                    "example": "I would like to update my earlier message."
+                },
+                "purpose": {
+                    "type": "string",
+                    "example": "Updated lease purpose"
+                },
+                "question": {
+                    "type": "string",
+                    "example": "Is there any flexibility in the lease terms?"
                 }
             }
         },

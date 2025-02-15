@@ -132,9 +132,10 @@ func (s *FiberHttpServer) initAuthRouter(router fiber.Router, httpHandler handle
 
 func (s *FiberHttpServer) initPropertyRouter(version string ,router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
 	propertyRouter := router.Group("/properties", middleware.AuthRequired(cfg))
-
+	requestRounter := router.Group("/requests", middleware.AuthRequired(cfg))
 
 	if version == "v1" {
+		// property
 		propertyRouter.Post("/create", httpHandler.Property().CreateProperty)
 		propertyRouter.Put("/update/:id", httpHandler.Property().UpdateProperty)
 		propertyRouter.Delete("/delete/:id", httpHandler.Property().DeleteProperty)
@@ -142,6 +143,7 @@ func (s *FiberHttpServer) initPropertyRouter(version string ,router fiber.Router
 		propertyRouter.Get("/:id", httpHandler.Property().GetPropertyByID)
 
 	} else if version == "v2" {
+		// property
 		propertyRouter.Post("/create", httpHandler.Property().CreateProperty)
 		propertyRouter.Put("/update/:id", httpHandler.Property().UpdateProperty)
 		propertyRouter.Delete("/delete/:id", httpHandler.Property().DeleteProperty)
@@ -149,5 +151,11 @@ func (s *FiberHttpServer) initPropertyRouter(version string ,router fiber.Router
 		propertyRouter.Get("/get/:id", httpHandler.Property().GetPropertyByID)
 		propertyRouter.Get("/search", httpHandler.Property().SearchProperty)
 		propertyRouter.Get("/autocomplete", httpHandler.Property().AutoComplete)
+
+		// request
+		requestRounter.Post("/create", httpHandler.Request().CreateRequest)
+		requestRounter.Put("/update/:id", httpHandler.Request().UpdateRequest)
+		requestRounter.Delete("/delete/:id", httpHandler.Request().DeleteRequest)
 	}
+	
 }
