@@ -116,14 +116,22 @@ func (s *propertyService) GetPropertyByID(propertyID uint) (*dtos.GetPropertyDTO
 		return nil, err
 	}
 
+	rating, reviewCount, err := s.propertyRepo.GetPropertyReviewDataByID(propertyID)
+	if err != nil {
+		return nil, err
+	}
+
 	propertyDTO := &dtos.GetPropertyDTO{
-		Name:               property.Name,
 		PropertyID:         property.ID,
 		LessorID:           property.LessorID,
+		Name:               property.Name,
 		Location:           property.Location,
 		Size:               property.Size,
 		Price:              property.Price,
 		AvailabilityStatus: property.AvailabilityStatus,
+		Date:               property.CreatedAt.Format(time.RFC3339), // ใช้ CreatedAt เป็น Date
+		Rating:             rating,
+		ReviewCount:        reviewCount,
 	}
 
 	return propertyDTO, nil

@@ -98,6 +98,27 @@ func (r *propertyRepository) GetPropertyReviewsData(properties []models.Property
 	return ratings, reviewCounts, nil
 }
 
+func (r *propertyRepository) GetPropertyReviewDataByID(propertyID uint) (float64, int, error) {
+	var rating float64
+	var reviewCount int
+
+	// Query ดึงค่า Rating และจำนวนรีวิว
+	err := r.db.Raw(`
+		SELECT 
+			COALESCE(AVG(r.rating), 0) AS avg_rating, 
+			COUNT(pr.review_id) AS review_count
+		FROM property_reviews pr
+		LEFT JOIN reviews r ON pr.review_id = r.id
+		WHERE pr.property_id = ?
+	`, propertyID).Row().Scan(&rating, &reviewCount)
+
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return rating, reviewCount, nil
+}
+
 func (r *propertyRepository) GetPropertyById(propertyID uint) (*models.Property, error) {
 	var property models.Property
 
