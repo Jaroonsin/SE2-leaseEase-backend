@@ -22,3 +22,12 @@ type GetPropertyDTO struct {
 	Rating             float64 `json:"rating" example:"4.5"`                    // Average rating
 	ReviewCount        int     `json:"review_count" example:"12"`               // Number of reviews
 }
+
+// @Description GetPropertyPaginatedDTO represents the response structure for retrieving a list of properties with pagination details.
+type GetPropertyPaginatedDTO struct {
+	Properties   []GetPropertyDTO `json:"properties"`    // List of properties retrieved from the database
+	TotalRecords int              `json:"total_records"` // Total number of properties available
+	TotalPages   int              `json:"total_pages"`   // Total number of pages based on total records and page size
+	CurrentPage  int              `json:"current_page"`  // The current page number being retrieved
+	PageSize     int              `json:"page_size"`     // Number of properties displayed per page
+}

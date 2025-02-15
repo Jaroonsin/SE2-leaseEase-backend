@@ -23,13 +23,13 @@ func (r *propertyRepository) CreateProperty(property *models.Property) error {
 
 func (r *propertyRepository) UpdateProperty(property *models.Property) error {
 	result := r.db.Model(&property).Updates(*property)
-	
+
 	if result.Error != nil {
-		return result.Error 
+		return result.Error
 	}
 
 	if result.RowsAffected == 0 {
-		return gorm.ErrRecordNotFound 
+		return gorm.ErrRecordNotFound
 	}
 
 	return nil
@@ -38,11 +38,11 @@ func (r *propertyRepository) UpdateProperty(property *models.Property) error {
 func (r *propertyRepository) DeleteProperty(id uint) error {
 	result := r.db.Delete(&models.Property{}, id)
 	if result.Error != nil {
-		return result.Error 
+		return result.Error
 	}
 
 	if result.RowsAffected == 0 {
-		return gorm.ErrRecordNotFound 
+		return gorm.ErrRecordNotFound
 	}
 
 	return nil
@@ -64,6 +64,38 @@ func (r *propertyRepository) GetPaginatedProperty(lessorID uint, limit, offset i
 		return nil, err
 	}
 	return properties, nil
+}
+
+func (r *propertyRepository) CountPropertiesByLessor(lessorID uint, totalRecords *int64) error {
+	return r.db.Model(&models.Property{}).Where("lessor_id = ?", lessorID).Count(totalRecords).Error
+}
+
+func (r *propertyRepository) GetPropertyReviewsData(properties []models.Property) ([]float64, []int, error) {
+	var ratings []float64
+	var reviewCounts []int
+
+	for _, property := range properties {
+		var rating float64
+		var reviewCount int
+
+		err := r.db.Raw(`
+			SELECT 
+				COALESCE(AVG(r.rating), 0) AS avg_rating, 
+				COUNT(pr.review_id) AS review_count
+			FROM property_reviews pr
+			LEFT JOIN reviews r ON pr.review_id = r.id
+			WHERE pr.property_id = ?
+		`, property.ID).Row().Scan(&rating, &reviewCount)
+
+		if err != nil {
+			return nil, nil, err
+		}
+
+		ratings = append(ratings, rating)
+		reviewCounts = append(reviewCounts, reviewCount)
+	}
+
+	return ratings, reviewCounts, nil
 }
 
 func (r *propertyRepository) GetPropertyById(propertyID uint) (*models.Property, error) {
