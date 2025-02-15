@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"time"
 
 	"LeaseEase/config"
@@ -34,14 +35,10 @@ func GenerateJWT(user dtos.JWTDTO) (string, error) {
 	return signedToken, nil
 }
 
-// ParseJWT parses and validates a JWT token, returning the claims if valid
 func ParseJWT(tokenString string) (jwt.MapClaims, error) {
-	// Define the secret key
 	secretKey := config.LoadConfig().JWTApiSecret
 
-	// Parse the token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		// Ensure the signing method is what we expect
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, jwt.ErrSignatureInvalid
 		}
@@ -51,10 +48,18 @@ func ParseJWT(tokenString string) (jwt.MapClaims, error) {
 		return nil, err
 	}
 
-	// Extract and return the claims
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		return claims, nil
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return nil, errors.New("invalid token")
 	}
 
-	return nil, jwt.ErrSignatureInvalid
+	if exp, ok := claims["exp"].(float64); ok {
+		if time.Now().Unix() > int64(exp) {
+			return nil, errors.New("token expired")
+		}
+	} else {
+		return nil, errors.New("invalid token: missing expiration")
+	}
+
+	return claims, nil
 }
