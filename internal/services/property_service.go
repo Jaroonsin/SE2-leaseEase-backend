@@ -16,8 +16,7 @@ func NewPropertyService(propertyRepo repositories.PropertyRepository) PropertySe
 	}
 }
 
-func (s *propertyService) CreateProperty(propertyDTO *dtos.PropertyDTO,lessorID uint) error {
-
+func (s *propertyService) CreateProperty(propertyDTO *dtos.PropertyDTO, lessorID uint) error {
 
 	property := &models.Property{
 		LessorID:           lessorID,
@@ -31,9 +30,9 @@ func (s *propertyService) CreateProperty(propertyDTO *dtos.PropertyDTO,lessorID 
 	return s.propertyRepo.CreateProperty(property)
 }
 
-func (s *propertyService) UpdateProperty(propertyDTO *dtos.PropertyDTO,propertyID uint) error {
+func (s *propertyService) UpdateProperty(propertyDTO *dtos.PropertyDTO, propertyID uint) error {
 	property := &models.Property{
-		ID: 				propertyID,
+		ID:                 propertyID,
 		Name:               propertyDTO.Name,
 		Location:           propertyDTO.Location,
 		Size:               propertyDTO.Size,
