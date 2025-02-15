@@ -60,12 +60,12 @@ func (s *FiberHttpServer) initHttpServer(version string) fiber.Router {
 
 	// swagger with scalar
 	filePath := filepath.Join("cmd", "docs", version, "swagger.yaml")
-	apiRef, err := scalar.New(filePath,&scalar.Config{
+	apiRef, err := scalar.New(filePath, &scalar.Config{
 		Theme: scalar.ThemeElysiajs,
 	})
 	if err != nil {
 		panic(err)
-	}	
+	}
 	router.Get("/reference", func(c *fiber.Ctx) error {
 		htmlContent, err := apiRef.RenderHTML()
 		if err != nil {
@@ -91,10 +91,9 @@ func (s *FiberHttpServer) Start() {
 	for _, v := range version {
 		router := s.initHttpServer(v)
 		// init modules
-	s.initAuthRouter(router, s.handlers)
-	s.initPropertyRouter(v,router, s.handlers, s.cfg)
+		s.initAuthRouter(router, s.handlers)
+		s.initPropertyRouter(v, router, s.handlers, s.cfg)
 	}
-	
 
 	// Setup signal capturing for graceful shutdown
 	quit := make(chan os.Signal, 1)
@@ -130,7 +129,7 @@ func (s *FiberHttpServer) initAuthRouter(router fiber.Router, httpHandler handle
 	authRouter.Post("/login", httpHandler.Auth().Login)
 }
 
-func (s *FiberHttpServer) initPropertyRouter(version string ,router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
+func (s *FiberHttpServer) initPropertyRouter(version string, router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
 	propertyRouter := router.Group("/properties", middleware.AuthRequired(cfg))
 	requestRounter := router.Group("/requests", middleware.AuthRequired(cfg))
 
@@ -157,5 +156,5 @@ func (s *FiberHttpServer) initPropertyRouter(version string ,router fiber.Router
 		requestRounter.Put("/update/:id", httpHandler.Request().UpdateRequest)
 		requestRounter.Delete("/delete/:id", httpHandler.Request().DeleteRequest)
 	}
-	
+
 }

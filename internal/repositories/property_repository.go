@@ -23,13 +23,13 @@ func (r *propertyRepository) CreateProperty(property *models.Property) error {
 
 func (r *propertyRepository) UpdateProperty(property *models.Property) error {
 	result := r.db.Model(&property).Updates(*property)
-	
+
 	if result.Error != nil {
-		return result.Error 
+		return result.Error
 	}
 
 	if result.RowsAffected == 0 {
-		return gorm.ErrRecordNotFound 
+		return gorm.ErrRecordNotFound
 	}
 
 	return nil
@@ -38,32 +38,64 @@ func (r *propertyRepository) UpdateProperty(property *models.Property) error {
 func (r *propertyRepository) DeleteProperty(id uint) error {
 	result := r.db.Delete(&models.Property{}, id)
 	if result.Error != nil {
-		return result.Error 
+		return result.Error
 	}
 
 	if result.RowsAffected == 0 {
-		return gorm.ErrRecordNotFound 
+		return gorm.ErrRecordNotFound
 	}
 
 	return nil
 }
 
-func (r *propertyRepository) GetAllProperty() ([]models.Property, error) {
+func (r *propertyRepository) GetAllProperty(lessorID uint) ([]models.Property, error) {
 	var properties []models.Property
-	err := r.db.Find(&properties).Error
+	err := r.db.Where("lessor_id = ?", lessorID).Find(&properties).Error
 	if err != nil {
 		return nil, err
 	}
 	return properties, nil
 }
 
-func (r *propertyRepository) GetPaginatedProperty(limit, offset int) ([]models.Property, error) {
+func (r *propertyRepository) GetPaginatedProperty(lessorID uint, limit, offset int) ([]models.Property, error) {
 	var properties []models.Property
-	err := r.db.Limit(limit).Offset(offset).Find(&properties).Error
+	err := r.db.Where("lessor_id = ?", lessorID).Limit(limit).Offset(offset).Find(&properties).Error
 	if err != nil {
 		return nil, err
 	}
 	return properties, nil
+}
+
+func (r *propertyRepository) CountPropertiesByLessor(lessorID uint, totalRecords *int64) error {
+	return r.db.Model(&models.Property{}).Where("lessor_id = ?", lessorID).Count(totalRecords).Error
+}
+
+func (r *propertyRepository) GetPropertyReviewsData(properties []models.Property) ([]float64, []int, error) {
+	var ratings []float64
+	var reviewCounts []int
+
+	for _, property := range properties {
+		var rating float64
+		var reviewCount int
+
+		err := r.db.Raw(`
+			SELECT 
+				COALESCE(AVG(r.rating), 0) AS avg_rating, 
+				COUNT(pr.review_id) AS review_count
+			FROM property_reviews pr
+			LEFT JOIN reviews r ON pr.review_id = r.id
+			WHERE pr.property_id = ?
+		`, property.ID).Row().Scan(&rating, &reviewCount)
+
+		if err != nil {
+			return nil, nil, err
+		}
+
+		ratings = append(ratings, rating)
+		reviewCounts = append(reviewCounts, reviewCount)
+	}
+
+	return ratings, reviewCounts, nil
 }
 
 func (r *propertyRepository) GetPropertyById(propertyID uint) (*models.Property, error) {
@@ -111,8 +143,8 @@ func (r *propertyRepository) SearchProperty(query map[string]string) ([]models.P
 
 	// Filter by location if provided.
 	if location, ok := query["location"]; ok && location != "" {
-			keyword := "%" + location + "%"
-			dbQuery = dbQuery.Where("location ILIKE ?", keyword)
+		keyword := "%" + location + "%"
+		dbQuery = dbQuery.Where("location ILIKE ?", keyword)
 	}
 
 	// Filter by name if provided.
@@ -139,7 +171,7 @@ func (r *propertyRepository) SearchProperty(query map[string]string) ([]models.P
 	}
 
 	// Apply pagination if provided.
-	if pageStr, ok := query["page"] ; ok && pageStr != "" {
+	if pageStr, ok := query["page"]; ok && pageStr != "" {
 		page, err := strconv.Atoi(pageStr)
 		if err != nil || page < 1 {
 			page = 1
@@ -156,7 +188,7 @@ func (r *propertyRepository) SearchProperty(query map[string]string) ([]models.P
 		offset := (page - 1) * pageSize
 		dbQuery = dbQuery.Limit(pageSize).Offset(offset)
 	}
-		
+
 	// Execute the query.
 	err := dbQuery.Find(&properties).Error
 	return properties, err

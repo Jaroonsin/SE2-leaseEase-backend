@@ -46,7 +46,7 @@ func (h *propertyHandler) CreateProperty(c *fiber.Ctx) error {
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
-	
+
 	return utils.SuccessResponse(c, fiber.StatusCreated, "Property created successfully", nil)
 }
 
@@ -131,9 +131,11 @@ func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
 	pageStr := c.Query("page", "")
 	pageSizeStr := c.Query("pageSize", "")
 
+	LessorID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
+
 	// Case 1: No pagination parameters → Fetch all properties
 	if pageStr == "" && pageSizeStr == "" {
-		properties, err := h.propertyService.GetAllProperty(0, 0) // 0 means fetch all
+		properties, err := h.propertyService.GetAllProperty(LessorID, 0, 0) // 0 means fetch all
 		if err != nil {
 			return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 		}
@@ -155,7 +157,7 @@ func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
 		}
 	}
 
-	properties, err := h.propertyService.GetAllProperty(page, pageSize)
+	properties, err := h.propertyService.GetAllProperty(LessorID, page, pageSize)
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
@@ -230,17 +232,18 @@ func (h *propertyHandler) SearchProperty(c *fiber.Ctx) error {
 }
 
 // Auto Complete:
-//   @Summary Auto complete property search
-//   @Description Retrieve property suggestions based on a partial search query
-//   @Tags Property
-//   @Accept json
-//   @Produce json
-//   @Security cookieAuth
-//   @Param query query string true "Partial property name"
-//   @Success 200 {object} utils.Response "Properties retrieved successfully"
-//   @Failure 400 {object} utils.Response "Bad Request"
-//   @Failure 500 {object} utils.Response "Internal Server Error"
-//   @Router /properties/autocomplete [get]
+//
+//	@Summary Auto complete property search
+//	@Description Retrieve property suggestions based on a partial search query
+//	@Tags Property
+//	@Accept json
+//	@Produce json
+//	@Security cookieAuth
+//	@Param query query string true "Partial property name"
+//	@Success 200 {object} utils.Response "Properties retrieved successfully"
+//	@Failure 400 {object} utils.Response "Bad Request"
+//	@Failure 500 {object} utils.Response "Internal Server Error"
+//	@Router /properties/autocomplete [get]
 func (h *propertyHandler) AutoComplete(c *fiber.Ctx) error {
 	query := c.Query("query")
 	if query == "" {
