@@ -46,20 +46,20 @@ func (s *propertyService) UpdateProperty(propertyDTO *dtos.PropertyDTO, property
 func (s *propertyService) DeleteProperty(propertyID uint) error {
 	return s.propertyRepo.DeleteProperty(propertyID)
 }
-func (s *propertyService) GetAllProperty(page, pageSize int) ([]dtos.GetPropertyDTO, error) {
+func (s *propertyService) GetAllProperty(lessorID uint, page, pageSize int) ([]dtos.GetPropertyDTO, error) {
 	var properties []models.Property
 	var err error
 
 	// Case 1: Fetch all properties (when page and pageSize are 0)
 	if page == 0 || pageSize == 0 {
-		properties, err = s.propertyRepo.GetAllProperty()
+		properties, err = s.propertyRepo.GetAllProperty(lessorID)
 		if err != nil {
 			return nil, err
 		}
 	} else {
 		// Case 2: Apply pagination
 		offset := (page - 1) * pageSize
-		properties, err = s.propertyRepo.GetPaginatedProperty(pageSize, offset)
+		properties, err = s.propertyRepo.GetPaginatedProperty(lessorID, pageSize, offset)
 		if err != nil {
 			return nil, err
 		}

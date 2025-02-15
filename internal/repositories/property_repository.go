@@ -48,18 +48,18 @@ func (r *propertyRepository) DeleteProperty(id uint) error {
 	return nil
 }
 
-func (r *propertyRepository) GetAllProperty() ([]models.Property, error) {
+func (r *propertyRepository) GetAllProperty(lessorID uint) ([]models.Property, error) {
 	var properties []models.Property
-	err := r.db.Find(&properties).Error
+	err := r.db.Where("lessor_id = ?", lessorID).Find(&properties).Error
 	if err != nil {
 		return nil, err
 	}
 	return properties, nil
 }
 
-func (r *propertyRepository) GetPaginatedProperty(limit, offset int) ([]models.Property, error) {
+func (r *propertyRepository) GetPaginatedProperty(lessorID uint, limit, offset int) ([]models.Property, error) {
 	var properties []models.Property
-	err := r.db.Limit(limit).Offset(offset).Find(&properties).Error
+	err := r.db.Where("lessor_id = ?", lessorID).Limit(limit).Offset(offset).Find(&properties).Error
 	if err != nil {
 		return nil, err
 	}
@@ -111,8 +111,8 @@ func (r *propertyRepository) SearchProperty(query map[string]string) ([]models.P
 
 	// Filter by location if provided.
 	if location, ok := query["location"]; ok && location != "" {
-			keyword := "%" + location + "%"
-			dbQuery = dbQuery.Where("location ILIKE ?", keyword)
+		keyword := "%" + location + "%"
+		dbQuery = dbQuery.Where("location ILIKE ?", keyword)
 	}
 
 	// Filter by name if provided.
@@ -139,7 +139,7 @@ func (r *propertyRepository) SearchProperty(query map[string]string) ([]models.P
 	}
 
 	// Apply pagination if provided.
-	if pageStr, ok := query["page"] ; ok && pageStr != "" {
+	if pageStr, ok := query["page"]; ok && pageStr != "" {
 		page, err := strconv.Atoi(pageStr)
 		if err != nil || page < 1 {
 			page = 1
@@ -156,7 +156,7 @@ func (r *propertyRepository) SearchProperty(query map[string]string) ([]models.P
 		offset := (page - 1) * pageSize
 		dbQuery = dbQuery.Limit(pageSize).Offset(offset)
 	}
-		
+
 	// Execute the query.
 	err := dbQuery.Find(&properties).Error
 	return properties, err
