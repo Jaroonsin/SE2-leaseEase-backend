@@ -22,11 +22,30 @@ func (r *propertyRepository) CreateProperty(property *models.Property) error {
 }
 
 func (r *propertyRepository) UpdateProperty(property *models.Property) error {
-	return r.db.Model(&property).Updates(*property).Error
+	result := r.db.Model(&property).Updates(*property)
+	
+	if result.Error != nil {
+		return result.Error 
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound 
+	}
+
+	return nil
 }
 
 func (r *propertyRepository) DeleteProperty(id uint) error {
-	return r.db.Delete(&models.Property{}, id).Error
+	result := r.db.Delete(&models.Property{}, id)
+	if result.Error != nil {
+		return result.Error 
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound 
+	}
+
+	return nil
 }
 
 func (r *propertyRepository) GetAllProperty() ([]models.Property, error) {

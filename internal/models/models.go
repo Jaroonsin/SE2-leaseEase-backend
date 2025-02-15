@@ -28,14 +28,15 @@ type Property struct {
 
 // Request struct with properly mapped fields
 type Request struct {
-	ID                     uint   `gorm:"primaryKey"`
-	Purpose                string `gorm:"size:255"`
-	ProposedMessage        string `gorm:"type:text"`
-	Question               string `gorm:"type:text"`
+	ID                     uint   	`gorm:"primaryKey"`
+	Purpose                string 	`gorm:"size:255"`
+	ProposedMessage        string 	`gorm:"type:text"`
+	Question               string 	`gorm:"type:text"`
 	CreateAt               time.Time
-	InterestedMarketSlotID uint
-	LesseeID               uint `gorm:"not null"`
-	Lessee                 User `gorm:"foreignKey:LesseeID;references:ID"`
+	InterestedProperty 	   uint		`gorm:"not null"`
+	Property			   Property `gorm:"foreignKey:InterestedProperty;references:ID"`
+	LesseeID               uint 	`gorm:"not null"`
+	Lessee                 User 	`gorm:"foreignKey:LesseeID;references:ID"`
 }
 
 // Review struct for reusable review fields

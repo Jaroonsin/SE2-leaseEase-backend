@@ -8,6 +8,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
+	"gorm.io/gorm"
 )
 
 // propertyHandler handles property endpoints.
@@ -60,6 +61,7 @@ func (h *propertyHandler) CreateProperty(c *fiber.Ctx) error {
 // @Param request body dtos.PropertyDTO true "Updated property data"
 // @Success 200 {array} utils.Response "Property updated successfully"
 // @Failure 400 {array} utils.Response "Bad Request"
+// @Failure 404 {array} utils.Response "Property not found"
 // @Failure 500 {array} utils.Response "Internal Server Error"
 // @Router /properties/update/{id} [put]
 func (h *propertyHandler) UpdateProperty(c *fiber.Ctx) error {
@@ -75,6 +77,9 @@ func (h *propertyHandler) UpdateProperty(c *fiber.Ctx) error {
 
 	err = h.propertyService.UpdateProperty(&req, uint(PropertyID))
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return utils.ErrorResponse(c, fiber.StatusNotFound, "Property not found")
+		}
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
@@ -91,6 +96,7 @@ func (h *propertyHandler) UpdateProperty(c *fiber.Ctx) error {
 // @Param id path uint true "Property ID"
 // @Success 200 {array} utils.Response "Property deleted successfully"
 // @Failure 400 {array} utils.Response "Bad Request"
+// @Failure 404 {array} utils.Response "Property not found"
 // @Failure 500 {array} utils.Response "Internal Server Error"
 // @Router /properties/delete/{id} [delete]
 func (h *propertyHandler) DeleteProperty(c *fiber.Ctx) error {
@@ -101,6 +107,9 @@ func (h *propertyHandler) DeleteProperty(c *fiber.Ctx) error {
 
 	err = h.propertyService.DeleteProperty(uint(propertyID))
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return utils.ErrorResponse(c, fiber.StatusNotFound, "Property not found")
+		}
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 	return utils.SuccessResponse(c, fiber.StatusOK, "Property deleted successfully", nil)
