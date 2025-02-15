@@ -11,7 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	_ "LeaseEase/cmd/docs"
+	_ "LeaseEase/cmd/docs/v2"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"

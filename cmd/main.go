@@ -12,7 +12,7 @@ import (
 
 	"github.com/joho/godotenv"
 
-	_ "LeaseEase/cmd/docs"
+	_ "LeaseEase/cmd/docs/v2"
 )
 
 // @title LeaseEase API
