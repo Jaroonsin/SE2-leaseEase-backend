@@ -1,6 +1,8 @@
 package handlers
 
-import "LeaseEase/internal/services"
+import (
+	"LeaseEase/internal/services"
+)
 
 type handler struct {
 	PropertyHandler *propertyHandler
@@ -27,4 +29,3 @@ func (h *handler) Property() *propertyHandler {
 func (h *handler) Request() *requestHandler {
 	return h.RequestHandler
 }
-

@@ -4,6 +4,7 @@ import (
 	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/services"
 	"LeaseEase/utils"
+	"LeaseEase/utils/constant"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -38,7 +39,7 @@ func NewPropertyHandler(propertyService services.PropertyService) *propertyHandl
 func (h *propertyHandler) CreateProperty(c *fiber.Ctx) error {
 	var req dtos.PropertyDTO
 	if err := c.BodyParser(&req); err != nil {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to parse request body")
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, constant.ErrParsebody)
 	}
 	LessorID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
 
@@ -47,7 +48,7 @@ func (h *propertyHandler) CreateProperty(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return utils.SuccessResponse(c, fiber.StatusCreated, "Property created successfully", nil)
+	return utils.SuccessResponse(c, fiber.StatusCreated, constant.SuccessCreateProp, nil)
 }
 
 // UpdateProperty godoc
@@ -139,7 +140,7 @@ func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
 		if err != nil {
 			return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 		}
-		return utils.SuccessResponse(c, fiber.StatusOK, "Properties retrieved successfully", properties)
+		return utils.SuccessResponse(c, fiber.StatusOK, constant.SuccessGetAllProp, properties)
 	}
 
 	// Parse page number (default to 1)
@@ -161,7 +162,7 @@ func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
-	return utils.SuccessResponse(c, fiber.StatusOK, "Properties retrieved successfully", properties)
+	return utils.SuccessResponse(c, fiber.StatusOK, constant.SuccessGetAllProp, properties)
 }
 
 // GetPropertyByID godoc

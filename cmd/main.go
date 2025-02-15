@@ -30,8 +30,11 @@ func main() {
 		log.Println("No .env file found")
 	}
 	cfg := config.LoadConfig()
-	logger := logs.NewLogger()
-	
+	logger, err := logs.NewLogger()
+	if err != nil {
+		log.Printf("Failed to create logger: %v", err)
+	}
+
 	// Initialize database
 	db, err := database.ConnectDB(cfg)
 	if err != nil {
@@ -40,7 +43,7 @@ func main() {
 
 	// Initialize repositories, services, and handlers
 	repositories := repositories.NewRepository(cfg, db)
-	services := services.NewService(repositories)
+	services := services.NewService(repositories, logger)
 	handlers := handlers.NewHandler(services)
 
 	servers := server.NewFiberHttpServer(cfg, logger, handlers)

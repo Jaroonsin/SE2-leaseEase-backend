@@ -4,20 +4,27 @@ import (
 	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/models"
 	"LeaseEase/internal/repositories"
+	"LeaseEase/utils/constant"
+
 	"time"
+
+	"go.uber.org/zap"
 )
 
 type propertyService struct {
 	propertyRepo repositories.PropertyRepository
+	logger       *zap.Logger
 }
 
-func NewPropertyService(propertyRepo repositories.PropertyRepository) PropertyService {
+func NewPropertyService(propertyRepo repositories.PropertyRepository, logger *zap.Logger) PropertyService {
 	return &propertyService{
 		propertyRepo: propertyRepo,
+		logger:       logger,
 	}
 }
 
 func (s *propertyService) CreateProperty(propertyDTO *dtos.PropertyDTO, lessorID uint) error {
+	logger := s.logger.Named("CreateProperty")
 
 	property := &models.Property{
 		LessorID:           lessorID,
@@ -28,10 +35,20 @@ func (s *propertyService) CreateProperty(propertyDTO *dtos.PropertyDTO, lessorID
 		AvailabilityStatus: propertyDTO.AvailabilityStatus,
 	}
 
-	return s.propertyRepo.CreateProperty(property)
+	err := s.propertyRepo.CreateProperty(property)
+
+	if err != nil {
+		logger.Error("Error in create property", zap.Error(err))
+		return err
+	}
+
+	logger.Info(constant.SuccessCreateProp, zap.String("Name", property.Name))
+	return err
 }
 
 func (s *propertyService) UpdateProperty(propertyDTO *dtos.PropertyDTO, propertyID uint) error {
+	logger := s.logger.Named("UpdateProperty")
+
 	property := &models.Property{
 		ID:                 propertyID,
 		Name:               propertyDTO.Name,
@@ -41,13 +58,31 @@ func (s *propertyService) UpdateProperty(propertyDTO *dtos.PropertyDTO, property
 		AvailabilityStatus: propertyDTO.AvailabilityStatus,
 	}
 
-	return s.propertyRepo.UpdateProperty(property)
+	err := s.propertyRepo.UpdateProperty(property)
+	if err != nil {
+		logger.Error("Error in update property", zap.Error(err))
+		return err
+	}
+
+	logger.Info(constant.SuccessUpdateProp, zap.Uint("ID", propertyID), zap.String("Name", property.Name))
+	return err
 }
 
 func (s *propertyService) DeleteProperty(propertyID uint) error {
-	return s.propertyRepo.DeleteProperty(propertyID)
+	logger := s.logger.Named("DeleteProperty")
+
+	err := s.propertyRepo.DeleteProperty(propertyID)
+	if err != nil {
+		logger.Error("Error in delete property", zap.Error(err))
+		return err
+	}
+
+	logger.Info(constant.SuccessDeleteProp, zap.Uint("propertyID", propertyID))
+	return err
 }
+
 func (s *propertyService) GetAllProperty(lessorID uint, page, pageSize int) (*dtos.GetPropertyPaginatedDTO, error) {
+	logger := s.logger.Named("GetAllProperty")
 	var properties []models.Property
 	var totalRecords int64
 	var err error
@@ -56,6 +91,7 @@ func (s *propertyService) GetAllProperty(lessorID uint, page, pageSize int) (*dt
 	if page == 0 || pageSize == 0 {
 		properties, err = s.propertyRepo.GetAllProperty(lessorID)
 		if err != nil {
+			logger.Error("Failed to fetch all properties", zap.Error(err))
 			return nil, err
 		}
 		totalRecords = int64(len(properties))
@@ -69,6 +105,7 @@ func (s *propertyService) GetAllProperty(lessorID uint, page, pageSize int) (*dt
 		offset := (page - 1) * pageSize
 		properties, err = s.propertyRepo.GetPaginatedProperty(lessorID, pageSize, offset)
 		if err != nil {
+			logger.Error("Failed to fetch paginated properties", zap.Int("page", page), zap.Int("pageSize", pageSize), zap.Error(err))
 			return nil, err
 		}
 	}
@@ -101,6 +138,7 @@ func (s *propertyService) GetAllProperty(lessorID uint, page, pageSize int) (*dt
 		propertyDTOs = append(propertyDTOs, propertyDTO)
 	}
 
+	logger.Info(constant.SuccessGetAllProp, zap.Int("count", len(propertyDTOs)))
 	return &dtos.GetPropertyPaginatedDTO{
 		Properties:   propertyDTOs,
 		TotalRecords: int(totalRecords),
@@ -111,8 +149,10 @@ func (s *propertyService) GetAllProperty(lessorID uint, page, pageSize int) (*dt
 }
 
 func (s *propertyService) GetPropertyByID(propertyID uint) (*dtos.GetPropertyDTO, error) {
+	logger := s.logger.Named("GetPropertyByID")
 	property, err := s.propertyRepo.GetPropertyById(propertyID)
 	if err != nil {
+		logger.Error("Failed to fetch property", zap.Uint("propertyID", propertyID), zap.Error(err))
 		return nil, err
 	}
 
@@ -134,6 +174,7 @@ func (s *propertyService) GetPropertyByID(propertyID uint) (*dtos.GetPropertyDTO
 		ReviewCount:        reviewCount,
 	}
 
+	logger.Info(constant.SuccessGetByIDProp, zap.Uint("propertyID", propertyID))
 	return propertyDTO, nil
 }
 
