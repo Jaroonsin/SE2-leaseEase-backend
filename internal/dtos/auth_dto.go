@@ -16,6 +16,6 @@ type LoginDTO struct {
 }
 
 type JWTDTO struct {
-	UserID int    `json:"user_id" example:"1"`
+	UserID uint   `json:"user_id" example:"1"`
 	Role   string `json:"role" example:"lessee" `
 }

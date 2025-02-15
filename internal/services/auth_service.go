@@ -59,8 +59,12 @@ func (s *authService) Login(loginDTO *dtos.LoginDTO) (string, error) {
 		logger.Error(constant.ErrPassNotMatch, zap.Error(err))
 		return "", errors.New(constant.ErrPassNotMatch)
 	}
+	JWTDTO := dtos.JWTDTO{
+		UserID: user.ID,
+		Role:   user.UserType,
+	}
 
-	token, err := utils.GenerateJWT(user.ID)
+	token, err := utils.GenerateJWT(JWTDTO)
 	if err != nil {
 		logger.Error("cannot generate JWT", zap.Error(err))
 		return "", err
