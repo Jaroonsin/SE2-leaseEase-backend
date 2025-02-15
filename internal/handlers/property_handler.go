@@ -117,7 +117,7 @@ func (h *propertyHandler) DeleteProperty(c *fiber.Ctx) error {
 // @Param pageSize query int false "Page size" default(10)
 // @Success 200 {array} utils.Response{data=[]dtos.GetPropertyDTO} "Properties retrieved successfully"
 // @Failure 500 {array} utils.Response "Internal Server Error"
-// @Router /properties [get]
+// @Router /properties/get [get]
 func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
 	pageStr := c.Query("page", "")
 	pageSizeStr := c.Query("pageSize", "")
@@ -164,7 +164,7 @@ func (h *propertyHandler) GetAllProperty(c *fiber.Ctx) error {
 // @Success 200 {array} utils.Response{data=dtos.GetPropertyDTO} "Property retrieved successfully"
 // @Failure 400 {array} utils.Response "Bad Request"
 // @Failure 404 {array} utils.Response "Not Found"
-// @Router /properties/{id} [get]
+// @Router /properties/get/{id} [get]
 func (h *propertyHandler) GetPropertyByID(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
@@ -177,4 +177,71 @@ func (h *propertyHandler) GetPropertyByID(c *fiber.Ctx) error {
 	}
 
 	return utils.SuccessResponse(c, fiber.StatusOK, "Property retrieved successfully", property)
+}
+
+// SearchProperty godoc
+// @Summary Search properties
+// @Description Search properties using query parameters
+// @Tags Property
+// @Accept json
+// @Produce json
+// @Security cookieAuth
+// @Param page query int true "Page number"
+// @Param pagesize query int true "Page size"
+// @Param name query string false "Property name keyword"
+// @Param minprice query number false "Minimum price"
+// @Param maxprice query number false "Maximum price"
+// @Param minsize query number false "Minimum size"
+// @Param maxsize query number false "Maximum size"
+// @Param sortby query string false "Order field (price or size)"
+// @Param order query string false "Order direction (asc or desc)"
+// @Param availability query bool false "Availability status"
+// @Success 200 {array} utils.Response{data=[]dtos.GetPropertyDTO} "Properties retrieved successfully"
+// @Failure 400 {array} utils.Response "Bad Request"
+// @Failure 500 {array} utils.Response "Internal Server Error"
+// @Router /properties/search [get]
+func (h *propertyHandler) SearchProperty(c *fiber.Ctx) error {
+
+	query := c.Queries()
+
+	if query["page"] == "" && query["pagesize"] == "" {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Page and pageSize parameters are required")
+	}
+
+	if query == nil {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Query parameter is required")
+	}
+
+	properties, err := h.propertyService.SearchProperty(query)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+	}
+
+	return utils.SuccessResponse(c, fiber.StatusOK, "Properties retrieved successfully", properties)
+}
+
+// Auto Complete:
+//   @Summary Auto complete property search
+//   @Description Retrieve property suggestions based on a partial search query
+//   @Tags Property
+//   @Accept json
+//   @Produce json
+//   @Security cookieAuth
+//   @Param query query string true "Partial property name"
+//   @Success 200 {object} utils.Response "Properties retrieved successfully"
+//   @Failure 400 {object} utils.Response "Bad Request"
+//   @Failure 500 {object} utils.Response "Internal Server Error"
+//   @Router /properties/autocomplete [get]
+func (h *propertyHandler) AutoComplete(c *fiber.Ctx) error {
+	query := c.Query("query")
+	if query == "" {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Query parameter is required")
+	}
+
+	properties, err := h.propertyService.AutoComplete(query)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+	}
+
+	return utils.SuccessResponse(c, fiber.StatusOK, "Properties retrieved successfully", properties)
 }

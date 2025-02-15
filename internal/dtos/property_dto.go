@@ -1,9 +1,5 @@
 package dtos
 
-import (
-	_ "LeaseEase/cmd/docs"
-)
-
 // @Description PropertyDTO represents a property.
 type PropertyDTO struct {
 	Name               string  `json:"name" example:"Sunset Villa"`    // name of the property

@@ -7,10 +7,11 @@ import (
 	"context"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"time"
 
-	_ "LeaseEase/cmd/docs"
+	_ "LeaseEase/cmd/docs/v2"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -36,9 +37,9 @@ func NewFiberHttpServer(cfg *config.Config, logger *zap.Logger, handlers handler
 	}
 }
 
-func (s *FiberHttpServer) initHttpServer() fiber.Router {
+func (s *FiberHttpServer) initHttpServer(version string) fiber.Router {
 	// set global prefix
-	router := s.app.Group("/api/v1")
+	router := s.app.Group("/api/" + version)
 
 	// enable cors
 	router.Use(cors.New(cors.Config{
@@ -58,7 +59,8 @@ func (s *FiberHttpServer) initHttpServer() fiber.Router {
 	// }))
 
 	// swagger with scalar
-	apiRef, err := scalar.New(`.\cmd\docs\swagger.yaml`,&scalar.Config{
+	filePath := filepath.Join("cmd", "docs", version, "swagger.yaml")
+	apiRef, err := scalar.New(filePath,&scalar.Config{
 		Theme: scalar.ThemeElysiajs,
 	})
 	if err != nil {
@@ -84,11 +86,15 @@ func (s *FiberHttpServer) initHttpServer() fiber.Router {
 
 func (s *FiberHttpServer) Start() {
 	// init http handler
-	router := s.initHttpServer()
 
-	// init modules
+	version := []string{"v1", "v2"}
+	for _, v := range version {
+		router := s.initHttpServer(v)
+		// init modules
 	s.initAuthRouter(router, s.handlers)
-	s.initPropertyRouter(router, s.handlers, s.cfg)
+	s.initPropertyRouter(v,router, s.handlers, s.cfg)
+	}
+	
 
 	// Setup signal capturing for graceful shutdown
 	quit := make(chan os.Signal, 1)
@@ -124,12 +130,24 @@ func (s *FiberHttpServer) initAuthRouter(router fiber.Router, httpHandler handle
 	authRouter.Post("/login", httpHandler.Auth().Login)
 }
 
-func (s *FiberHttpServer) initPropertyRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
+func (s *FiberHttpServer) initPropertyRouter(version string ,router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
 	propertyRouter := router.Group("/properties", middleware.AuthRequired(cfg))
 
-	propertyRouter.Post("/create", httpHandler.Property().CreateProperty)
-	propertyRouter.Put("/update/:id", httpHandler.Property().UpdateProperty)
-	propertyRouter.Delete("/delete/:id", httpHandler.Property().DeleteProperty)
-	propertyRouter.Get("/", httpHandler.Property().GetAllProperty)
-	propertyRouter.Get("/:id", httpHandler.Property().GetPropertyByID)
+
+	if version == "v1" {
+		propertyRouter.Post("/create", httpHandler.Property().CreateProperty)
+		propertyRouter.Put("/update/:id", httpHandler.Property().UpdateProperty)
+		propertyRouter.Delete("/delete/:id", httpHandler.Property().DeleteProperty)
+		propertyRouter.Get("/", httpHandler.Property().GetAllProperty)
+		propertyRouter.Get("/:id", httpHandler.Property().GetPropertyByID)
+
+	} else if version == "v2" {
+		propertyRouter.Post("/create", httpHandler.Property().CreateProperty)
+		propertyRouter.Put("/update/:id", httpHandler.Property().UpdateProperty)
+		propertyRouter.Delete("/delete/:id", httpHandler.Property().DeleteProperty)
+		propertyRouter.Get("/get", httpHandler.Property().GetAllProperty)
+		propertyRouter.Get("/get/:id", httpHandler.Property().GetPropertyByID)
+		propertyRouter.Get("/search", httpHandler.Property().SearchProperty)
+		propertyRouter.Get("/autocomplete", httpHandler.Property().AutoComplete)
+	}
 }

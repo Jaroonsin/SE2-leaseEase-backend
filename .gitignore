@@ -1,5 +1,3 @@
-cmd/docs/*
-
 docker-compose*.yml
 docker-compose*.yaml
 go.mod
@@ -8,4 +6,3 @@ Dockerfile
 *.env
 tmp
 *.db
-docs/

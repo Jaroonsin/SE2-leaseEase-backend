@@ -12,17 +12,17 @@ import (
 
 	"github.com/joho/godotenv"
 
-	_ "LeaseEase/cmd/docs"
+	_ "LeaseEase/cmd/docs/v2"
 )
 
 // @title LeaseEase API
-// @version 1.0
+// @version 2.0
 // @description API documentation for LeaseEase.
 
 // @contact.name API Support
 // @contact.url http://www.example.com/support
 // @contact.email support@example.com
-// @host localhost:5000/api/v1
+// @host localhost:5000/api/v2
 // @BasePath /
 func main() {
 	// Load configuration
