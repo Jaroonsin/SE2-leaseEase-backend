@@ -131,6 +131,7 @@ func (s *FiberHttpServer) initAuthRouter(router fiber.Router, httpHandler handle
 
 func (s *FiberHttpServer) initPropertyRouter(version string, router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
 	propertyRouter := router.Group("/properties", middleware.AuthRequired(cfg))
+	requestRounter := router.Group("/requests", middleware.AuthRequired(cfg))
 
 	if version == "v1" {
 		// property
