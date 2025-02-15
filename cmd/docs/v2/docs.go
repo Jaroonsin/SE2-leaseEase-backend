@@ -283,6 +283,15 @@ const docTemplate = `{
                             }
                         }
                     },
+                    "404": {
+                        "description": "Property not found",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/utils.Response"
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -612,6 +621,15 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/utils.Response"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Property not found",
                         "schema": {
                             "type": "array",
                             "items": {

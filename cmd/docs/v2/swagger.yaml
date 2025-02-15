@@ -311,6 +311,12 @@ paths:
             items:
               $ref: '#/definitions/utils.Response'
             type: array
+        "404":
+          description: Property not found
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
         "500":
           description: Internal Server Error
           schema:
@@ -516,6 +522,12 @@ paths:
             type: array
         "400":
           description: Bad Request
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "404":
+          description: Property not found
           schema:
             items:
               $ref: '#/definitions/utils.Response'
