@@ -26,6 +26,10 @@ definitions:
         description: property's availability status
         example: available
         type: string
+      date:
+        description: Property creation date
+        example: "2024-02-15T10:00:00Z"
+        type: string
       id:
         description: Property ID
         example: 1
@@ -46,6 +50,14 @@ definitions:
         description: property's price
         example: 1.2000005e+06
         type: number
+      rating:
+        description: Average rating
+        example: 4.5
+        type: number
+      review_count:
+        description: Number of reviews
+        example: 12
+        type: integer
       size:
         description: property's size
         example: 3500 sqft

@@ -893,6 +893,11 @@ const docTemplate = `{
                     "type": "string",
                     "example": "available"
                 },
+                "date": {
+                    "description": "Property creation date",
+                    "type": "string",
+                    "example": "2024-02-15T10:00:00Z"
+                },
                 "id": {
                     "description": "Property ID",
                     "type": "integer",
@@ -917,6 +922,16 @@ const docTemplate = `{
                     "description": "property's price",
                     "type": "number",
                     "example": 1200000.5
+                },
+                "rating": {
+                    "description": "Average rating",
+                    "type": "number",
+                    "example": 4.5
+                },
+                "review_count": {
+                    "description": "Number of reviews",
+                    "type": "integer",
+                    "example": 12
                 },
                 "size": {
                     "description": "property's size",
