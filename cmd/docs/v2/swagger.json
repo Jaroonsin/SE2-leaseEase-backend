@@ -96,6 +96,32 @@
                 }
             }
         },
+        "/auth/logout": {
+            "post": {
+                "description": "Clear the authentication cookie to logout the user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Logout an existing user",
+                "responses": {
+                    "201": {
+                        "description": "User logout successfully",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/utils.Response"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/auth/register": {
             "post": {
                 "description": "Register a new user account with the provided details.",

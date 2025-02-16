@@ -91,7 +91,7 @@ func (s *FiberHttpServer) Start() {
 	for _, v := range version {
 		router := s.initHttpServer(v)
 		// init modules
-		s.initAuthRouter(router, s.handlers)
+		s.initAuthRouter(v, router, s.handlers)
 		s.initPropertyRouter(v, router, s.handlers, s.cfg)
 	}
 
@@ -122,12 +122,19 @@ func (s *FiberHttpServer) Start() {
 	s.logger.Sugar().Info("Server shutdown complete.")
 }
 
-func (s *FiberHttpServer) initAuthRouter(router fiber.Router, httpHandler handlers.Handler) {
+func (s *FiberHttpServer) initAuthRouter(version string, router fiber.Router, httpHandler handlers.Handler) {
 	authRouter := router.Group("/auth")
 
-	authRouter.Post("/register", httpHandler.Auth().Register)
-	authRouter.Post("/login", httpHandler.Auth().Login)
-	authRouter.Get("/check", httpHandler.Auth().AuthCheck)
+	if version == "v1" {
+		authRouter.Post("/register", httpHandler.Auth().Register)
+		authRouter.Post("/login", httpHandler.Auth().Login)
+
+	} else if version == "v2" {
+		authRouter.Post("/register", httpHandler.Auth().Register)
+		authRouter.Post("/login", httpHandler.Auth().Login)
+		authRouter.Get("/check", httpHandler.Auth().AuthCheck)
+		authRouter.Post("/logout", httpHandler.Auth().Logout)
+	}
 }
 
 func (s *FiberHttpServer) initPropertyRouter(version string, router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {

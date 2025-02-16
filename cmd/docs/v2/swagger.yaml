@@ -198,6 +198,23 @@ paths:
       summary: Login an existing user
       tags:
       - auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Clear the authentication cookie to logout the user.
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User logout successfully
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+      summary: Logout an existing user
+      tags:
+      - auth
   /auth/register:
     post:
       consumes:

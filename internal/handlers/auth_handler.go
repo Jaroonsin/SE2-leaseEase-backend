@@ -110,3 +110,26 @@ func (h *authHandler) AuthCheck(c *fiber.Ctx) error {
 	// Return success response with user details
 	return utils.SuccessResponse(c, fiber.StatusOK, "User is authenticated", claims)
 }
+
+// Login godoc
+// @Summary Logout an existing user
+// @Description Clear the authentication cookie to logout the user.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Success 201 {array} utils.Response "User logout successfully"
+// @Router /auth/logout [post]
+func (h *authHandler) Logout(c *fiber.Ctx) error {
+
+	c.Cookie(&fiber.Cookie{
+		Name:     "auth_token",
+		Value:    "",
+		HTTPOnly: true,
+		Secure:   false, // Requires HTTPS ? true for Prod
+		SameSite: "Strict",
+		Path:     "/",
+		Expires:  time.Now(),
+	})
+
+	return utils.SuccessResponse(c, fiber.StatusCreated, "User logout successfully", nil)
+}
