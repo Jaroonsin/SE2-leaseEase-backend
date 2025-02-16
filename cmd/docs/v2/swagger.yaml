@@ -26,6 +26,10 @@ definitions:
         description: property's availability status
         example: available
         type: string
+      date:
+        description: Property creation date
+        example: "2024-02-15T10:00:00Z"
+        type: string
       id:
         description: Property ID
         example: 1
@@ -46,6 +50,14 @@ definitions:
         description: property's price
         example: 1.2000005e+06
         type: number
+      rating:
+        description: Average rating
+        example: 4.5
+        type: number
+      review_count:
+        description: Number of reviews
+        example: 12
+        type: integer
       size:
         description: property's size
         example: 3500 sqft
@@ -143,6 +155,24 @@ info:
   title: LeaseEase API
   version: "2.0"
 paths:
+  /auth/check:
+    get:
+      description: Validates JWT token and returns authentication status.
+      operationId: "3"
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User is authenticated
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized - Invalid token
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Check authentication status
+      tags:
+      - auth
   /auth/login:
     post:
       consumes:
@@ -178,6 +208,23 @@ paths:
               $ref: '#/definitions/utils.Response'
             type: array
       summary: Login an existing user
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Clear the authentication cookie to logout the user.
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User logout successfully
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+      summary: Logout an existing user
       tags:
       - auth
   /auth/register:
@@ -307,6 +354,12 @@ paths:
             type: array
         "400":
           description: Bad Request
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "404":
+          description: Property not found
           schema:
             items:
               $ref: '#/definitions/utils.Response'
@@ -516,6 +569,12 @@ paths:
             type: array
         "400":
           description: Bad Request
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "404":
+          description: Property not found
           schema:
             items:
               $ref: '#/definitions/utils.Response'

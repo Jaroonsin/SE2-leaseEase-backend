@@ -19,6 +19,33 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/check": {
+            "get": {
+                "description": "Validates JWT token and returns authentication status.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Check authentication status",
+                "operationId": "3",
+                "responses": {
+                    "200": {
+                        "description": "User is authenticated",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Invalid token",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "Authenticate user and set an authentication cookie.",
@@ -65,6 +92,32 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal server error",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/utils.Response"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "description": "Clear the authentication cookie to logout the user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Logout an existing user",
+                "responses": {
+                    "201": {
+                        "description": "User logout successfully",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -276,6 +329,15 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/utils.Response"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Property not found",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -619,6 +681,15 @@ const docTemplate = `{
                             }
                         }
                     },
+                    "404": {
+                        "description": "Property not found",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/utils.Response"
+                            }
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -822,6 +893,11 @@ const docTemplate = `{
                     "type": "string",
                     "example": "available"
                 },
+                "date": {
+                    "description": "Property creation date",
+                    "type": "string",
+                    "example": "2024-02-15T10:00:00Z"
+                },
                 "id": {
                     "description": "Property ID",
                     "type": "integer",
@@ -846,6 +922,16 @@ const docTemplate = `{
                     "description": "property's price",
                     "type": "number",
                     "example": 1200000.5
+                },
+                "rating": {
+                    "description": "Average rating",
+                    "type": "number",
+                    "example": 4.5
+                },
+                "review_count": {
+                    "description": "Number of reviews",
+                    "type": "integer",
+                    "example": 12
                 },
                 "size": {
                     "description": "property's size",
