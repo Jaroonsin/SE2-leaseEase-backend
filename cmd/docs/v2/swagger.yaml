@@ -123,6 +123,14 @@ definitions:
         example: lessee
         type: string
     type: object
+  dtos.RequestOTPDTO:
+    properties:
+      email:
+        example: prix.noti@gmail.com
+        type: string
+    required:
+    - email
+    type: object
   dtos.UpdateRequest:
     properties:
       proposedMessage:
@@ -134,6 +142,18 @@ definitions:
       question:
         example: Is there any flexibility in the lease terms?
         type: string
+    type: object
+  dtos.VerifyOTPDTO:
+    properties:
+      email:
+        example: prix.noti@gmail.com
+        type: string
+      otp:
+        example: "123456"
+        type: string
+    required:
+    - email
+    - otp
     type: object
   utils.Response:
     properties:
@@ -261,6 +281,75 @@ paths:
               $ref: '#/definitions/utils.Response'
             type: array
       summary: Register a new user
+      tags:
+      - auth
+  /auth/request-otp:
+    post:
+      consumes:
+      - application/json
+      description: Sends a one-time password (OTP) to the user's contact information
+        provided.
+      parameters:
+      - description: Request payload containing user identifier
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.RequestOTPDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: OTP sent successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data: {}
+              type: object
+        "400":
+          description: Bad Request - Unable to parse request body
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error - Failed to process OTP request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Request OTP for authentication
+      tags:
+      - auth
+  /auth/verify-otp:
+    post:
+      consumes:
+      - application/json
+      description: Validates the OTP provided by the user for authentication.
+      parameters:
+      - description: Request payload containing OTP and user identifier
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.VerifyOTPDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OTP verification successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data: {}
+              type: object
+        "400":
+          description: Bad Request - Invalid OTP payload or incorrect OTP
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error - Failed to verify OTP
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Verify provided OTP
       tags:
       - auth
   /properties/autocomplete:

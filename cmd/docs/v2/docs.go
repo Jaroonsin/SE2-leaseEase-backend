@@ -181,6 +181,118 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/request-otp": {
+            "post": {
+                "description": "Sends a one-time password (OTP) to the user's contact information provided.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Request OTP for authentication",
+                "parameters": [
+                    {
+                        "description": "Request payload containing user identifier",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.RequestOTPDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "OTP sent successfully",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {}
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Unable to parse request body",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error - Failed to process OTP request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/verify-otp": {
+            "post": {
+                "description": "Validates the OTP provided by the user for authentication.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Verify provided OTP",
+                "parameters": [
+                    {
+                        "description": "Request payload containing OTP and user identifier",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.VerifyOTPDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OTP verification successful",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/utils.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {}
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid OTP payload or incorrect OTP",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error - Failed to verify OTP",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/properties/autocomplete": {
             "get": {
                 "security": [
@@ -1018,6 +1130,18 @@ const docTemplate = `{
                 }
             }
         },
+        "dtos.RequestOTPDTO": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "prix.noti@gmail.com"
+                }
+            }
+        },
         "dtos.UpdateRequest": {
             "type": "object",
             "properties": {
@@ -1032,6 +1156,23 @@ const docTemplate = `{
                 "question": {
                     "type": "string",
                     "example": "Is there any flexibility in the lease terms?"
+                }
+            }
+        },
+        "dtos.VerifyOTPDTO": {
+            "type": "object",
+            "required": [
+                "email",
+                "otp"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "prix.noti@gmail.com"
+                },
+                "otp": {
+                    "type": "string",
+                    "example": "123456"
                 }
             }
         },
