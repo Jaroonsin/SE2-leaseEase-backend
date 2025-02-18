@@ -4,4 +4,5 @@ type Handler interface {
 	Property() *propertyHandler
 	Auth() *authHandler
 	Request() *requestHandler
+	Review() *reviewHandler
 }
