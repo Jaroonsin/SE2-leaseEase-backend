@@ -157,7 +157,7 @@ func (s *propertyService) GetPropertyByID(propertyID uint) (*dtos.GetPropertyDTO
 		return nil, err
 	}
 
-	rating, reviewCount, err := s.propertyRepo.GetPropertyReviewDataByID(propertyID)
+	rating, reviewCount, reviewIDs, err := s.propertyRepo.GetPropertyReviewDataByID(propertyID)
 	if err != nil {
 		return nil, err
 	}
@@ -170,9 +170,10 @@ func (s *propertyService) GetPropertyByID(propertyID uint) (*dtos.GetPropertyDTO
 		Size:               property.Size,
 		Price:              property.Price,
 		AvailabilityStatus: property.AvailabilityStatus,
-		Date:               property.CreatedAt.Format(time.RFC3339), // ใช้ CreatedAt เป็น Date
+		Date:               property.CreatedAt.Format(time.RFC3339),
 		Rating:             rating,
 		ReviewCount:        reviewCount,
+		ReviewIDs:          reviewIDs,
 	}
 
 	logger.Info(constant.SuccessGetByIDProp, zap.Uint("propertyID", propertyID))
