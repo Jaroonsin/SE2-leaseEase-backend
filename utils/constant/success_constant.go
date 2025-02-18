@@ -11,4 +11,7 @@ var (
 	SuccessGetByIDProp = "Successfully fetched property"
 	SuccessUpdateProp  = "Property updated successfully"
 	SuccessDeleteProp  = "Property deleted successfully"
+
+	//Review
+	SuccesCreateReview = "Review created successfully"
 )

@@ -28,20 +28,20 @@ type Property struct {
 
 // Request struct with properly mapped fields
 type Request struct {
-	ID                     uint   	`gorm:"primaryKey"`
-	Purpose                string 	`gorm:"size:255"`
-	ProposedMessage        string 	`gorm:"type:text"`
-	Question               string 	`gorm:"type:text"`
-	CreateAt               time.Time
-	InterestedProperty 	   uint		`gorm:"not null"`
-	Property			   Property `gorm:"foreignKey:InterestedProperty;references:ID"`
-	LesseeID               uint 	`gorm:"not null"`
-	Lessee                 User 	`gorm:"foreignKey:LesseeID;references:ID"`
+	ID                 uint   `gorm:"primaryKey"`
+	Purpose            string `gorm:"size:255"`
+	ProposedMessage    string `gorm:"type:text"`
+	Question           string `gorm:"type:text"`
+	CreateAt           time.Time
+	InterestedProperty uint     `gorm:"not null"`
+	Property           Property `gorm:"foreignKey:InterestedProperty;references:ID"`
+	LesseeID           uint     `gorm:"not null"`
+	Lessee             User     `gorm:"foreignKey:LesseeID;references:ID"`
 }
 
 // Review struct for reusable review fields
 type Review struct {
-	ID            uint      `gorm:"primaryKey"`
+	ID            uint      `gorm:"primaryKey;autoIncrement"`
 	ReviewMessage string    `gorm:"type:text;not null"`
 	Rating        int       `gorm:"not null"`
 	TimeStamp     time.Time `gorm:"autoCreateTime"`

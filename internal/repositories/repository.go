@@ -5,4 +5,5 @@ type Repository interface {
 	Property() PropertyRepository
 	Auth() AuthRepository
 	Request() RequestRepository
+	Review() ReviewRepository
 }

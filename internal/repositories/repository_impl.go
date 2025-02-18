@@ -11,6 +11,7 @@ type repository struct {
 	PropertyRepository PropertyRepository
 	AuthRepository     AuthRepository
 	RequestRepository  RequestRepository
+	ReviewRepository   ReviewRepository
 }
 
 func NewRepository(cfg *config.Config, db *gorm.DB) Repository {
@@ -19,6 +20,7 @@ func NewRepository(cfg *config.Config, db *gorm.DB) Repository {
 		PropertyRepository: NewPropertyRepository(db),
 		AuthRepository:     NewAuthRepository(db),
 		RequestRepository:  NewRequestRepository(db),
+		ReviewRepository:   NewReviewRepository(db),
 	}
 }
 
@@ -36,4 +38,8 @@ func (r *repository) Auth() AuthRepository {
 
 func (r *repository) Request() RequestRepository {
 	return r.RequestRepository
+}
+
+func (r *repository) Review() ReviewRepository {
+	return r.ReviewRepository
 }
