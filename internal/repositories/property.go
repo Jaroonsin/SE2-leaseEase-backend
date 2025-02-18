@@ -12,6 +12,6 @@ type PropertyRepository interface {
 	SearchProperty(query map[string]string) ([]models.Property, error)
 	AutoComplete(query string) ([]string, error)
 	CountPropertiesByLessor(lessorID uint, totalRecords *int64) error
-	GetPropertyReviewsData(properties []models.Property) ([]float64, []int, error)
+	GetPropertyReviewsData(properties []models.Property) ([]float64, []int, [][]uint, error)
 	GetPropertyReviewDataByID(propertyID uint) (float64, int, error)
 }

@@ -21,6 +21,7 @@ type GetPropertyDTO struct {
 	Date               string  `json:"date" example:"2024-02-15T10:00:00Z"`     // Property creation date
 	Rating             float64 `json:"rating" example:"4.5"`                    // Average rating
 	ReviewCount        int     `json:"review_count" example:"12"`               // Number of reviews
+	ReviewIDs          []uint  `json:"review_ids"`
 }
 
 // @Description GetPropertyPaginatedDTO represents the response structure for retrieving a list of properties with pagination details.
