@@ -20,7 +20,6 @@ func NewAuthHandler(authService services.AuthService) *authHandler {
 	}
 }
 
-
 // Register godoc
 // @Summary Register a new user
 // @Description Register a new user account with the provided details.
@@ -123,13 +122,62 @@ func (h *authHandler) Logout(c *fiber.Ctx) error {
 
 	c.Cookie(&fiber.Cookie{
 		Name:     "auth_token",
-		Value:    "",
+		Value:    "delete",
 		HTTPOnly: true,
 		Secure:   false, // Requires HTTPS ? true for Prod
 		SameSite: "Strict",
 		Path:     "/",
-		Expires:  time.Now(),
+		Expires:  time.Now().Add(time.Second * -3),
 	})
 
 	return utils.SuccessResponse(c, fiber.StatusCreated, "User logout successfully", nil)
+}
+
+// API: Request OTP for registration
+// RequestOTP godoc
+// @Summary Request OTP for authentication
+// @Description Sends a one-time password (OTP) to the user's contact information provided.
+// @Tags auth
+// @Accept  json
+// @Produce  json
+// @Param  request body dtos.RequestOTPDTO true "Request payload containing user identifier"
+// @Success 201 {object} utils.Response{data=any} "OTP sent successfully"
+// @Failure 400 {object} utils.Response "Bad Request - Unable to parse request body"
+// @Failure 500 {object} utils.Response "Internal Server Error - Failed to process OTP request"
+// @Router /auth/request-otp [post]
+func (h *authHandler) RequestOTP(c *fiber.Ctx) error {
+	var req dtos.RequestOTPDTO
+	if err := c.BodyParser(&req); err != nil {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, constant.ErrParsebody)
+	}
+
+	if err := h.authService.RequestOTP(&req); err != nil {
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+	}
+
+	return utils.SuccessResponse(c, fiber.StatusCreated, "OTP sent successfully", nil)
+}
+
+// VerifyOTP godoc
+// @Summary Verify provided OTP
+// @Description Validates the OTP provided by the user for authentication.
+// @Tags auth
+// @Accept  json
+// @Produce  json
+// @Param  request body dtos.VerifyOTPDTO true "Request payload containing OTP and user identifier"
+// @Success 200 {object} utils.Response{data=any} "OTP verification successful"
+// @Failure 400 {object} utils.Response "Bad Request - Invalid OTP payload or incorrect OTP"
+// @Failure 500 {object} utils.Response "Internal Server Error - Failed to verify OTP"
+// @Router /auth/verify-otp [post]
+func (h *authHandler) VerifyOTP(c *fiber.Ctx) error {
+	var req dtos.VerifyOTPDTO
+	if err := c.BodyParser(&req); err != nil {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, constant.ErrParsebody)
+	}
+
+	if err := h.authService.VerifyOTP(&req); err != nil {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, err.Error())
+	}
+
+	return utils.SuccessResponse(c, fiber.StatusOK, "User registration verified", nil)
 }

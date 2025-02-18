@@ -25,25 +25,34 @@ func NewAuthService(authRepo repositories.AuthRepository, logger *zap.Logger) Au
 }
 
 func (s *authService) Register(registerDTO *dtos.RegisterDTO) error {
-	logger := s.logger.Named("Register")
+	logger := s.logger.Named("Register tempUsers")
+
+	if s.authRepo.FindEmailExisted(registerDTO.Email) {
+		logger.Error("Email already existed", zap.String("Email", registerDTO.Email))
+		return errors.New("email already existed")
+	}
 
 	hashedPassword, err := utils.HashPassword(registerDTO.Password)
 	if err != nil {
 		logger.Error("cannot hash password", zap.Error(err))
 		return err
 	}
+	registerDTO.Password = hashedPassword
 
-	user := &models.User{
-		Email:    registerDTO.Email,
-		Password: hashedPassword,
-		Name:     registerDTO.Name,
-		Address:  registerDTO.Address,
-		Birthday: time.Now(),
-		UserType: registerDTO.Role,
-	}
+	s.authRepo.SaveTempUser(models.TempUser{
+		User: &models.User{
+			Email:    registerDTO.Email,
+			Password: registerDTO.Password,
+			Name:     registerDTO.Name,
+			Address:  registerDTO.Address,
+			Birthday: time.Now(),
+			UserType: registerDTO.Role,
+		},
+		ExpireAt: time.Now().Add(30 * time.Minute),
+	})
 
-	logger.Info(constant.SuccessRegister, zap.String("Email", user.Email))
-	return s.authRepo.CreateUser(user)
+	logger.Info("Temporary user created", zap.String("Email", registerDTO.Email))
+	return nil
 }
 
 func (s *authService) Login(loginDTO *dtos.LoginDTO) (string, error) {
@@ -74,32 +83,84 @@ func (s *authService) Login(loginDTO *dtos.LoginDTO) (string, error) {
 	return token, nil
 }
 
-// AuthCheck validates a JWT token and returns user information
 func (s *authService) AuthCheck(token string) (*dtos.AuthCheckDTO, error) {
+	logger := s.logger.Named("AuthCheck")
 	if token == "" {
+		logger.Error("no token provided")
 		return nil, errors.New("no token provided")
 	}
 
 	claims, err := utils.ParseJWT(token)
 	if err != nil {
+		logger.Error("invalid or expired token", zap.Error(err))
 		return nil, errors.New("invalid or expired token")
 	}
 
-	// Extract user ID as uint (JWT claims are usually float64)
 	userIDFloat, ok1 := claims["user_id"].(float64)
 	role, ok2 := claims["role"].(string)
 	if !ok1 || !ok2 {
+		logger.Error("invalid token payload")
 		return nil, errors.New("invalid token payload")
 	}
 	if role != "lessor" && role != "lessee" {
+		logger.Error("invalid role")
 		return nil, errors.New("invalid role")
 	}
 
-	// Convert user ID from float64 to uint
 	userID := uint(userIDFloat)
-
+	logger.Info("user authenticated", zap.Uint("UserID", userID), zap.String("Role", role))
 	return &dtos.AuthCheckDTO{
 		UserID: userID,
 		Role:   role,
 	}, nil
+}
+
+func (s *authService) RequestOTP(requestOTPDTO *dtos.RequestOTPDTO) error {
+	logger := s.logger.Named("RequestOTP")
+	otp := utils.GenerateOTP()
+	expiry := time.Now().Add(3 * time.Minute)
+
+	s.authRepo.SaveOTP(models.OTP{
+		Email:    requestOTPDTO.Email,
+		OTP:      otp,
+		ExpireAt: expiry,
+	})
+
+	if err := utils.SendOTP(requestOTPDTO.Email, otp); err != nil {
+		logger.Error("failed to send OTP", zap.Error(err))
+		return errors.New("failed to send OTP")
+	}
+	logger.Info("OTP sent", zap.String("Email", requestOTPDTO.Email))
+	return nil
+}
+
+func (s *authService) VerifyOTP(verifyOTPDTO *dtos.VerifyOTPDTO) error {
+	logger := s.logger.Named("VerifyOTP")
+	otpData, exists := s.authRepo.FindByEmailOTP(verifyOTPDTO.Email)
+
+	if !exists || time.Now().After(otpData.ExpireAt) {
+		s.authRepo.DeleteOTP(verifyOTPDTO.Email)
+		logger.Error("OTP is invalid or expired", zap.String("Email", verifyOTPDTO.Email))
+		return errors.New("OTP is invalid or expired")
+	}
+
+	if otpData.OTP != verifyOTPDTO.OTP {
+		s.authRepo.DeleteOTP(verifyOTPDTO.Email)
+		logger.Error("invalid OTP", zap.String("Email", verifyOTPDTO.Email))
+		return errors.New("invalid OTP")
+	}
+
+	s.authRepo.DeleteOTP(verifyOTPDTO.Email)
+
+	tempUser, exists := s.authRepo.FindByEmailTempUser(verifyOTPDTO.Email)
+	if !exists {
+		logger.Error("Temporary user not found", zap.String("Email", verifyOTPDTO.Email))
+		return errors.New("temporary user not found")
+	}
+
+	user := tempUser.User
+
+	s.authRepo.DeleteTempUser(verifyOTPDTO.Email)
+	logger.Info(constant.SuccessRegister, zap.String("Email", user.Email))
+	return s.authRepo.CreateUser(user)
 }

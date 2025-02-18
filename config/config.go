@@ -27,6 +27,12 @@ type Config struct {
 	// JWTRefreshTokenSecret string
 	// JWTAccessTokenExpiration string
 	// JWTRefreshTokenExpiration string
+
+	// Email settings
+	EmailHost     string
+	EmailPort     string
+	EmailUser     string
+	EmailPassword string
 }
 
 func LoadConfig() *Config {
@@ -53,6 +59,12 @@ func LoadConfig() *Config {
 		// JWTRefreshTokenSecret: os.Getenv("JWT_REFRESH_TOKEN_SECRET"),			//not used
 		// JWTAccessTokenExpiration: os.Getenv("JWT_ACCESS_TOKEN_EXPIRATION"),		//not used
 		// JWTRefreshTokenExpiration: os.Getenv("JWT_REFRESH_TOKEN_EXPIRATION"),	//not used
+
+		// Email settings
+		EmailHost:     os.Getenv("EMAIL_HOST"),
+		EmailPort:     os.Getenv("EMAIL_PORT"),
+		EmailUser:     os.Getenv("EMAIL_USER"),
+		EmailPassword: os.Getenv("EMAIL_PASS"),
 	}
 }
 
