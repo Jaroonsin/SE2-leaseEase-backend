@@ -110,14 +110,14 @@ func (s *propertyService) GetAllProperty(lessorID uint, page, pageSize int) (*dt
 		}
 	}
 
-	ratings, reviewCounts, err := s.propertyRepo.GetPropertyReviewsData(properties)
+	ratings, reviewCounts, reviewIDsList, err := s.propertyRepo.GetPropertyReviewsData(properties)
 	if err != nil {
 		return nil, err
 	}
 
 	totalPages := 1
 	if pageSize > 0 {
-		totalPages = int((totalRecords + int64(pageSize) - 1) / int64(pageSize)) // ปัดขึ้นเสมอ
+		totalPages = int((totalRecords + int64(pageSize) - 1) / int64(pageSize))
 	}
 
 	// Convert to DTO
@@ -134,6 +134,7 @@ func (s *propertyService) GetAllProperty(lessorID uint, page, pageSize int) (*dt
 			Date:               property.CreatedAt.Format(time.RFC3339),
 			Rating:             ratings[i],
 			ReviewCount:        reviewCounts[i],
+			ReviewIDs:          reviewIDsList[i],
 		}
 		propertyDTOs = append(propertyDTOs, propertyDTO)
 	}

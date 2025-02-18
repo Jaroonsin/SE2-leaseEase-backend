@@ -2,7 +2,9 @@ package repositories
 
 import (
 	"LeaseEase/internal/models"
+	"database/sql"
 	"strconv"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -70,32 +72,43 @@ func (r *propertyRepository) CountPropertiesByLessor(lessorID uint, totalRecords
 	return r.db.Model(&models.Property{}).Where("lessor_id = ?", lessorID).Count(totalRecords).Error
 }
 
-func (r *propertyRepository) GetPropertyReviewsData(properties []models.Property) ([]float64, []int, error) {
+func (r *propertyRepository) GetPropertyReviewsData(properties []models.Property) ([]float64, []int, [][]uint, error) {
 	var ratings []float64
 	var reviewCounts []int
+	var reviewIDsList [][]uint
 
 	for _, property := range properties {
 		var rating float64
 		var reviewCount int
+		var reviewIDsArray string
 
 		err := r.db.Raw(`
 			SELECT 
 				COALESCE(AVG(r.rating), 0) AS avg_rating, 
-				COUNT(pr.review_id) AS review_count
+				COUNT(pr.review_id) AS review_count,
+				COALESCE(array_agg(pr.review_id), '{}') AS review_ids
 			FROM property_reviews pr
 			LEFT JOIN reviews r ON pr.review_id = r.id
 			WHERE pr.property_id = ?
-		`, property.ID).Row().Scan(&rating, &reviewCount)
+			GROUP BY pr.property_id
+		`, property.ID).Row().Scan(&rating, &reviewCount, &reviewIDsArray)
 
-		if err != nil {
-			return nil, nil, err
+		if err == sql.ErrNoRows {
+			rating = 0
+			reviewCount = 0
+			reviewIDsArray = "{}"
+		} else if err != nil {
+			return nil, nil, nil, err
 		}
+
+		reviewIDs := parseArrayStringToUintSlice(reviewIDsArray)
 
 		ratings = append(ratings, rating)
 		reviewCounts = append(reviewCounts, reviewCount)
+		reviewIDsList = append(reviewIDsList, reviewIDs)
 	}
 
-	return ratings, reviewCounts, nil
+	return ratings, reviewCounts, reviewIDsList, nil
 }
 
 func (r *propertyRepository) GetPropertyReviewDataByID(propertyID uint) (float64, int, error) {
@@ -228,4 +241,20 @@ func (r *propertyRepository) AutoComplete(query string) ([]string, error) {
 	}
 
 	return names, nil
+}
+
+func parseArrayStringToUintSlice(arrayStr string) []uint {
+	arrayStr = strings.Trim(arrayStr, "{}")
+	if arrayStr == "" {
+		return []uint{}
+	}
+	strIDs := strings.Split(arrayStr, ",")
+	var ids []uint
+	for _, strID := range strIDs {
+		id, err := strconv.ParseUint(strID, 10, 32)
+		if err == nil {
+			ids = append(ids, uint(id))
+		}
+	}
+	return ids
 }
