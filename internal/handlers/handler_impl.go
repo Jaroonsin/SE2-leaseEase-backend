@@ -7,7 +7,7 @@ import (
 type handler struct {
 	PropertyHandler *propertyHandler
 	AuthHandler     *authHandler
-	RequestHandler  *requestHandler
+	ReservationHandler  *reservationHandler
 	ReviewHandler   *reviewHandler
 }
 
@@ -15,7 +15,7 @@ func NewHandler(service services.Service) Handler {
 	return &handler{
 		PropertyHandler: NewPropertyHandler(service.Property()),
 		AuthHandler:     NewAuthHandler(service.Auth()),
-		RequestHandler:  NewRequestHandler(service.Request()),
+		ReservationHandler:  NewReservationHandler(service.Reservation()),
 		ReviewHandler:   NewReviewHandler(service.Review()),
 	}
 }
@@ -28,8 +28,8 @@ func (h *handler) Property() *propertyHandler {
 	return h.PropertyHandler
 }
 
-func (h *handler) Request() *requestHandler {
-	return h.RequestHandler
+func (h *handler) Reservation() *reservationHandler {
+	return h.ReservationHandler
 }
 
 func (h *handler) Review() *reviewHandler {

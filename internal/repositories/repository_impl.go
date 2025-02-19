@@ -10,7 +10,7 @@ type repository struct {
 	UserRepository     UserRepository
 	PropertyRepository PropertyRepository
 	AuthRepository     AuthRepository
-	RequestRepository  RequestRepository
+	ReservationRepository  ReservationRepository
 	ReviewRepository   ReviewRepository
 }
 
@@ -19,7 +19,7 @@ func NewRepository(cfg *config.Config, db *gorm.DB) Repository {
 		UserRepository:     NewUserRepository(db),
 		PropertyRepository: NewPropertyRepository(db),
 		AuthRepository:     NewAuthRepository(db),
-		RequestRepository:  NewRequestRepository(db),
+		ReservationRepository:  NewReservationRepository(db),
 		ReviewRepository:   NewReviewRepository(db),
 	}
 }
@@ -36,8 +36,8 @@ func (r *repository) Auth() AuthRepository {
 	return r.AuthRepository
 }
 
-func (r *repository) Request() RequestRepository {
-	return r.RequestRepository
+func (r *repository) Reservation() ReservationRepository {
+	return r.ReservationRepository
 }
 
 func (r *repository) Review() ReviewRepository {

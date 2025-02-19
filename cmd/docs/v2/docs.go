@@ -814,9 +814,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/request/create": {
+        "/reservation/create": {
             "post": {
-                "description": "Parses the request body and creates a new lease request using the lessee ID from the JWT token.",
+                "description": "Parses the reservation body and creates a new lease reservation using the lessee ID from the JWT token.",
                 "consumes": [
                     "application/json"
                 ],
@@ -824,29 +824,29 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Request"
+                    "Reservation"
                 ],
-                "summary": "Create a New Lease Request",
+                "summary": "Create a New Lease Reservation",
                 "parameters": [
                     {
-                        "description": "Lease Request Data",
-                        "name": "request",
+                        "description": "Lease Reservation Data",
+                        "name": "reservation",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.CreateRequest"
+                            "$ref": "#/definitions/dtos.CreateReservation"
                         }
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": "Request created successfully",
+                        "description": "Reservation created successfully",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
                     },
                     "400": {
-                        "description": "Failed to parse request body",
+                        "description": "Failed to parse reservation body",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -860,9 +860,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/requests/delete/{id}": {
+        "/reservations/delete/{id}": {
             "delete": {
-                "description": "Deletes a lease request using the request ID provided in the URL.",
+                "description": "Deletes a lease reservation using the reservation ID provided in the URL.",
                 "consumes": [
                     "application/json"
                 ],
@@ -870,13 +870,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Request"
+                    "Reservation"
                 ],
-                "summary": "Delete a Lease Request",
+                "summary": "Delete a Lease Reservation",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Request ID",
+                        "description": "Reservation ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -884,19 +884,19 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Request deleted successfully",
+                        "description": "Reservation deleted successfully",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
                     },
                     "400": {
-                        "description": "Invalid request ID",
+                        "description": "Invalid reservation ID",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
                     },
                     "404": {
-                        "description": "Request not found",
+                        "description": "Reservation not found",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -910,9 +910,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/requests/update/{id}": {
+        "/reservations/update/{id}": {
             "put": {
-                "description": "Parses the request body and updates an existing lease request identified by its ID.",
+                "description": "Parses the reservation body and updates an existing lease reservation identified by its ID.",
                 "consumes": [
                     "application/json"
                 ],
@@ -920,42 +920,101 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Request"
+                    "Reservation"
                 ],
-                "summary": "Update an Existing Lease Request",
+                "summary": "Update an Existing Lease Reservation",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Request ID",
+                        "description": "Reservation ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Lease Request Update Data",
-                        "name": "request",
+                        "description": "Lease Reservation Update Data",
+                        "name": "reservation",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.UpdateRequest"
+                            "$ref": "#/definitions/dtos.UpdateReservation"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Request updated successfully",
+                        "description": "Reservation updated successfully",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
                     },
                     "400": {
-                        "description": "Failed to parse request body or invalid request ID",
+                        "description": "Failed to parse reservation body or invalid reservation ID",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
                     },
                     "404": {
-                        "description": "Request not found",
+                        "description": "Reservation not found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/reservations/{id}": {
+            "put": {
+                "description": "Approves a lease reservation using the reservation ID provided in the URL.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Reservation"
+                ],
+                "summary": "Approve a Lease Reservation",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Reservation ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Reservation Status",
+                        "name": "reservation",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ApproveReservation"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Reservation approved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid reservation ID",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Reservation not found",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -971,7 +1030,16 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dtos.CreateRequest": {
+        "dtos.ApproveReservation": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "example": "approved"
+                }
+            }
+        },
+        "dtos.CreateReservation": {
             "type": "object",
             "properties": {
                 "interestedProperty": {
@@ -1044,6 +1112,12 @@ const docTemplate = `{
                     "description": "Number of reviews",
                     "type": "integer",
                     "example": 12
+                },
+                "review_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 },
                 "size": {
                     "description": "property's size",
@@ -1137,12 +1211,13 @@ const docTemplate = `{
             ],
             "properties": {
                 "email": {
+                    "description": "user's email",
                     "type": "string",
-                    "example": "prix.noti@gmail.com"
+                    "example": "john.doe@example.com"
                 }
             }
         },
-        "dtos.UpdateRequest": {
+        "dtos.UpdateReservation": {
             "type": "object",
             "properties": {
                 "proposedMessage": {
@@ -1167,10 +1242,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "email": {
+                    "description": "user's email",
                     "type": "string",
-                    "example": "prix.noti@gmail.com"
+                    "example": "john.doe@example.com"
                 },
                 "otp": {
+                    "description": "user's OTP",
                     "type": "string",
                     "example": "123456"
                 }

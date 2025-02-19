@@ -1,6 +1,12 @@
 basePath: /
 definitions:
-  dtos.CreateRequest:
+  dtos.ApproveReservation:
+    properties:
+      status:
+        example: approved
+        type: string
+    type: object
+  dtos.CreateReservation:
     properties:
       interestedProperty:
         example: 1
@@ -58,6 +64,10 @@ definitions:
         description: Number of reviews
         example: 12
         type: integer
+      review_ids:
+        items:
+          type: integer
+        type: array
       size:
         description: property's size
         example: 3500 sqft
@@ -126,12 +136,13 @@ definitions:
   dtos.RequestOTPDTO:
     properties:
       email:
-        example: prix.noti@gmail.com
+        description: user's email
+        example: john.doe@example.com
         type: string
     required:
     - email
     type: object
-  dtos.UpdateRequest:
+  dtos.UpdateReservation:
     properties:
       proposedMessage:
         example: I would like to update my earlier message.
@@ -146,9 +157,11 @@ definitions:
   dtos.VerifyOTPDTO:
     properties:
       email:
-        example: prix.noti@gmail.com
+        description: user's email
+        example: john.doe@example.com
         type: string
       otp:
+        description: user's OTP
         example: "123456"
         type: string
     required:
@@ -679,108 +692,149 @@ paths:
       summary: Update a property
       tags:
       - Property
-  /request/create:
+  /reservation/create:
     post:
       consumes:
       - application/json
-      description: Parses the request body and creates a new lease request using the
-        lessee ID from the JWT token.
+      description: Parses the reservation body and creates a new lease reservation
+        using the lessee ID from the JWT token.
       parameters:
-      - description: Lease Request Data
+      - description: Lease Reservation Data
         in: body
-        name: request
+        name: reservation
         required: true
         schema:
-          $ref: '#/definitions/dtos.CreateRequest'
+          $ref: '#/definitions/dtos.CreateReservation'
       produces:
       - application/json
       responses:
         "201":
-          description: Request created successfully
+          description: Reservation created successfully
           schema:
             $ref: '#/definitions/utils.Response'
         "400":
-          description: Failed to parse request body
+          description: Failed to parse reservation body
           schema:
             $ref: '#/definitions/utils.Response'
         "500":
           description: Internal server error
           schema:
             $ref: '#/definitions/utils.Response'
-      summary: Create a New Lease Request
+      summary: Create a New Lease Reservation
       tags:
-      - Request
-  /requests/delete/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Deletes a lease request using the request ID provided in the URL.
-      parameters:
-      - description: Request ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Request deleted successfully
-          schema:
-            $ref: '#/definitions/utils.Response'
-        "400":
-          description: Invalid request ID
-          schema:
-            $ref: '#/definitions/utils.Response'
-        "404":
-          description: Request not found
-          schema:
-            $ref: '#/definitions/utils.Response'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/utils.Response'
-      summary: Delete a Lease Request
-      tags:
-      - Request
-  /requests/update/{id}:
+      - Reservation
+  /reservations/{id}:
     put:
       consumes:
       - application/json
-      description: Parses the request body and updates an existing lease request identified
-        by its ID.
+      description: Approves a lease reservation using the reservation ID provided
+        in the URL.
       parameters:
-      - description: Request ID
+      - description: Reservation ID
         in: path
         name: id
         required: true
         type: integer
-      - description: Lease Request Update Data
+      - description: Reservation Status
         in: body
-        name: request
+        name: reservation
         required: true
         schema:
-          $ref: '#/definitions/dtos.UpdateRequest'
+          $ref: '#/definitions/dtos.ApproveReservation'
       produces:
       - application/json
       responses:
         "200":
-          description: Request updated successfully
+          description: Reservation approved successfully
           schema:
             $ref: '#/definitions/utils.Response'
         "400":
-          description: Failed to parse request body or invalid request ID
+          description: Invalid reservation ID
           schema:
             $ref: '#/definitions/utils.Response'
         "404":
-          description: Request not found
+          description: Reservation not found
           schema:
             $ref: '#/definitions/utils.Response'
         "500":
           description: Internal server error
           schema:
             $ref: '#/definitions/utils.Response'
-      summary: Update an Existing Lease Request
+      summary: Approve a Lease Reservation
       tags:
-      - Request
+      - Reservation
+  /reservations/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a lease reservation using the reservation ID provided in
+        the URL.
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reservation deleted successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid reservation ID
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Reservation not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Delete a Lease Reservation
+      tags:
+      - Reservation
+  /reservations/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Parses the reservation body and updates an existing lease reservation
+        identified by its ID.
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Lease Reservation Update Data
+        in: body
+        name: reservation
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateReservation'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reservation updated successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Failed to parse reservation body or invalid reservation ID
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Reservation not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Update an Existing Lease Reservation
+      tags:
+      - Reservation
 swagger: "2.0"

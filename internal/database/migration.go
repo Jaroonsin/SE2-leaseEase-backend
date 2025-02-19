@@ -13,7 +13,7 @@ func RunMigrations(db *gorm.DB) {
 	err := db.AutoMigrate(
 		&models.User{},
 		&models.Property{},
-		&models.Request{},
+		&models.Reservation{},
 		&models.Review{},
 		&models.LessorReview{},
 		&models.PropertyReview{},

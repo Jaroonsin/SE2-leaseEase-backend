@@ -3,6 +3,6 @@ package services
 type Service interface {
 	Property() PropertyService
 	Auth() AuthService
-	Request() RequestService
+	Reservation() ReservationService
 	Review() ReviewService
 }

@@ -9,7 +9,7 @@ import (
 type service struct {
 	PropertyService PropertyService
 	AuthService     AuthService
-	RequestService  RequestService
+	ReservationService  ReservationService
 	ReviewService   ReviewService
 }
 
@@ -17,7 +17,7 @@ func NewService(repo repositories.Repository, logger *zap.Logger) Service {
 	return &service{
 		PropertyService: NewPropertyService(repo.Property(), logger),
 		AuthService:     NewAuthService(repo.Auth(), logger),
-		RequestService:  NewRequestService(repo.Request(), logger),
+		ReservationService:  NewReservationService(repo.Reservation(), logger),
 		ReviewService:   NewReviewService(repo.Review(), logger),
 	}
 }
@@ -30,8 +30,8 @@ func (s *service) Auth() AuthService {
 	return s.AuthService
 }
 
-func (s *service) Request() RequestService {
-	return s.RequestService
+func (s *service) Reservation() ReservationService {
+	return s.ReservationService
 }
 
 func (s *service) Review() ReviewService {
