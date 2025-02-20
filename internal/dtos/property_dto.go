@@ -2,11 +2,12 @@ package dtos
 
 // @Description PropertyDTO represents a property.
 type PropertyDTO struct {
-	Name               string  `json:"name" example:"Sunset Villa"`   // name of the property
-	Location           string  `json:"location" example:"California"` // property location
-	Size               string  `json:"size" example:"3500 sqft"`      // property size
-	Price              float64 `json:"price" example:"1200000.50"`    // property price
-	AvailabilityStatus string  `json:"status" example:"available"`    // availability status
+	Name               string  `json:"name" example:"Sunset Villa"`                      // name of the property
+	Location           string  `json:"location" example:"California"`                    // property location
+	Size               string  `json:"size" example:"3500 sqft"`                         // property size
+	Price              float64 `json:"price" example:"1200000.50"`                       // property price
+	AvailabilityStatus string  `json:"status" example:"available"`                       // availability status
+	Details            string  `json:"details" example:"Spacious villa with a sea view"` // Property details
 }
 
 // @Description GetPropertyDTO represents the details of a property along with identifier information.
@@ -22,6 +23,7 @@ type GetPropertyDTO struct {
 	Rating             float64 `json:"rating" example:"4.5"`                    // Average rating
 	ReviewCount        int     `json:"review_count" example:"12"`               // Number of reviews
 	ReviewIDs          []uint  `json:"review_ids"`
+	Details            string  `json:"details" example:"Spacious villa with a sea view"` // Property details
 }
 
 // @Description GetPropertyPaginatedDTO represents the response structure for retrieving a list of properties with pagination details.
