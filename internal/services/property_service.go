@@ -33,6 +33,7 @@ func (s *propertyService) CreateProperty(propertyDTO *dtos.PropertyDTO, lessorID
 		Size:               propertyDTO.Size,
 		Price:              propertyDTO.Price,
 		AvailabilityStatus: propertyDTO.AvailabilityStatus,
+		Details:            propertyDTO.Details,
 	}
 
 	err := s.propertyRepo.CreateProperty(property)
@@ -56,6 +57,7 @@ func (s *propertyService) UpdateProperty(propertyDTO *dtos.PropertyDTO, property
 		Size:               propertyDTO.Size,
 		Price:              propertyDTO.Price,
 		AvailabilityStatus: propertyDTO.AvailabilityStatus,
+		Details:            propertyDTO.Details,
 	}
 
 	err := s.propertyRepo.UpdateProperty(property)
@@ -135,6 +137,7 @@ func (s *propertyService) GetAllProperty(lessorID uint, page, pageSize int) (*dt
 			Rating:             ratings[i],
 			ReviewCount:        reviewCounts[i],
 			ReviewIDs:          reviewIDsList[i],
+			Details:            property.Details,
 		}
 		propertyDTOs = append(propertyDTOs, propertyDTO)
 	}
@@ -174,6 +177,7 @@ func (s *propertyService) GetPropertyByID(propertyID uint) (*dtos.GetPropertyDTO
 		Rating:             rating,
 		ReviewCount:        reviewCount,
 		ReviewIDs:          reviewIDs,
+		Details:            property.Details,
 	}
 
 	logger.Info(constant.SuccessGetByIDProp, zap.Uint("propertyID", propertyID))
@@ -197,6 +201,7 @@ func (s *propertyService) SearchProperty(query map[string]string) ([]dtos.GetPro
 			Size:               property.Size,
 			Price:              property.Price,
 			AvailabilityStatus: property.AvailabilityStatus,
+			Details:            property.Details,
 		}
 		propertyDTOs = append(propertyDTOs, propertyDTO)
 	}

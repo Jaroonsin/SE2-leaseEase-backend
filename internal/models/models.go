@@ -23,6 +23,7 @@ type Property struct {
 	Size               string  `gorm:"size:50;not null"`
 	Price              float64 `gorm:"not null"`
 	AvailabilityStatus string  `gorm:"size:50;not null"`
+	Details            string  `gorm:"type:text;not null"`
 	Lessor             User    `gorm:"foreignKey:LessorID;references:ID"`
 }
 
