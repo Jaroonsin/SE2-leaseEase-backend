@@ -174,5 +174,6 @@ func (s *FiberHttpServer) initPropertyReviewRouter(version string, router fiber.
 	propertyReviewRouter := router.Group("/propertyReview", middleware.AuthRequired(cfg))
 	if version == "v2" {
 		propertyReviewRouter.Post("/create", httpHandler.Review().CreateReview)
+		propertyReviewRouter.Put("/update/:id", httpHandler.Review().UpdateReview)
 	}
 }
