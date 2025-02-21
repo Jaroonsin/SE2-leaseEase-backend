@@ -1,6 +1,8 @@
 package services
 
-import "LeaseEase/internal/dtos"
+import (
+	"LeaseEase/internal/dtos"
+)
 
 type AuthService interface {
 	Register(registerDTO *dtos.RegisterDTO) error
@@ -8,4 +10,6 @@ type AuthService interface {
 	AuthCheck(token string) (*dtos.AuthCheckDTO, error)
 	RequestOTP(requestOTPDTO *dtos.RequestOTPDTO) error
 	VerifyOTP(verifyOTPDTO *dtos.VerifyOTPDTO) error
+	RequestPasswordReset(resetPassRequest *dtos.ResetPassRequestDTO) (string, error)
+	ResetPassword(resetPassDTO *dtos.ResetPassDTO) error
 }

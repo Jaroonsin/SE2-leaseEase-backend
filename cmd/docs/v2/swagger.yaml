@@ -36,6 +36,10 @@ definitions:
         description: Property creation date
         example: "2024-02-15T10:00:00Z"
         type: string
+      details:
+        description: Property details
+        example: Spacious villa with a sea view
+        type: string
       id:
         description: Property ID
         example: 1
@@ -88,6 +92,10 @@ definitions:
   dtos.PropertyDTO:
     description: PropertyDTO represents a property.
     properties:
+      details:
+        description: Property details
+        example: Spacious villa with a sea view
+        type: string
       location:
         description: property location
         example: California
@@ -137,6 +145,23 @@ definitions:
     properties:
       email:
         description: user's email
+        example: john.doe@example.com
+        type: string
+    required:
+    - email
+    type: object
+  dtos.ResetPassDTO:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      token:
+        type: string
+    type: object
+  dtos.ResetPassRequestDTO:
+    properties:
+      email:
         example: john.doe@example.com
         type: string
     required:
@@ -204,6 +229,41 @@ paths:
           schema:
             $ref: '#/definitions/utils.Response'
       summary: Check authentication status
+      tags:
+      - auth
+  /auth/forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: Generates and sends a password reset link to the provided email
+        address if the user exists.
+      parameters:
+      - description: Request payload containing the user's email
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ResetPassRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reset link sent successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request - Invalid request payload
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Not Found - Email not associated with any account
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error - Failed to send reset email
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Forgot a password
       tags:
       - auth
   /auth/login:
@@ -329,6 +389,41 @@ paths:
           schema:
             $ref: '#/definitions/utils.Response'
       summary: Request OTP for authentication
+      tags:
+      - auth
+  /auth/reset-password:
+    post:
+      consumes:
+      - application/json
+      description: Resets the user's password using the provided reset token and new
+        password.
+      parameters:
+      - description: Request payload containing the reset token and new password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ResetPassDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password reset successful
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request - Invalid request payload
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized - Invalid or expired reset token
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error - Unable to reset password
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Reset user password
       tags:
       - auth
   /auth/verify-otp:

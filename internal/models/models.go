@@ -4,13 +4,15 @@ import "time"
 
 // User struct with proper GORM tags for relations and validations
 type User struct {
-	ID       uint   `gorm:"primaryKey"`
-	Email    string `gorm:"uniqueIndex;size:100;not null"`
-	Password string `gorm:"size:100;not null"`
-	Name     string `gorm:"size:100;not null"`
-	Address  string `gorm:"size:255"`
-	Birthday time.Time
-	UserType string `gorm:"size:50;not null"` // lessor lessee
+	ID          uint   `gorm:"primaryKey"`
+	Email       string `gorm:"uniqueIndex;size:100;not null"`
+	Password    string `gorm:"size:100;not null"`
+	Name        string `gorm:"size:100;not null"`
+	Address     string `gorm:"size:255"`
+	Birthday    time.Time
+	UserType    string `gorm:"size:50;not null"` // lessor lessee
+	ResetToken  string `gorm:"unique"`
+	TokenExpiry time.Time
 }
 
 type Property struct {

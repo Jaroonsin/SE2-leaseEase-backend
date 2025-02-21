@@ -33,6 +33,9 @@ type Config struct {
 	EmailPort     string
 	EmailUser     string
 	EmailPassword string
+
+	// Website settings
+	ResetPassURL string
 }
 
 func LoadConfig() *Config {
@@ -52,7 +55,7 @@ func LoadConfig() *Config {
 		DBName:     os.Getenv("DB_NAME"),
 		// DBSSLMode:  os.Getenv("DB_SSL_MODE"),	//not used
 		// DBTimeZone: os.Getenv("DB_TIMEZONE"), 	//not used
-		
+
 		// # JWT settings
 		JWTApiSecret: os.Getenv("JWT_API_SECRET_KEY"),
 		// JWTAccessTokenSecret: os.Getenv("JWT_ACCESS_TOKEN_SECRET"),				//not used
@@ -65,6 +68,9 @@ func LoadConfig() *Config {
 		EmailPort:     os.Getenv("EMAIL_PORT"),
 		EmailUser:     os.Getenv("EMAIL_USER"),
 		EmailPassword: os.Getenv("EMAIL_PASS"),
+
+		// Website settings
+		ResetPassURL: os.Getenv("RESET_PASSWORD_URL"),
 	}
 }
 
