@@ -23,7 +23,7 @@ func NewPropertyService(propertyRepo repositories.PropertyRepository, logger *za
 	}
 }
 
-func (s *propertyService) CreateProperty(propertyDTO *dtos.PropertyDTO, lessorID uint) error {
+func (s *propertyService) CreateProperty(propertyDTO *dtos.PropertyDTO, lessorID uint) (uint, error) {
 	logger := s.logger.Named("CreateProperty")
 
 	property := &models.Property{
@@ -40,11 +40,11 @@ func (s *propertyService) CreateProperty(propertyDTO *dtos.PropertyDTO, lessorID
 
 	if err != nil {
 		logger.Error("Error in create property", zap.Error(err))
-		return err
+		return 0, err
 	}
 
 	logger.Info(constant.SuccessCreateProp, zap.String("Name", property.Name))
-	return err
+	return property.ID, nil
 }
 
 func (s *propertyService) UpdateProperty(propertyDTO *dtos.PropertyDTO, propertyID uint) error {
