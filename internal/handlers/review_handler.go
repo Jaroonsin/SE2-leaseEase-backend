@@ -76,3 +76,40 @@ func (h *reviewHandler) DeleteReview(c *fiber.Ctx) error {
 
 	return utils.SuccessResponse(c, fiber.StatusOK, "Review deleted successfully", nil)
 }
+
+func (h *reviewHandler) GetAllReviews(c *fiber.Ctx) error {
+	pageStr := c.Query("page", "")
+	pageSizeStr := c.Query("pageSize", "")
+
+	propertyID, err := strconv.Atoi(c.Params("propertyID"))
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid property ID")
+	}
+
+	if pageStr == "" && pageSizeStr == "" {
+		reviews, err := h.reviewService.GetAllReviews(uint(propertyID), 0, 0)
+		if err != nil {
+			return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+		}
+		return utils.SuccessResponse(c, fiber.StatusOK, "Success", reviews)
+	}
+
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	pageSize := 10
+	if pageSizeStr != "" {
+		pageSize, err = strconv.Atoi(pageSizeStr)
+		if err != nil || pageSize < 1 {
+			pageSize = 10
+		}
+	}
+
+	reviews, err := h.reviewService.GetAllReviews(uint(propertyID), page, pageSize)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+	}
+	return utils.SuccessResponse(c, fiber.StatusOK, "Success", reviews)
+}
