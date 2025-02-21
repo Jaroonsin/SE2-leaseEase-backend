@@ -43,12 +43,14 @@ func (h *propertyHandler) CreateProperty(c *fiber.Ctx) error {
 	}
 	LessorID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
 
-	err := h.propertyService.CreateProperty(&req, LessorID)
+	propertyID, err := h.propertyService.CreateProperty(&req, LessorID)
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return utils.SuccessResponse(c, fiber.StatusCreated, constant.SuccessCreateProp, nil)
+	return utils.SuccessResponse(c, fiber.StatusCreated, constant.SuccessCreateProp, map[string]interface{}{
+		"property_id": propertyID,
+	})
 }
 
 // UpdateProperty godoc

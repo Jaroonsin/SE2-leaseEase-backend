@@ -3,7 +3,7 @@ package services
 import "LeaseEase/internal/dtos"
 
 type PropertyService interface {
-	CreateProperty(propertyDTO *dtos.PropertyDTO, lessorID uint) error
+	CreateProperty(propertyDTO *dtos.PropertyDTO, lessorID uint) (uint, error)
 	UpdateProperty(propertyDTO *dtos.PropertyDTO, propertyID uint) error
 	DeleteProperty(propertyID uint) error
 	GetAllProperty(lessorID uint, page, pageSize int) (*dtos.GetPropertyPaginatedDTO, error)
