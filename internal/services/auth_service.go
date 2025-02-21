@@ -7,6 +7,7 @@ import (
 	"LeaseEase/utils"
 	"LeaseEase/utils/constant"
 	"errors"
+	"fmt"
 	"time"
 
 	"go.uber.org/zap"
@@ -163,4 +164,70 @@ func (s *authService) VerifyOTP(verifyOTPDTO *dtos.VerifyOTPDTO) error {
 	s.authRepo.DeleteTempUser(verifyOTPDTO.Email)
 	logger.Info(constant.SuccessRegister, zap.String("Email", user.Email))
 	return s.authRepo.CreateUser(user)
+}
+
+func (s *authService) RequestPasswordReset(resetPassRequestDTO *dtos.ResetPassRequestDTO) (string, error) {
+	logger := s.logger.Named("RequestPasswordReset")
+	email := resetPassRequestDTO.Email
+
+	user, err := s.authRepo.FindByEmail(email)
+	if err != nil {
+		logger.Warn("User not found", zap.String("email", email))
+		return "", errors.New("user not found")
+	}
+
+	token, err := utils.GenerateSecureToken()
+	if err != nil {
+		logger.Error("Failed to generate reset token", zap.Error(err))
+		return "", errors.New("could not generate token")
+	}
+
+	expiry := time.Now().Add(15 * time.Minute)
+	if err := s.authRepo.SaveResetToken(user, token, expiry); err != nil {
+		logger.Error("Failed to save reset token", zap.Error(err))
+		return "", errors.New("could not save reset token")
+	}
+
+	resetLink := fmt.Sprintf("http://localhost:3000/reset-password?email=%s&token=%s", email, token)
+	logger.Info("Generated reset link", zap.String("email", email), zap.String("reset_link", resetLink))
+
+	return resetLink, nil
+}
+
+func (s *authService) ResetPassword(resetPassDTO *dtos.ResetPassDTO) error {
+	logger := s.logger.Named("ResetPassword")
+	email := resetPassDTO.Email
+	token := resetPassDTO.Token
+	newPassword := resetPassDTO.Password
+
+	user, err := s.authRepo.FindByEmail(email)
+	if err != nil {
+		logger.Warn("Invalid reset attempt - user not found", zap.String("email", email))
+		return errors.New("invalid request")
+	}
+
+	if time.Now().After(user.TokenExpiry) {
+		logger.Warn("Expired reset token", zap.String("email", email))
+		return errors.New("token expired")
+	}
+
+	hashedInputToken := utils.HashToken(token)
+	if hashedInputToken != user.ResetToken {
+		logger.Warn("Invalid reset token", zap.String("email", email))
+		return errors.New("invalid token")
+	}
+
+	hashedPassword, err := utils.HashPassword(newPassword)
+	if err != nil {
+		logger.Error("Failed to hash new password", zap.Error(err))
+		return errors.New("could not hash password")
+	}
+
+	if err := s.authRepo.UpdateUserPassword(user, hashedPassword); err != nil {
+		logger.Error("Failed to update user password", zap.String("email", email), zap.Error(err))
+		return errors.New("could not update password")
+	}
+
+	logger.Info("Password reset successful", zap.String("email", email))
+	return nil
 }

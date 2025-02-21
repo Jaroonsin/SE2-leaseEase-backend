@@ -137,6 +137,8 @@ func (s *FiberHttpServer) initAuthRouter(version string, router fiber.Router, ht
 		authRouter.Post("/logout", httpHandler.Auth().Logout)
 		authRouter.Post("/request-otp", httpHandler.Auth().RequestOTP)
 		authRouter.Post("/verify-otp", httpHandler.Auth().VerifyOTP)
+		authRouter.Post("/forgot-password", httpHandler.Auth().ResetPasswordRequest)
+		authRouter.Post("/reset-password", httpHandler.Auth().ResetPassword)
 	}
 }
 

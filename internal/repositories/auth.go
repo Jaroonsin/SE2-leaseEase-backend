@@ -1,6 +1,9 @@
 package repositories
 
-import "LeaseEase/internal/models"
+import (
+	"LeaseEase/internal/models"
+	"time"
+)
 
 type AuthRepository interface {
 	FindEmailExisted(email string) bool
@@ -12,4 +15,7 @@ type AuthRepository interface {
 	SaveOTP(otp models.OTP)
 	FindByEmailOTP(email string) (models.OTP, bool)
 	DeleteOTP(email string)
+	FindByEmail(email string) (*models.User, error)
+	SaveResetToken(user *models.User, token string, expiry time.Time) error
+	UpdateUserPassword(user *models.User, hashedPassword string) error
 }

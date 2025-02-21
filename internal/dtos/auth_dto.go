@@ -16,19 +16,29 @@ type LoginDTO struct {
 }
 
 type JWTDTO struct {
-	UserID uint   `json:"user_id" example:"1"`			// user's ID
-	Role   string `json:"role" example:"lessee" `		// user's role
+	UserID uint   `json:"user_id" example:"1"`    // user's ID
+	Role   string `json:"role" example:"lessee" ` // user's role
 }
 type AuthCheckDTO struct {
-	UserID uint   `json:"user_id" example:"1"`		// user's ID
-	Role   string `json:"role" example:"lessee" `	// user's role
+	UserID uint   `json:"user_id" example:"1"`    // user's ID
+	Role   string `json:"role" example:"lessee" ` // user's role
 }
 
 type RequestOTPDTO struct {
-	Email string `json:"email" example:"john.doe@example.com" binding:"required"`	// user's email
+	Email string `json:"email" example:"john.doe@example.com" binding:"required"` // user's email
 }
 
 type VerifyOTPDTO struct {
-	Email string `json:"email" example:"john.doe@example.com" binding:"required"`	// user's email
-	OTP   string `json:"otp" example:"123456" binding:"required"`					// user's OTP
+	Email string `json:"email" example:"john.doe@example.com" binding:"required"` // user's email
+	OTP   string `json:"otp" example:"123456" binding:"required"`                 // user's OTP
+}
+
+type ResetPassRequestDTO struct {
+	Email string `json:"email" example:"john.doe@example.com" binding:"required"`
+}
+
+type ResetPassDTO struct {
+	Email    string `json:"email"`
+	Token    string `json:"token"`
+	Password string `json:"password"`
 }

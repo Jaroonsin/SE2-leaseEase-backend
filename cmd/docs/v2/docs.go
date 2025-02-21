@@ -46,6 +46,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/forgot-password": {
+            "post": {
+                "description": "Generates and sends a password reset link to the provided email address if the user exists.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Forgot a password",
+                "parameters": [
+                    {
+                        "description": "Request payload containing the user's email",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ResetPassRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Reset link sent successfully",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid request payload",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found - Email not associated with any account",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error - Failed to send reset email",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "Authenticate user and set an authentication cookie.",
@@ -230,6 +282,58 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error - Failed to process OTP request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/reset-password": {
+            "post": {
+                "description": "Resets the user's password using the provided reset token and new password.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Reset user password",
+                "parameters": [
+                    {
+                        "description": "Request payload containing the reset token and new password",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ResetPassDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Password reset successful",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Invalid request payload",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized - Invalid or expired reset token",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error - Unable to reset password",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -1078,6 +1182,11 @@ const docTemplate = `{
                     "type": "string",
                     "example": "2024-02-15T10:00:00Z"
                 },
+                "details": {
+                    "description": "Property details",
+                    "type": "string",
+                    "example": "Spacious villa with a sea view"
+                },
                 "id": {
                     "description": "Property ID",
                     "type": "integer",
@@ -1146,6 +1255,11 @@ const docTemplate = `{
             "description": "PropertyDTO represents a property.",
             "type": "object",
             "properties": {
+                "details": {
+                    "description": "Property details",
+                    "type": "string",
+                    "example": "Spacious villa with a sea view"
+                },
                 "location": {
                     "description": "property location",
                     "type": "string",
@@ -1212,6 +1326,32 @@ const docTemplate = `{
             "properties": {
                 "email": {
                     "description": "user's email",
+                    "type": "string",
+                    "example": "john.doe@example.com"
+                }
+            }
+        },
+        "dtos.ResetPassDTO": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.ResetPassRequestDTO": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
                     "type": "string",
                     "example": "john.doe@example.com"
                 }

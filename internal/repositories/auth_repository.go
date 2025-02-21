@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"LeaseEase/internal/models"
+	"LeaseEase/utils"
 	"sync"
 	"time"
 
@@ -117,4 +118,25 @@ func (r *authRepository) cleanupRoutine() {
 		r.cleanupExpiredOTP()
 		r.cleanupExpiredUsers()
 	}
+}
+
+func (r *authRepository) FindByEmail(email string) (*models.User, error) {
+	var user models.User
+	if err := r.db.First(&user, "email = ?", email).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (r *authRepository) SaveResetToken(user *models.User, token string, expiry time.Time) error {
+	hashedToken := utils.HashToken(token)
+	user.ResetToken = hashedToken
+	user.TokenExpiry = expiry
+	return r.db.Save(user).Error
+}
+
+func (r *authRepository) UpdateUserPassword(user *models.User, hashedPassword string) error {
+	user.Password = hashedPassword
+	user.ResetToken = "" // Clear reset token
+	return r.db.Save(user).Error
 }

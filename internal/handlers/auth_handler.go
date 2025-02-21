@@ -5,6 +5,7 @@ import (
 	"LeaseEase/internal/services"
 	"LeaseEase/utils"
 	"LeaseEase/utils/constant"
+	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -180,4 +181,63 @@ func (h *authHandler) VerifyOTP(c *fiber.Ctx) error {
 	}
 
 	return utils.SuccessResponse(c, fiber.StatusOK, "User registration verified", nil)
+}
+
+// ResetPasswordRequest godoc
+// @Summary Forgot a password
+// @Description Generates and sends a password reset link to the provided email address if the user exists.
+// @Tags auth
+// @Accept  json
+// @Produce  json
+// @Param  request body dtos.ResetPassRequestDTO true "Request payload containing the user's email"
+// @Success 200 {object} utils.Response "Reset link sent successfully"
+// @Failure 400 {object} utils.Response "Bad Request - Invalid request payload"
+// @Failure 404 {object} utils.Response "Not Found - Email not associated with any account"
+// @Failure 500 {object} utils.Response "Internal Server Error - Failed to send reset email"
+// @Router /auth/forgot-password [post]
+func (h *authHandler) ResetPasswordRequest(c *fiber.Ctx) error {
+	var req dtos.ResetPassRequestDTO
+	if err := c.BodyParser(&req); err != nil {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, constant.ErrParsebody)
+	}
+
+	resetLink, err := h.authService.RequestPasswordReset(&req)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusNotFound, "Failed to create reset link")
+	}
+
+	if err := utils.SendPasswordResetEmail(&req, resetLink); err != nil {
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Failed to send reset email")
+	}
+
+	if os.Getenv("SERVER_ENV") == "development" {
+		return utils.SuccessResponse(c, fiber.StatusOK, "Reset link sent", fiber.Map{"reset_link": resetLink})
+	}
+	return utils.SuccessResponse(c, fiber.StatusOK, "Reset link sent", nil)
+}
+
+// ResetPassword godoc
+// @Summary Reset user password
+// @Description Resets the user's password using the provided reset token and new password.
+// @Tags auth
+// @Accept  json
+// @Produce  json
+// @Param  request body dtos.ResetPassDTO true "Request payload containing the reset token and new password"
+// @Success 200 {object} utils.Response "Password reset successful"
+// @Failure 400 {object} utils.Response "Bad Request - Invalid request payload"
+// @Failure 401 {object} utils.Response "Unauthorized - Invalid or expired reset token"
+// @Failure 500 {object} utils.Response "Internal Server Error - Unable to reset password"
+// @Router /auth/reset-password [post]
+func (h *authHandler) ResetPassword(c *fiber.Ctx) error {
+	var req dtos.ResetPassDTO
+	if err := c.BodyParser(&req); err != nil {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, constant.ErrParsebody)
+	}
+
+	err := h.authService.ResetPassword(&req)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusUnauthorized, "Failed to reset password")
+	}
+
+	return utils.SuccessResponse(c, fiber.StatusOK, "Password reset successful", nil)
 }
