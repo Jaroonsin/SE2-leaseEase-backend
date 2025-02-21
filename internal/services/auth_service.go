@@ -8,6 +8,7 @@ import (
 	"LeaseEase/utils/constant"
 	"errors"
 	"fmt"
+	"os"
 	"time"
 
 	"go.uber.org/zap"
@@ -188,7 +189,8 @@ func (s *authService) RequestPasswordReset(resetPassRequestDTO *dtos.ResetPassRe
 		return "", errors.New("could not save reset token")
 	}
 
-	resetLink := fmt.Sprintf("http://localhost:3000/reset-password?email=%s&token=%s", email, token)
+	resetPassURL := os.Getenv("RESET_PASSWORD_URL")
+	resetLink := fmt.Sprintf("%s?email=%s&token=%s", resetPassURL, email, token)
 	logger.Info("Generated reset link", zap.String("email", email), zap.String("reset_link", resetLink))
 
 	return resetLink, nil
