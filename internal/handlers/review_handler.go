@@ -60,3 +60,19 @@ func (h *reviewHandler) UpdateReview(c *fiber.Ctx) error {
 
 	return utils.SuccessResponse(c, fiber.StatusOK, "Review updated successfully", nil)
 }
+
+func (h *reviewHandler) DeleteReview(c *fiber.Ctx) error {
+	reviewID, err := strconv.ParseUint(c.Params("id"), 10, 64)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "invalid review ID")
+	}
+
+	lesseeID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
+
+	err = h.reviewService.DeleteReview(uint(reviewID), lesseeID)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+	}
+
+	return utils.SuccessResponse(c, fiber.StatusOK, "Review deleted successfully", nil)
+}

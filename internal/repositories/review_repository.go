@@ -63,3 +63,28 @@ func (r *reviewRepository) UpdateReview(reviewID uint, lesseeID uint, updates *m
 		return nil
 	})
 }
+
+func (r *reviewRepository) DeleteReview(reviewID uint, lesseeID uint) error {
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		var propertyReview models.PropertyReview
+
+		if err := tx.Where("review_id = ? AND lessee_id = ?", reviewID, lesseeID).
+			First(&propertyReview).Error; err != nil {
+			return errors.New("review not found or unauthorized")
+		}
+
+		// Delete PropertyReview first
+		if err := tx.Where("review_id = ?", reviewID).
+			Delete(&models.PropertyReview{}).Error; err != nil {
+			return err
+		}
+
+		// Delete Review
+		if err := tx.Where("id = ?", reviewID).
+			Delete(&models.Review{}).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+}

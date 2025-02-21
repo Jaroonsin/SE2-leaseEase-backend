@@ -85,3 +85,16 @@ func (s *reviewService) UpdateReview(reviewID uint, dto *dtos.UpdateReviewDTO, l
 	logger.Info("Review updated successfully", zap.Uint("ReviewID", reviewID))
 	return nil
 }
+
+func (s *reviewService) DeleteReview(reviewID uint, lesseeID uint) error {
+	logger := s.logger.Named("DeleteReview")
+
+	err := s.reviewRepo.DeleteReview(reviewID, lesseeID)
+	if err != nil {
+		logger.Error("Error deleting review", zap.Error(err))
+		return err
+	}
+
+	logger.Info("Review deleted successfully", zap.Uint("ReviewID", reviewID))
+	return nil
+}
