@@ -176,5 +176,6 @@ func (s *FiberHttpServer) initPropertyReviewRouter(version string, router fiber.
 		propertyReviewRouter.Post("/create", httpHandler.Review().CreateReview)
 		propertyReviewRouter.Put("/update/:id", httpHandler.Review().UpdateReview)
 		propertyReviewRouter.Delete("/delete/:id", httpHandler.Review().DeleteReview)
+		propertyReviewRouter.Get("/get/:propertyID", httpHandler.Review().GetAllReviews)
 	}
 }

@@ -88,3 +88,32 @@ func (r *reviewRepository) DeleteReview(reviewID uint, lesseeID uint) error {
 		return nil
 	})
 }
+
+func (r *reviewRepository) GetAllReviews(propertyID uint) ([]models.PropertyReview, error) {
+	var propertyReviews []models.PropertyReview
+	err := r.db.Preload("Review").Preload("Lessee").
+		Where("property_id = ?", propertyID).
+		Find(&propertyReviews).Error
+	if err != nil {
+		return nil, err
+	}
+	return propertyReviews, nil
+}
+
+func (r *reviewRepository) GetPaginatedReviews(propertyID uint, limit, offset int) ([]models.PropertyReview, error) {
+	var propertyReviews []models.PropertyReview
+	err := r.db.Preload("Review").Preload("Lessee").
+		Where("property_id = ?", propertyID).
+		Limit(limit).Offset(offset).
+		Find(&propertyReviews).Error
+	if err != nil {
+		return nil, err
+	}
+	return propertyReviews, nil
+}
+
+func (r *reviewRepository) CountReviewsByProperty(propertyID uint, totalRecords *int64) error {
+	return r.db.Model(&models.PropertyReview{}).
+		Where("property_id = ?", propertyID).
+		Count(totalRecords).Error
+}
