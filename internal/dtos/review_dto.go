@@ -2,8 +2,13 @@ package dtos
 
 type CreateReviewDTO struct {
 	ReviewMessage string `json:"review_message" binding:"required"`
-	Rating        int    `json:"rating" binding:"required,min=1,max=5"`
+	Rating        int    `json:"rating" binding:"required,min=0,max=5"`
 	PropertyID    uint   `json:"property_id" binding:"required"`
+}
+
+type UpdateReviewDTO struct {
+	ReviewMessage string `json:"review_message" binding:"required"`
+	Rating        int    `json:"rating" binding:"required,min=0,max=5"`
 }
 
 type ReviewResponseDTO struct {
