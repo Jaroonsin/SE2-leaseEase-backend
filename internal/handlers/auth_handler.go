@@ -1,11 +1,11 @@
 package handlers
 
 import (
+	"LeaseEase/config"
 	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/services"
 	"LeaseEase/utils"
 	"LeaseEase/utils/constant"
-	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -203,14 +203,14 @@ func (h *authHandler) ResetPasswordRequest(c *fiber.Ctx) error {
 
 	resetLink, err := h.authService.RequestPasswordReset(&req)
 	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusNotFound, "Failed to create reset link")
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Failed to create reset link")
 	}
 
 	if err := utils.SendPasswordResetEmail(&req, resetLink); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Failed to send reset email")
 	}
 
-	if os.Getenv("SERVER_ENV") == "development" {
+	if config.LoadEnv() == "development" {
 		return utils.SuccessResponse(c, fiber.StatusOK, "Reset link sent", fiber.Map{"reset_link": resetLink})
 	}
 	return utils.SuccessResponse(c, fiber.StatusOK, "Reset link sent", nil)
