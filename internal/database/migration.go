@@ -17,6 +17,7 @@ func RunMigrations(db *gorm.DB) {
 		&models.Review{},
 		&models.LessorReview{},
 		&models.PropertyReview{},
+		&models.Payment{},
 	)
 	if err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)

@@ -36,6 +36,10 @@ type Config struct {
 
 	// Website settings
 	ResetPassURL string
+
+	// Omise settings
+	OmisePublicKey string
+	OmiseSecretKey string
 }
 
 func LoadConfig() *Config {
@@ -71,6 +75,10 @@ func LoadConfig() *Config {
 
 		// Website settings
 		ResetPassURL: os.Getenv("RESET_PASSWORD_URL"),
+
+		// Omise settings
+		OmisePublicKey: os.Getenv("OMISE_PUBLIC_KEY"),
+		OmiseSecretKey: os.Getenv("OMISE_SECRET_KEY"),
 	}
 }
 

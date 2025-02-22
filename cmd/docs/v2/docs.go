@@ -397,6 +397,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/payments/process": {
+            "post": {
+                "description": "This endpoint processes a payment using the provided user ID, amount, currency, and card token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "payments"
+                ],
+                "summary": "Process a payment",
+                "parameters": [
+                    {
+                        "description": "Payment details",
+                        "name": "payment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.PaymentDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Payment successful",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Payment process failed",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/properties/autocomplete": {
             "get": {
                 "security": [
@@ -1248,6 +1294,26 @@ const docTemplate = `{
                     "description": "user's password",
                     "type": "string",
                     "example": "strongPassword123"
+                }
+            }
+        },
+        "dtos.PaymentDTO": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "description": "Stored in satangs na ja",
+                    "type": "integer"
+                },
+                "currency": {
+                    "description": "Example: \"THB\", \"USD\"",
+                    "type": "string"
+                },
+                "token": {
+                    "description": "Example: \"tokn_test_xxyy69btt9rnb5mir5b\"",
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },

@@ -13,12 +13,13 @@ require (
 	gorm.io/gorm v1.25.12
 )
 
-require github.com/pakornv/scalar-go v0.0.0-20250123093844-ce2e1fb1a762
-
 require (
-	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
-	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df // indirect
+	github.com/omise/omise-go v1.5.0
+	github.com/pakornv/scalar-go v0.0.0-20250123093844-ce2e1fb1a762
+	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 )
+
+require gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect

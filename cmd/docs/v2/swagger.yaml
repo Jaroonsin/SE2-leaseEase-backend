@@ -89,6 +89,20 @@ definitions:
         example: strongPassword123
         type: string
     type: object
+  dtos.PaymentDTO:
+    properties:
+      amount:
+        description: Stored in satangs na ja
+        type: integer
+      currency:
+        description: 'Example: "THB", "USD"'
+        type: string
+      token:
+        description: 'Example: "tokn_test_xxyy69btt9rnb5mir5b"'
+        type: string
+      user_id:
+        type: integer
+    type: object
   dtos.PropertyDTO:
     description: PropertyDTO represents a property.
     properties:
@@ -460,6 +474,37 @@ paths:
       summary: Verify provided OTP
       tags:
       - auth
+  /payments/process:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint processes a payment using the provided user ID, amount,
+        currency, and card token.
+      parameters:
+      - description: Payment details
+        in: body
+        name: payment
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.PaymentDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Payment successful
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Payment process failed
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Process a payment
+      tags:
+      - payments
   /properties/autocomplete:
     get:
       consumes:
