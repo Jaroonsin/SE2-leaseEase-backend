@@ -9,6 +9,7 @@ import (
 	"LeaseEase/utils/constant"
 	"errors"
 	"fmt"
+	"regexp"
 	"time"
 
 	"go.uber.org/zap"
@@ -116,11 +117,16 @@ func (s *authService) AuthCheck(token string) (*dtos.AuthCheckDTO, error) {
 		Role:   role,
 	}, nil
 }
-
 func (s *authService) RequestOTP(requestOTPDTO *dtos.RequestOTPDTO) error {
 	logger := s.logger.Named("RequestOTP")
 	otp := utils.GenerateOTP()
 	expiry := time.Now().Add(3 * time.Minute)
+
+	re := regexp.MustCompile(`^john\.doe(?:[1-9][0-9]?)?@example\.com$`)
+	dev := config.LoadConfig().ServerEnv == "development"
+	if dev && re.MatchString(requestOTPDTO.Email) {
+		otp = "123456"
+	}
 
 	s.authRepo.SaveOTP(models.OTP{
 		Email:    requestOTPDTO.Email,
@@ -128,10 +134,13 @@ func (s *authService) RequestOTP(requestOTPDTO *dtos.RequestOTPDTO) error {
 		ExpireAt: expiry,
 	})
 
-	if err := utils.SendOTP(requestOTPDTO.Email, otp); err != nil {
-		logger.Error("failed to send OTP", zap.Error(err))
-		return errors.New("failed to send OTP")
+	if !dev || !re.MatchString(requestOTPDTO.Email) {
+		if err := utils.SendOTP(requestOTPDTO.Email, otp); err != nil {
+			logger.Error("failed to send OTP", zap.Error(err))
+			return errors.New("failed to send OTP")
+		}
 	}
+
 	logger.Info("OTP sent", zap.String("Email", requestOTPDTO.Email))
 	return nil
 }

@@ -7,7 +7,7 @@ import (
 type Config struct {
 	// Server settings
 	// ServerName string
-	// ServerEnv  string
+	ServerEnv string
 	// ServerURL  string
 	// ServerHost string
 	ServerPort string
@@ -46,7 +46,7 @@ func LoadConfig() *Config {
 	return &Config{
 		// Server settings
 		// ServerName: os.Getenv("SERVER_NAME"),	//not used
-		// ServerEnv:  os.Getenv("SERVER_ENV"),		//not used
+		ServerEnv: os.Getenv("SERVER_ENV"),
 		// ServerURL:  os.Getenv("SERVER_URL"), 	//not used
 		// ServerHost: os.Getenv("SERVER_HOST"),	//not used
 		ServerPort: os.Getenv("SERVER_PORT"),
