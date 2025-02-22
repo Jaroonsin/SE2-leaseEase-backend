@@ -34,10 +34,10 @@ func (h *paymentHandler) HandlePayment(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
 	}
 
-	payment, err := h.paymentService.ProcessPayment(req.UserID, req.Amount, req.Currency, req.Token)
+	err := h.paymentService.ProcessPayment(req.UserID, req.Amount, req.Currency, req.Token)
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Payment process failed")
 	}
 
-	return utils.SuccessResponse(c, fiber.StatusOK, "Payment successful", payment)
+	return utils.SuccessResponse(c, fiber.StatusOK, "Payment successful", nil)
 }

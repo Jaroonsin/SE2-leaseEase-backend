@@ -22,7 +22,7 @@ func NewPaymentService(paymentRepo repositories.PaymentRepository, logger *zap.L
 	}
 }
 
-func (s *paymentService) ProcessPayment(userID uint, amount int64, currency, token string) (*models.Payment, error) {
+func (s *paymentService) ProcessPayment(userID uint, amount int64, currency, token string) error {
 	logger := s.logger.Named("ProcessPayment")
 	charge := &omise.Charge{}
 	client, err := utils.NewOmiseClient()
@@ -41,7 +41,7 @@ func (s *paymentService) ProcessPayment(userID uint, amount int64, currency, tok
 			zap.Uint("userID", userID),
 			zap.Error(err),
 		)
-		return nil, err
+		return err
 	}
 
 	logger.Info("Payment successful",
@@ -62,11 +62,11 @@ func (s *paymentService) ProcessPayment(userID uint, amount int64, currency, tok
 			zap.String("chargeID", charge.ID),
 			zap.Error(err),
 		)
-		return nil, err
+		return err
 	}
 
 	logger.Info("Payment record saved successfully",
 		zap.String("chargeID", charge.ID),
 	)
-	return payment, nil
+	return nil
 }
