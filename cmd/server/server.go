@@ -94,6 +94,7 @@ func (s *FiberHttpServer) Start() {
 		s.initAuthRouter(v, router, s.handlers)
 		s.initPropertyRouter(v, router, s.handlers, s.cfg)
 		s.initPropertyReviewRouter(v, router, s.handlers, s.cfg)
+		s.initPaymentRouter(v, router, s.handlers, s.cfg)
 	}
 
 	// Setup signal capturing for graceful shutdown
@@ -179,5 +180,12 @@ func (s *FiberHttpServer) initPropertyReviewRouter(version string, router fiber.
 		propertyReviewRouter.Put("/update/:id", httpHandler.Review().UpdateReview)
 		propertyReviewRouter.Delete("/delete/:id", httpHandler.Review().DeleteReview)
 		propertyReviewRouter.Get("/get/:propertyID", httpHandler.Review().GetAllReviews)
+	}
+}
+
+func (s *FiberHttpServer) initPaymentRouter(version string, router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
+	paymentRouter := router.Group("/payments", middleware.AuthRequired(cfg))
+	if version == "v2" {
+		paymentRouter.Post("/process", httpHandler.Payment().HandlePayment)
 	}
 }

@@ -6,4 +6,5 @@ type Repository interface {
 	Auth() AuthRepository
 	Reservation() ReservationRepository
 	Review() ReviewRepository
+	Payment() PaymentRepository
 }

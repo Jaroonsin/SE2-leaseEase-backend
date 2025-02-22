@@ -43,12 +43,12 @@ func (s *authService) Register(registerDTO *dtos.RegisterDTO) error {
 
 	s.authRepo.SaveTempUser(models.TempUser{
 		User: &models.User{
-			Email:    registerDTO.Email,
-			Password: registerDTO.Password,
-			Name:     registerDTO.Name,
-			Address:  registerDTO.Address,
-			Birthday: time.Now(),
-			UserType: registerDTO.Role,
+			Email:     registerDTO.Email,
+			Password:  registerDTO.Password,
+			Name:      registerDTO.Name,
+			Address:   registerDTO.Address,
+			CreatedAt: time.Now(),
+			UserType:  registerDTO.Role,
 		},
 		ExpireAt: time.Now().Add(30 * time.Minute),
 	})

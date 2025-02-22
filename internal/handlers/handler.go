@@ -5,4 +5,5 @@ type Handler interface {
 	Auth() *authHandler
 	Reservation() *reservationHandler
 	Review() *reviewHandler
+	Payment() *paymentHandler
 }

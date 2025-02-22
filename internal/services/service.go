@@ -5,4 +5,5 @@ type Service interface {
 	Auth() AuthService
 	Reservation() ReservationService
 	Review() ReviewService
+	Payment() PaymentService
 }
