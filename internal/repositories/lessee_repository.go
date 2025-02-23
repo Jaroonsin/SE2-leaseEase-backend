@@ -20,9 +20,18 @@ func (r *lesseeRepository) CreateReservation(reservation *models.Reservation) er
 	return r.db.Create(reservation).Error
 }
 
-func (r *lesseeRepository) UpdateReservation(reservation *models.Reservation) error {
-	result := r.db.Model(&reservation).Updates(reservation)
+func (r *lesseeRepository) UpdateReservation(reservation *models.Reservation, lesseeID uint) error {
+	var existingReservation models.Reservation
+	result := r.db.First(&existingReservation, reservation.ID)
+	if result.Error != nil {
+		return result.Error
+	}
 
+	if existingReservation.LesseeID != lesseeID {
+		return gorm.ErrRecordNotFound
+	}
+
+	result = r.db.Model(&existingReservation).Updates(reservation)
 	if result.Error != nil {
 		return result.Error
 	}
@@ -34,47 +43,24 @@ func (r *lesseeRepository) UpdateReservation(reservation *models.Reservation) er
 	return nil
 }
 
-func (r *lesseeRepository) DeleteReservation(reservationID uint) error {
-	result := r.db.Delete(&models.Reservation{}, reservationID)
+func (r *lesseeRepository) DeleteReservation(reservationID uint, lesseeID uint) error {
+	var reservation models.Reservation
+	result := r.db.First(&reservation, reservationID)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if reservation.LesseeID != lesseeID {
+		return gorm.ErrRecordNotFound
+	}
+
+	result = r.db.Delete(&reservation)
 	if result.Error != nil {
 		return result.Error
 	}
 
 	if result.RowsAffected == 0 {
 		return gorm.ErrRecordNotFound
-	}
-
-	return nil
-}
-
-func (r *lesseeRepository) AcceptReservation(reservationID uint) error {
-
-	var reservation models.Reservation
-	result := r.db.First(&reservation, reservationID)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	reservation.Status = "waiting"
-	//some logic
-	if err := r.db.Save(&reservation).Error; err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (r *lesseeRepository) DeclineReservation(reservationID uint) error {
-
-	var reservation models.Reservation
-	result := r.db.First(&reservation, reservationID)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	reservation.Status = "cancel"
-	if err := r.db.Save(&reservation).Error; err != nil {
-		return err
 	}
 
 	return nil

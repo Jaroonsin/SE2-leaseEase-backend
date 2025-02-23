@@ -33,24 +33,16 @@ func (r *lesseeService) CreateReservation(reservationDTO *dtos.CreateReservation
 	return r.lesseeRepo.CreateReservation(reservation)
 }
 
-func (r *lesseeService) UpdateReservation(reservationDTO *dtos.UpdateReservationDTO, reservationID uint) error {
+func (r *lesseeService) UpdateReservation(reservationDTO *dtos.UpdateReservationDTO, reservationID uint, lesseeID uint) error {
 	reservation := &models.Reservation{
 		ID:              reservationID,
 		Purpose:         reservationDTO.Purpose,
 		ProposedMessage: reservationDTO.ProposedMessage,
 		Question:        reservationDTO.Question,
 	}
-	return r.lesseeRepo.UpdateReservation(reservation)
+	return r.lesseeRepo.UpdateReservation(reservation, lesseeID)
 }
 
-func (r *lesseeService) DeleteReservation(reservationID uint) error {
-	return r.lesseeRepo.DeleteReservation(reservationID)
-}
-
-func (r *lesseeService) ApproveReservation(status string, reservationID uint) error {
-	reservation := &models.Reservation{
-		ID:     reservationID,
-		Status: status,
-	}
-	return r.lesseeRepo.UpdateReservation(reservation)
+func (r *lesseeService) DeleteReservation(reservationID uint, lesseeID uint) error {
+	return r.lesseeRepo.DeleteReservation(reservationID, lesseeID)
 }

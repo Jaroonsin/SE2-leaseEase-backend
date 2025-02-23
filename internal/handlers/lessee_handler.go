@@ -69,8 +69,8 @@ func (h *lesseeHandler) UpdateReservation(c *fiber.Ctx) error {
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid reservation ID")
 	}
-
-	err = h.lesseeService.UpdateReservation(&req, uint(reservationID))
+	lesseeID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
+	err = h.lesseeService.UpdateReservation(&req, uint(reservationID), lesseeID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return utils.ErrorResponse(c, fiber.StatusNotFound, "Reservation not found")
@@ -97,8 +97,8 @@ func (h *lesseeHandler) DeleteReservation(c *fiber.Ctx) error {
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid reservation ID")
 	}
-
-	err = h.lesseeService.DeleteReservation(uint(reservationID))
+	lesseeID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
+	err = h.lesseeService.DeleteReservation(uint(reservationID), lesseeID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return utils.ErrorResponse(c, fiber.StatusNotFound, "Reservation not found")
