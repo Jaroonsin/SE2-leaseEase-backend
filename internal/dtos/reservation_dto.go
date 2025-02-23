@@ -20,6 +20,5 @@ type ApproveReservationDTO struct {
 
 type AcceptReservationDTO struct {
 	LesseeEmail  string `json:"lesseeEmail" example:"lessee@example.com"`
-	PropertyName string `json:"propertyName" example:"Beautiful Apartment"`
-	LessorName   string `json:"lessorName" example:"John Doe"`
+	PropertyName string `json:"propertyName" example:"Example Property"`
 }

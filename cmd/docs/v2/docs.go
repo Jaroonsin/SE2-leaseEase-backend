@@ -417,7 +417,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.CreateReservation"
+                            "$ref": "#/definitions/dtos.CreateReservationDTO"
                         }
                     }
                 ],
@@ -520,7 +520,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.UpdateReservation"
+                            "$ref": "#/definitions/dtos.UpdateReservationDTO"
                         }
                     }
                 ],
@@ -572,6 +572,15 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Reservation details",
+                        "name": "reservation",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.AcceptReservationDTO"
+                        }
                     }
                 ],
                 "responses": {
@@ -582,7 +591,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Invalid reservation ID",
+                        "description": "Invalid request body",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -1209,7 +1218,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dtos.CreateReservation": {
+        "dtos.AcceptReservationDTO": {
+            "type": "object",
+            "properties": {
+                "lesseeEmail": {
+                    "type": "string",
+                    "example": "lessee@example.com"
+                },
+                "propertyName": {
+                    "type": "string",
+                    "example": "Example Property"
+                }
+            }
+        },
+        "dtos.CreateReservationDTO": {
             "type": "object",
             "properties": {
                 "interestedProperty": {
@@ -1443,7 +1465,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dtos.UpdateReservation": {
+        "dtos.UpdateReservationDTO": {
             "type": "object",
             "properties": {
                 "proposedMessage": {

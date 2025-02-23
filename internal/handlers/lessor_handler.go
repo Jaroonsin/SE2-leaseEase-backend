@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/services"
 	"LeaseEase/utils"
 	"strconv"
@@ -25,8 +26,10 @@ func NewLessorHandler(lessorService services.LessorService) *lessorHandler {
 // @Accept json
 // @Produce json
 // @Param id path int true "Reservation ID"
+// @Param reservation body dtos.AcceptReservationDTO true "Reservation details"
 // @Success 200 {object} utils.Response "Reservation accepted successfully"
 // @Failure 400 {object} utils.Response "Invalid reservation ID"
+// @Failure 400 {object} utils.Response "Invalid request body"
 // @Failure 500 {object} utils.Response "Failed to accept reservation"
 // @Router /lessor/accept/{id} [post]
 func (h *lessorHandler) AcceptReservation(c *fiber.Ctx) error {
@@ -35,8 +38,12 @@ func (h *lessorHandler) AcceptReservation(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid reservation ID")
 	}
 
-	err = h.lessorService.AcceptReservation(uint(reservationID))
-	if err != nil {
+	var req dtos.AcceptReservationDTO
+	if err := c.BodyParser(&req); err != nil {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
+	}
+
+	if err := h.lessorService.AcceptReservation(uint(reservationID), &req); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Failed to accept reservation")
 	}
 

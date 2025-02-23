@@ -1,6 +1,15 @@
 basePath: /
 definitions:
-  dtos.CreateReservation:
+  dtos.AcceptReservationDTO:
+    properties:
+      lesseeEmail:
+        example: lessee@example.com
+        type: string
+      propertyName:
+        example: Example Property
+        type: string
+    type: object
+  dtos.CreateReservationDTO:
     properties:
       interestedProperty:
         example: 1
@@ -175,7 +184,7 @@ definitions:
     required:
     - email
     type: object
-  dtos.UpdateReservation:
+  dtos.UpdateReservationDTO:
     properties:
       proposedMessage:
         example: I would like to update my earlier message.
@@ -480,7 +489,7 @@ paths:
         name: reservation
         required: true
         schema:
-          $ref: '#/definitions/dtos.CreateReservation'
+          $ref: '#/definitions/dtos.CreateReservationDTO'
       produces:
       - application/json
       responses:
@@ -550,7 +559,7 @@ paths:
         name: reservation
         required: true
         schema:
-          $ref: '#/definitions/dtos.UpdateReservation'
+          $ref: '#/definitions/dtos.UpdateReservationDTO'
       produces:
       - application/json
       responses:
@@ -584,6 +593,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: Reservation details
+        in: body
+        name: reservation
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.AcceptReservationDTO'
       produces:
       - application/json
       responses:
@@ -592,7 +607,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Response'
         "400":
-          description: Invalid reservation ID
+          description: Invalid request body
           schema:
             $ref: '#/definitions/utils.Response'
         "500":

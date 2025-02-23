@@ -27,7 +27,7 @@ func NewLesseeHandler(lesseeService services.LesseeService) *lesseeHandler {
 // @Tags         Lessee
 // @Accept       json
 // @Produce      json
-// @Param        reservation  body      dtos.CreateReservation  true  "Lease Reservation Data"
+// @Param        reservation  body      dtos.CreateReservationDTO  true  "Lease Reservation Data"
 // @Success      201      {object}  utils.Response  "Reservation created successfully"
 // @Failure      400      {object}  utils.Response    "Failed to parse reservation body"
 // @Failure      500      {object}  utils.Response    "Internal server error"
@@ -54,7 +54,7 @@ func (h *lesseeHandler) CreateReservation(c *fiber.Ctx) error {
 // @Accept       json
 // @Produce      json
 // @Param        id       path      int                 true  "Reservation ID"
-// @Param        reservation  body      dtos.UpdateReservation  true  "Lease Reservation Update Data"
+// @Param        reservation  body      dtos.UpdateReservationDTO  true  "Lease Reservation Update Data"
 // @Success      200      {object}  utils.Response  "Reservation updated successfully"
 // @Failure      400      {object}  utils.Response    "Failed to parse reservation body or invalid reservation ID"
 // @Failure      404      {object}  utils.Response    "Reservation not found"

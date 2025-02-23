@@ -126,7 +126,6 @@ func SendLessorAcceptanceEmail(req *dtos.AcceptReservationDTO) error {
 	cfg := config.LoadConfig()
 	lesseeEmail := req.LesseeEmail
 	propertyName := req.PropertyName
-	lessorName := req.LessorName
 
 	// Create email message
 	m := gomail.NewMessage()
@@ -151,14 +150,14 @@ func SendLessorAcceptanceEmail(req *dtos.AcceptReservationDTO) error {
 			<div class="container">
 				<p class="header">LeaseEase - Rental Request Approved</p>
 				<p class="content">Dear Valued Lessee,</p>
-				<p class="content">We are pleased to inform you that your request to lease <strong>%s</strong> has been formally approved by <strong>%s</strong>.</p>
+				<p class="content">We are pleased to inform you that your request to lease <strong>%s</strong> has been formally approved.</p>
 				<p class="content">Kindly log in to your account at your earliest convenience to review the terms and proceed with the necessary formalities.</p>
 				<p class="content">Should you have any questions or require further assistance, please do not hesitate to contact us.</p>
 				<p class="footer">Thank you for choosing LeaseEase.<br>Best regards,<br><strong>The LeaseEase Team</strong></p>
 			</div>
 		</body>
 		</html>
-	`, propertyName, lessorName)
+	`, propertyName)
 
 	m.SetBody("text/html", emailBody)
 
