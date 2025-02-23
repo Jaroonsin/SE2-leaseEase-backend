@@ -121,3 +121,56 @@ func SendPasswordResetEmail(req *dtos.ResetPassRequestDTO, resetURL string) erro
 	// Send email
 	return d.DialAndSend(m)
 }
+
+func SendLessorAcceptanceEmail(req *dtos.AcceptReservationDTO) error {
+	cfg := config.LoadConfig()
+	lesseeEmail := req.LesseeEmail
+	propertyName := req.PropertyName
+	lessorName := req.LessorName
+
+	// Create email message
+	m := gomail.NewMessage()
+	m.SetHeader("From", cfg.EmailUser)
+	m.SetHeader("To", lesseeEmail)
+	m.SetHeader("Subject", "LeaseEase - Rental Request Approved")
+
+	// HTML email body
+	emailBody := fmt.Sprintf(`
+		<!DOCTYPE html>
+		<html>
+		<head>
+			<style>
+				body { font-family: Arial, sans-serif; }
+				.container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+				.header { text-align: center; font-size: 24px; font-weight: bold; color: #333; }
+				.content { font-size: 16px; color: #444; }
+				.footer { font-size: 14px; color: #555; text-align: center; margin-top: 20px; }
+			</style>
+		</head>
+		<body>
+			<div class="container">
+				<p class="header">LeaseEase - Rental Request Approved</p>
+				<p class="content">Dear Valued Lessee,</p>
+				<p class="content">We are pleased to inform you that your request to lease <strong>%s</strong> has been formally approved by <strong>%s</strong>.</p>
+				<p class="content">Kindly log in to your account at your earliest convenience to review the terms and proceed with the necessary formalities.</p>
+				<p class="content">Should you have any questions or require further assistance, please do not hesitate to contact us.</p>
+				<p class="footer">Thank you for choosing LeaseEase.<br>Best regards,<br><strong>The LeaseEase Team</strong></p>
+			</div>
+		</body>
+		</html>
+	`, propertyName, lessorName)
+
+	m.SetBody("text/html", emailBody)
+
+	// Parse email port from config
+	port, err := strconv.Atoi(cfg.EmailPort)
+	if err != nil {
+		return err
+	}
+
+	// Set up SMTP dialer
+	d := gomail.NewDialer(cfg.EmailHost, port, cfg.EmailUser, cfg.EmailPassword)
+
+	// Send email
+	return d.DialAndSend(m)
+}

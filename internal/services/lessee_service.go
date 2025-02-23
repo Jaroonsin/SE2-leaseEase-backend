@@ -20,7 +20,7 @@ func NewLesseeService(lesseeRepo repositories.LesseeRepository, logger *zap.Logg
 	}
 }
 
-func (r *lesseeService) CreateReservation(reservationDTO *dtos.CreateReservation, lesseeId uint) error {
+func (r *lesseeService) CreateReservation(reservationDTO *dtos.CreateReservationDTO, lesseeId uint) error {
 	reservation := &models.Reservation{
 		LesseeID:           lesseeId,
 		Purpose:            reservationDTO.Purpose,
@@ -33,7 +33,7 @@ func (r *lesseeService) CreateReservation(reservationDTO *dtos.CreateReservation
 	return r.lesseeRepo.CreateReservation(reservation)
 }
 
-func (r *lesseeService) UpdateReservation(reservationDTO *dtos.UpdateReservation, reservationID uint) error {
+func (r *lesseeService) UpdateReservation(reservationDTO *dtos.UpdateReservationDTO, reservationID uint) error {
 	reservation := &models.Reservation{
 		ID:              reservationID,
 		Purpose:         reservationDTO.Purpose,

@@ -33,7 +33,7 @@ func NewLesseeHandler(lesseeService services.LesseeService) *lesseeHandler {
 // @Failure      500      {object}  utils.Response    "Internal server error"
 // @Router       /lessee/create [post]
 func (h *lesseeHandler) CreateReservation(c *fiber.Ctx) error {
-	var req dtos.CreateReservation
+	var req dtos.CreateReservationDTO
 	if err := c.BodyParser(&req); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to parse reservation body")
 	}
@@ -61,7 +61,7 @@ func (h *lesseeHandler) CreateReservation(c *fiber.Ctx) error {
 // @Failure      500      {object}  utils.Response    "Internal server error"
 // @Router       /lessee/update/{id} [put]
 func (h *lesseeHandler) UpdateReservation(c *fiber.Ctx) error {
-	var req dtos.UpdateReservation
+	var req dtos.UpdateReservationDTO
 	if err := c.BodyParser(&req); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to parse reservation body")
 	}
