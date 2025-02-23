@@ -20,9 +20,9 @@ func NewLesseeService(lesseeRepo repositories.LesseeRepository, logger *zap.Logg
 	}
 }
 
-func (r *lesseeService) CreateReservation(reservationDTO *dtos.CreateReservationDTO, lesseeId uint) error {
+func (r *lesseeService) CreateReservation(reservationDTO *dtos.CreateReservationDTO, lesseeID uint) error {
 	reservation := &models.Reservation{
-		LesseeID:           lesseeId,
+		LesseeID:           lesseeID,
 		Purpose:            reservationDTO.Purpose,
 		ProposedMessage:    reservationDTO.ProposedMessage,
 		Status:             "pending",

@@ -20,8 +20,8 @@ func NewLessorService(lessorRepo repositories.LessorRepository, logger *zap.Logg
 	}
 }
 
-func (s *lessorService) AcceptReservation(reservationID uint, req *dtos.ApprovalReservationDTO) error {
-	err := s.lessorRepo.AcceptReservation(reservationID)
+func (s *lessorService) AcceptReservation(reservationID uint, req *dtos.ApprovalReservationDTO, lessorID uint) error {
+	err := s.lessorRepo.AcceptReservation(reservationID, lessorID)
 	if err != nil {
 		s.logger.Error("failed to accept reservation", zap.Uint("reservationID", reservationID), zap.Error(err))
 		return err
@@ -36,8 +36,8 @@ func (s *lessorService) AcceptReservation(reservationID uint, req *dtos.Approval
 	return nil
 }
 
-func (s *lessorService) DeclineReservation(reservationID uint, req *dtos.ApprovalReservationDTO) error {
-	err := s.lessorRepo.DeclineReservation(reservationID)
+func (s *lessorService) DeclineReservation(reservationID uint, req *dtos.ApprovalReservationDTO, lessorID uint) error {
+	err := s.lessorRepo.DeclineReservation(reservationID, lessorID)
 	if err != nil {
 		s.logger.Error("failed to decline reservation", zap.Uint("reservationID", reservationID), zap.Error(err))
 		return err

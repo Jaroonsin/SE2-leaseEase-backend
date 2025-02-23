@@ -1,6 +1,6 @@
 package repositories
 
 type LessorRepository interface {
-	AcceptReservation(reservationID uint) error
-	DeclineReservation(reservationID uint) error
+	AcceptReservation(reservationID uint, lessorID uint) error
+	DeclineReservation(reservationID uint, lessorID uint) error
 }

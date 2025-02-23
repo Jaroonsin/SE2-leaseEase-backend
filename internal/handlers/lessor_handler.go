@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 type lessorHandler struct {
@@ -37,13 +38,13 @@ func (h *lessorHandler) AcceptReservation(c *fiber.Ctx) error {
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid reservation ID")
 	}
-
+	lesseeID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
 	var req dtos.ApprovalReservationDTO
 	if err := c.BodyParser(&req); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
 	}
 
-	if err := h.lessorService.AcceptReservation(uint(reservationID), &req); err != nil {
+	if err := h.lessorService.AcceptReservation(uint(reservationID), &req, lesseeID); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Failed to accept reservation")
 	}
 
@@ -68,13 +69,13 @@ func (h *lessorHandler) DeclineReservation(c *fiber.Ctx) error {
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid reservation ID")
 	}
-
+	lesseeID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
 	var req dtos.ApprovalReservationDTO
 	if err := c.BodyParser(&req); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
 	}
 
-	if err := h.lessorService.DeclineReservation(uint(reservationID), &req); err != nil {
+	if err := h.lessorService.DeclineReservation(uint(reservationID), &req, lesseeID); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Failed to decline reservation")
 	}
 

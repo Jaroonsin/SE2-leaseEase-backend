@@ -17,12 +17,18 @@ func NewLessorRepository(db *gorm.DB) LessorRepository {
 	}
 }
 
-func (r *lessorRepository) AcceptReservation(reservationID uint) error {
+func (r *lessorRepository) AcceptReservation(reservationID uint, lessorID uint) error {
 
 	var reservation models.Reservation
-	result := r.db.First(&reservation, reservationID)
-	if result.Error != nil {
+	result := r.db.Preload("Property").First(&reservation, reservationID)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return gorm.ErrRecordNotFound
+	} else if result.Error != nil {
 		return result.Error
+	}
+
+	if reservation.Property.LessorID != lessorID {
+		return gorm.ErrRecordNotFound
 	}
 
 	if reservation.Status != "pending" {
@@ -37,12 +43,18 @@ func (r *lessorRepository) AcceptReservation(reservationID uint) error {
 	return nil
 }
 
-func (r *lessorRepository) DeclineReservation(reservationID uint) error {
+func (r *lessorRepository) DeclineReservation(reservationID uint, lessorID uint) error {
 
 	var reservation models.Reservation
-	result := r.db.First(&reservation, reservationID)
-	if result.Error != nil {
+	result := r.db.Preload("Property").First(&reservation, reservationID)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return gorm.ErrRecordNotFound
+	} else if result.Error != nil {
 		return result.Error
+	}
+
+	if reservation.Property.LessorID != lessorID {
+		return gorm.ErrRecordNotFound
 	}
 
 	if reservation.Status != "pending" {
