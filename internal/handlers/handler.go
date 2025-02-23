@@ -3,7 +3,7 @@ package handlers
 type Handler interface {
 	Property() *propertyHandler
 	Auth() *authHandler
-	Reservation() *reservationHandler
+	Lessee() *lesseeHandler
 	Review() *reviewHandler
 	Payment() *paymentHandler
 }

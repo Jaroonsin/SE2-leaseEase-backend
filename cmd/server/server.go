@@ -145,7 +145,7 @@ func (s *FiberHttpServer) initAuthRouter(version string, router fiber.Router, ht
 
 func (s *FiberHttpServer) initPropertyRouter(version string, router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
 	propertyRouter := router.Group("/properties", middleware.AuthRequired(cfg))
-	reservationRounter := router.Group("/reservations", middleware.AuthRequired(cfg))
+	lesseeRounter := router.Group("/lessee", middleware.AuthRequired(cfg))
 
 	if version == "v1" {
 		// property
@@ -165,10 +165,10 @@ func (s *FiberHttpServer) initPropertyRouter(version string, router fiber.Router
 		propertyRouter.Get("/search", httpHandler.Property().SearchProperty)
 		propertyRouter.Get("/autocomplete", httpHandler.Property().AutoComplete)
 
-		// reservation
-		reservationRounter.Post("/create", httpHandler.Reservation().CreateReservation)
-		reservationRounter.Put("/update/:id", httpHandler.Reservation().UpdateReservation)
-		reservationRounter.Delete("/delete/:id", httpHandler.Reservation().DeleteReservation)
+		// lessee
+		lesseeRounter.Post("/create", httpHandler.Lessee().CreateReservation)
+		lesseeRounter.Put("/update/:id", httpHandler.Lessee().UpdateReservation)
+		lesseeRounter.Delete("/delete/:id", httpHandler.Lessee().DeleteReservation)
 	}
 
 }

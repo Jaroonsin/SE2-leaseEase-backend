@@ -7,20 +7,20 @@ import (
 )
 
 type service struct {
-	PropertyService    PropertyService
-	AuthService        AuthService
-	ReservationService ReservationService
-	ReviewService      ReviewService
-	PaymentService     PaymentService
+	PropertyService PropertyService
+	AuthService     AuthService
+	LesseeService   LesseeService
+	ReviewService   ReviewService
+	PaymentService  PaymentService
 }
 
 func NewService(repo repositories.Repository, logger *zap.Logger) Service {
 	return &service{
-		PropertyService:    NewPropertyService(repo.Property(), logger),
-		AuthService:        NewAuthService(repo.Auth(), logger),
-		ReservationService: NewReservationService(repo.Reservation(), logger),
-		ReviewService:      NewReviewService(repo.Review(), logger),
-		PaymentService:     NewPaymentService(repo.Payment(), logger),
+		PropertyService: NewPropertyService(repo.Property(), logger),
+		AuthService:     NewAuthService(repo.Auth(), logger),
+		LesseeService:   NewLesseeService(repo.Lessee(), logger),
+		ReviewService:   NewReviewService(repo.Review(), logger),
+		PaymentService:  NewPaymentService(repo.Payment(), logger),
 	}
 }
 
@@ -32,8 +32,8 @@ func (s *service) Auth() AuthService {
 	return s.AuthService
 }
 
-func (s *service) Reservation() ReservationService {
-	return s.ReservationService
+func (s *service) Lessee() LesseeService {
+	return s.LesseeService
 }
 
 func (s *service) Review() ReviewService {

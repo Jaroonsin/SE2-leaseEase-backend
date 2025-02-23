@@ -11,13 +11,13 @@ import (
 	"gorm.io/gorm"
 )
 
-type reservationHandler struct {
-	reservationService services.ReservationService
+type lesseeHandler struct {
+	lesseeService services.LesseeService
 }
 
-func NewReservationHandler(reservationService services.ReservationService) *reservationHandler {
-	return &reservationHandler{
-		reservationService: reservationService,
+func NewLesseeHandler(lesseeService services.LesseeService) *lesseeHandler {
+	return &lesseeHandler{
+		lesseeService: lesseeService,
 	}
 }
 
@@ -31,8 +31,8 @@ func NewReservationHandler(reservationService services.ReservationService) *rese
 // @Success      201      {object}  utils.Response  "Reservation created successfully"
 // @Failure      400      {object}  utils.Response    "Failed to parse reservation body"
 // @Failure      500      {object}  utils.Response    "Internal server error"
-// @Router       /reservation/create [post]
-func (h *reservationHandler) CreateReservation(c *fiber.Ctx) error {
+// @Router       /lessee/create [post]
+func (h *lesseeHandler) CreateReservation(c *fiber.Ctx) error {
 	var req dtos.CreateReservation
 	if err := c.BodyParser(&req); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to parse reservation body")
@@ -40,7 +40,7 @@ func (h *reservationHandler) CreateReservation(c *fiber.Ctx) error {
 
 	lesseeID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
 
-	err := h.reservationService.CreateReservation(&req, lesseeID)
+	err := h.lesseeService.CreateReservation(&req, lesseeID)
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
@@ -59,8 +59,8 @@ func (h *reservationHandler) CreateReservation(c *fiber.Ctx) error {
 // @Failure      400      {object}  utils.Response    "Failed to parse reservation body or invalid reservation ID"
 // @Failure      404      {object}  utils.Response    "Reservation not found"
 // @Failure      500      {object}  utils.Response    "Internal server error"
-// @Router       /reservations/update/{id} [put]
-func (h *reservationHandler) UpdateReservation(c *fiber.Ctx) error {
+// @Router       /lessee/update/{id} [put]
+func (h *lesseeHandler) UpdateReservation(c *fiber.Ctx) error {
 	var req dtos.UpdateReservation
 	if err := c.BodyParser(&req); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to parse reservation body")
@@ -70,7 +70,7 @@ func (h *reservationHandler) UpdateReservation(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid reservation ID")
 	}
 
-	err = h.reservationService.UpdateReservation(&req, uint(reservationID))
+	err = h.lesseeService.UpdateReservation(&req, uint(reservationID))
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return utils.ErrorResponse(c, fiber.StatusNotFound, "Reservation not found")
@@ -91,14 +91,14 @@ func (h *reservationHandler) UpdateReservation(c *fiber.Ctx) error {
 // @Failure      400  {object}  utils.Response    "Invalid reservation ID"
 // @Failure      404  {object}  utils.Response    "Reservation not found"
 // @Failure      500  {object}  utils.Response    "Internal server error"
-// @Router       /reservations/delete/{id} [delete]
-func (h *reservationHandler) DeleteReservation(c *fiber.Ctx) error {
+// @Router       /lessee/delete/{id} [delete]
+func (h *lesseeHandler) DeleteReservation(c *fiber.Ctx) error {
 	reservationID, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid reservation ID")
 	}
 
-	err = h.reservationService.DeleteReservation(uint(reservationID))
+	err = h.lesseeService.DeleteReservation(uint(reservationID))
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return utils.ErrorResponse(c, fiber.StatusNotFound, "Reservation not found")
@@ -121,8 +121,8 @@ func (h *reservationHandler) DeleteReservation(c *fiber.Ctx) error {
 // @Failure      400  {object}  utils.Response    "Invalid reservation ID"
 // @Failure      404  {object}  utils.Response    "Reservation not found"
 // @Failure      500  {object}  utils.Response    "Internal server error"
-// @Router       /reservations/{id} [put]
-func (h *reservationHandler) ApproveReservation(c *fiber.Ctx) error {
+// @Router       /lessee/{id} [put]
+func (h *lesseeHandler) ApproveReservation(c *fiber.Ctx) error {
 	var req dtos.ApproveReservation
 	reservationID, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -133,7 +133,7 @@ func (h *reservationHandler) ApproveReservation(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to parse reservation body")
 	}
 
-	err = h.reservationService.ApproveReservation(req.Status, uint(reservationID))
+	err = h.lesseeService.ApproveReservation(req.Status, uint(reservationID))
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return utils.ErrorResponse(c, fiber.StatusNotFound, "Reservation not found")
