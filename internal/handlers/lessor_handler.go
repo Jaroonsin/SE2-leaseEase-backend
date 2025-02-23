@@ -26,7 +26,7 @@ func NewLessorHandler(lessorService services.LessorService) *lessorHandler {
 // @Accept json
 // @Produce json
 // @Param id path int true "Reservation ID"
-// @Param reservation body dtos.AcceptReservationDTO true "Reservation details"
+// @Param reservation body dtos.ApprovalReservationDTO true "Reservation details"
 // @Success 200 {object} utils.Response "Reservation accepted successfully"
 // @Failure 400 {object} utils.Response "Invalid reservation ID"
 // @Failure 400 {object} utils.Response "Invalid request body"
@@ -38,7 +38,7 @@ func (h *lessorHandler) AcceptReservation(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid reservation ID")
 	}
 
-	var req dtos.AcceptReservationDTO
+	var req dtos.ApprovalReservationDTO
 	if err := c.BodyParser(&req); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
 	}
@@ -57,8 +57,10 @@ func (h *lessorHandler) AcceptReservation(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param id path int true "Reservation ID"
+// @Param reservation body dtos.ApprovalReservationDTO true "Reservation details"
 // @Success 200 {object} utils.Response "Reservation declined successfully"
 // @Failure 400 {object} utils.Response "Invalid reservation ID"
+// @Failure 400 {object} utils.Response "Invalid request body"
 // @Failure 500 {object} utils.Response "Failed to decline reservation"
 // @Router /lessor/decline/{id} [post]
 func (h *lessorHandler) DeclineReservation(c *fiber.Ctx) error {
@@ -67,8 +69,12 @@ func (h *lessorHandler) DeclineReservation(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid reservation ID")
 	}
 
-	err = h.lessorService.DeclineReservation(uint(reservationID))
-	if err != nil {
+	var req dtos.ApprovalReservationDTO
+	if err := c.BodyParser(&req); err != nil {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
+	}
+
+	if err := h.lessorService.DeclineReservation(uint(reservationID), &req); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Failed to decline reservation")
 	}
 

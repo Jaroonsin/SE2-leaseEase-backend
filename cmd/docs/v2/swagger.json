@@ -573,7 +573,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.AcceptReservationDTO"
+                            "$ref": "#/definitions/dtos.ApprovalReservationDTO"
                         }
                     }
                 ],
@@ -619,6 +619,15 @@
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Reservation details",
+                        "name": "reservation",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ApprovalReservationDTO"
+                        }
                     }
                 ],
                 "responses": {
@@ -629,7 +638,7 @@
                         }
                     },
                     "400": {
-                        "description": "Invalid reservation ID",
+                        "description": "Invalid request body",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -1212,7 +1221,7 @@
         }
     },
     "definitions": {
-        "dtos.AcceptReservationDTO": {
+        "dtos.ApprovalReservationDTO": {
             "type": "object",
             "properties": {
                 "lesseeEmail": {

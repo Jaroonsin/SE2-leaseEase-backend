@@ -579,7 +579,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.AcceptReservationDTO"
+                            "$ref": "#/definitions/dtos.ApprovalReservationDTO"
                         }
                     }
                 ],
@@ -625,6 +625,15 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Reservation details",
+                        "name": "reservation",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ApprovalReservationDTO"
+                        }
                     }
                 ],
                 "responses": {
@@ -635,7 +644,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Invalid reservation ID",
+                        "description": "Invalid request body",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -1218,7 +1227,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dtos.AcceptReservationDTO": {
+        "dtos.ApprovalReservationDTO": {
             "type": "object",
             "properties": {
                 "lesseeEmail": {

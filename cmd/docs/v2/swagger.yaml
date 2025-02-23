@@ -1,6 +1,6 @@
 basePath: /
 definitions:
-  dtos.AcceptReservationDTO:
+  dtos.ApprovalReservationDTO:
     properties:
       lesseeEmail:
         example: lessee@example.com
@@ -598,7 +598,7 @@ paths:
         name: reservation
         required: true
         schema:
-          $ref: '#/definitions/dtos.AcceptReservationDTO'
+          $ref: '#/definitions/dtos.ApprovalReservationDTO'
       produces:
       - application/json
       responses:
@@ -628,6 +628,12 @@ paths:
         name: id
         required: true
         type: integer
+      - description: Reservation details
+        in: body
+        name: reservation
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ApprovalReservationDTO'
       produces:
       - application/json
       responses:
@@ -636,7 +642,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Response'
         "400":
-          description: Invalid reservation ID
+          description: Invalid request body
           schema:
             $ref: '#/definitions/utils.Response'
         "500":
