@@ -6,4 +6,5 @@ type Handler interface {
 	Lessee() *lesseeHandler
 	Review() *reviewHandler
 	Payment() *paymentHandler
+	Lessor() *lessorHandler
 }

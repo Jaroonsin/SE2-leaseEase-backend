@@ -407,7 +407,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Reservation"
+                    "Lessee"
                 ],
                 "summary": "Create a New Lease Reservation",
                 "parameters": [
@@ -453,7 +453,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Reservation"
+                    "Lessee"
                 ],
                 "summary": "Delete a Lease Reservation",
                 "parameters": [
@@ -503,7 +503,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Reservation"
+                    "Lessee"
                 ],
                 "summary": "Update an Existing Lease Reservation",
                 "parameters": [
@@ -552,9 +552,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/lessee/{id}": {
-            "put": {
-                "description": "Approves a lease reservation using the reservation ID provided in the URL.",
+        "/lessor/accept/{id}": {
+            "post": {
+                "description": "Accept a reservation by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -562,9 +562,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Reservation"
+                    "Lessor"
                 ],
-                "summary": "Approve a Lease Reservation",
+                "summary": "Accept a reservation",
                 "parameters": [
                     {
                         "type": "integer",
@@ -572,20 +572,11 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "description": "Reservation Status",
-                        "name": "reservation",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dtos.ApproveReservation"
-                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Reservation approved successfully",
+                        "description": "Reservation accepted successfully",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -596,14 +587,52 @@ const docTemplate = `{
                             "$ref": "#/definitions/utils.Response"
                         }
                     },
-                    "404": {
-                        "description": "Reservation not found",
+                    "500": {
+                        "description": "Failed to accept reservation",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/lessor/decline/{id}": {
+            "post": {
+                "description": "Decline a reservation by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lessor"
+                ],
+                "summary": "Decline a reservation",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Reservation ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Reservation declined successfully",
+                        "schema": {
+                            "$ref": "#/definitions/utils.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid reservation ID",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
                     },
                     "500": {
-                        "description": "Internal server error",
+                        "description": "Failed to decline reservation",
                         "schema": {
                             "$ref": "#/definitions/utils.Response"
                         }
@@ -1180,15 +1209,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dtos.ApproveReservation": {
-            "type": "object",
-            "properties": {
-                "status": {
-                    "type": "string",
-                    "example": "approved"
-                }
-            }
-        },
         "dtos.CreateReservation": {
             "type": "object",
             "properties": {

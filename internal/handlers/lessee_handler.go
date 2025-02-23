@@ -24,7 +24,7 @@ func NewLesseeHandler(lesseeService services.LesseeService) *lesseeHandler {
 // CreateReservation godoc
 // @Summary      Create a New Lease Reservation
 // @Description  Parses the reservation body and creates a new lease reservation using the lessee ID from the JWT token.
-// @Tags         Reservation
+// @Tags         Lessee
 // @Accept       json
 // @Produce      json
 // @Param        reservation  body      dtos.CreateReservation  true  "Lease Reservation Data"
@@ -50,7 +50,7 @@ func (h *lesseeHandler) CreateReservation(c *fiber.Ctx) error {
 // UpdateReservation godoc
 // @Summary      Update an Existing Lease Reservation
 // @Description  Parses the reservation body and updates an existing lease reservation identified by its ID.
-// @Tags         Reservation
+// @Tags         Lessee
 // @Accept       json
 // @Produce      json
 // @Param        id       path      int                 true  "Reservation ID"
@@ -83,7 +83,7 @@ func (h *lesseeHandler) UpdateReservation(c *fiber.Ctx) error {
 // DeleteReservation godoc
 // @Summary      Delete a Lease Reservation
 // @Description  Deletes a lease reservation using the reservation ID provided in the URL.
-// @Tags         Reservation
+// @Tags         Lessee
 // @Accept       json
 // @Produce      json
 // @Param        id   path      int  true  "Reservation ID"
@@ -108,25 +108,3 @@ func (h *lesseeHandler) DeleteReservation(c *fiber.Ctx) error {
 
 	return utils.SuccessResponse(c, fiber.StatusOK, "Reservation deleted successfully", nil)
 }
-
-// func (h *lesseeHandler) ApproveReservation(c *fiber.Ctx) error {
-// 	var req dtos.ApproveReservation
-// 	reservationID, err := strconv.Atoi(c.Params("id"))
-// 	if err != nil {
-// 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid reservation ID")
-// 	}
-
-// 	if err := c.BodyParser(&req); err != nil {
-// 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to parse reservation body")
-// 	}
-
-// 	err = h.lesseeService.ApproveReservation(req.Status, uint(reservationID))
-// 	if err != nil {
-// 		if err == gorm.ErrRecordNotFound {
-// 			return utils.ErrorResponse(c, fiber.StatusNotFound, "Reservation not found")
-// 		}
-// 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
-// 	}
-
-// 	return utils.SuccessResponse(c, fiber.StatusOK, "Reservation approved successfully", nil)
-// }

@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"LeaseEase/internal/models"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -24,8 +25,11 @@ func (r *lessorRepository) AcceptReservation(reservationID uint) error {
 		return result.Error
 	}
 
+	if reservation.Status != "pending" {
+		return errors.New("reservation can only be accepted if it is pending")
+	}
+
 	reservation.Status = "waiting"
-	//add some logics
 	if err := r.db.Save(&reservation).Error; err != nil {
 		return err
 	}
@@ -39,6 +43,10 @@ func (r *lessorRepository) DeclineReservation(reservationID uint) error {
 	result := r.db.First(&reservation, reservationID)
 	if result.Error != nil {
 		return result.Error
+	}
+
+	if reservation.Status != "pending" {
+		return errors.New("reservation can only be declined if it is pending")
 	}
 
 	reservation.Status = "cancel"
