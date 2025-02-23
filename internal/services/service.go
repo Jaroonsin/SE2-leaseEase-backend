@@ -6,4 +6,5 @@ type Service interface {
 	Lessee() LesseeService
 	Review() ReviewService
 	Payment() PaymentService
+	Lessor() LessorService
 }

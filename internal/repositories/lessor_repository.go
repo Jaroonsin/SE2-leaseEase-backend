@@ -25,6 +25,7 @@ func (r *lessorRepository) AcceptReservation(reservationID uint) error {
 	}
 
 	reservation.Status = "waiting"
+	//add some logics
 	if err := r.db.Save(&reservation).Error; err != nil {
 		return err
 	}
