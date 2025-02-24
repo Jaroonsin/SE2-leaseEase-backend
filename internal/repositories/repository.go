@@ -4,7 +4,8 @@ type Repository interface {
 	User() UserRepository
 	Property() PropertyRepository
 	Auth() AuthRepository
-	Reservation() ReservationRepository
+	Lessee() LesseeRepository
 	Review() ReviewRepository
 	Payment() PaymentRepository
+	Lessor() LessorRepository
 }

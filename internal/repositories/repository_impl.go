@@ -7,22 +7,26 @@ import (
 )
 
 type repository struct {
-	UserRepository        UserRepository
-	PropertyRepository    PropertyRepository
-	AuthRepository        AuthRepository
-	ReservationRepository ReservationRepository
-	ReviewRepository      ReviewRepository
-	PaymentRepository     PaymentRepository
+	UserRepository     UserRepository
+	PropertyRepository PropertyRepository
+	AuthRepository     AuthRepository
+	LesseeRepository   LesseeRepository
+	ReviewRepository   ReviewRepository
+	PaymentRepository  PaymentRepository
+	LessorRepository   LessorRepository
 }
+
+// Lessor implements Repository.
 
 func NewRepository(cfg *config.Config, db *gorm.DB) Repository {
 	return &repository{
-		UserRepository:        NewUserRepository(db),
-		PropertyRepository:    NewPropertyRepository(db),
-		AuthRepository:        NewAuthRepository(db),
-		ReservationRepository: NewReservationRepository(db),
-		ReviewRepository:      NewReviewRepository(db),
-		PaymentRepository:     NewPaymentRepository(db),
+		UserRepository:     NewUserRepository(db),
+		PropertyRepository: NewPropertyRepository(db),
+		AuthRepository:     NewAuthRepository(db),
+		LesseeRepository:   NewLesseeRepository(db),
+		ReviewRepository:   NewReviewRepository(db),
+		PaymentRepository:  NewPaymentRepository(db),
+		LessorRepository:   NewLessorRepository(db),
 	}
 }
 
@@ -38,8 +42,12 @@ func (r *repository) Auth() AuthRepository {
 	return r.AuthRepository
 }
 
-func (r *repository) Reservation() ReservationRepository {
-	return r.ReservationRepository
+func (r *repository) Lessee() LesseeRepository {
+	return r.LesseeRepository
+}
+
+func (r *repository) Lessor() LessorRepository {
+	return r.LessorRepository
 }
 
 func (r *repository) Review() ReviewRepository {

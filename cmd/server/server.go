@@ -95,6 +95,8 @@ func (s *FiberHttpServer) Start() {
 		s.initPropertyRouter(v, router, s.handlers, s.cfg)
 		s.initPropertyReviewRouter(v, router, s.handlers, s.cfg)
 		s.initPaymentRouter(v, router, s.handlers, s.cfg)
+		s.initLesseeRouter(v, router, s.handlers, s.cfg)
+		s.initLessorRouter(v, router, s.handlers, s.cfg)
 	}
 
 	// Setup signal capturing for graceful shutdown
@@ -145,7 +147,6 @@ func (s *FiberHttpServer) initAuthRouter(version string, router fiber.Router, ht
 
 func (s *FiberHttpServer) initPropertyRouter(version string, router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
 	propertyRouter := router.Group("/properties", middleware.AuthRequired(cfg))
-	reservationRounter := router.Group("/reservations", middleware.AuthRequired(cfg))
 
 	if version == "v1" {
 		// property
@@ -164,13 +165,28 @@ func (s *FiberHttpServer) initPropertyRouter(version string, router fiber.Router
 		propertyRouter.Get("/get/:id", httpHandler.Property().GetPropertyByID)
 		propertyRouter.Get("/search", httpHandler.Property().SearchProperty)
 		propertyRouter.Get("/autocomplete", httpHandler.Property().AutoComplete)
-
-		// reservation
-		reservationRounter.Post("/create", httpHandler.Reservation().CreateReservation)
-		reservationRounter.Put("/update/:id", httpHandler.Reservation().UpdateReservation)
-		reservationRounter.Delete("/delete/:id", httpHandler.Reservation().DeleteReservation)
 	}
+}
 
+func (s *FiberHttpServer) initLesseeRouter(version string, router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
+	lesseeRouter := router.Group("/lessee", middleware.AuthRequired(cfg))
+
+	if version == "v2" {
+		// lessee
+		lesseeRouter.Post("/create", httpHandler.Lessee().CreateReservation)
+		lesseeRouter.Put("/update/:id", httpHandler.Lessee().UpdateReservation)
+		lesseeRouter.Delete("/delete/:id", httpHandler.Lessee().DeleteReservation)
+	}
+}
+
+func (s *FiberHttpServer) initLessorRouter(version string, router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
+	lessorRouter := router.Group("/lessor", middleware.AuthRequired(cfg))
+
+	if version == "v2" {
+		// lessor
+		lessorRouter.Post("/accept/:id", httpHandler.Lessor().AcceptReservation)
+		lessorRouter.Post("/decline/:id", httpHandler.Lessor().DeclineReservation)
+	}
 }
 
 func (s *FiberHttpServer) initPropertyReviewRouter(version string, router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {

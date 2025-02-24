@@ -5,20 +5,24 @@ import (
 )
 
 type handler struct {
-	PropertyHandler    *propertyHandler
-	AuthHandler        *authHandler
-	ReservationHandler *reservationHandler
-	ReviewHandler      *reviewHandler
-	PaymentHandler     *paymentHandler
+	PropertyHandler *propertyHandler
+	AuthHandler     *authHandler
+	LesseeHandler   *lesseeHandler
+	ReviewHandler   *reviewHandler
+	PaymentHandler  *paymentHandler
+	lessorHandler   *lessorHandler
 }
+
+// LEssor implements Handler.
 
 func NewHandler(service services.Service) Handler {
 	return &handler{
-		PropertyHandler:    NewPropertyHandler(service.Property()),
-		AuthHandler:        NewAuthHandler(service.Auth()),
-		ReservationHandler: NewReservationHandler(service.Reservation()),
-		ReviewHandler:      NewReviewHandler(service.Review()),
-		PaymentHandler:     NewPaymentHandler(service.Payment()),
+		PropertyHandler: NewPropertyHandler(service.Property()),
+		AuthHandler:     NewAuthHandler(service.Auth()),
+		LesseeHandler:   NewLesseeHandler(service.Lessee()),
+		ReviewHandler:   NewReviewHandler(service.Review()),
+		PaymentHandler:  NewPaymentHandler(service.Payment()),
+		lessorHandler:   NewLessorHandler(service.Lessor()),
 	}
 }
 
@@ -30,8 +34,8 @@ func (h *handler) Property() *propertyHandler {
 	return h.PropertyHandler
 }
 
-func (h *handler) Reservation() *reservationHandler {
-	return h.ReservationHandler
+func (h *handler) Lessee() *lesseeHandler {
+	return h.LesseeHandler
 }
 
 func (h *handler) Review() *reviewHandler {
@@ -40,4 +44,7 @@ func (h *handler) Review() *reviewHandler {
 
 func (h *handler) Payment() *paymentHandler {
 	return h.PaymentHandler
+}
+func (h *handler) Lessor() *lessorHandler {
+	return h.lessorHandler
 }
