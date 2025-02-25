@@ -27,6 +27,21 @@ definitions:
         example: Could you provide more details about the lease duration?
         type: string
     type: object
+  dtos.CreateReviewDTO:
+    properties:
+      property_id:
+        type: integer
+      rating:
+        maximum: 5
+        minimum: 0
+        type: integer
+      review_message:
+        type: string
+    required:
+    - property_id
+    - rating
+    - review_message
+    type: object
   dtos.GetPropertyDTO:
     description: GetPropertyDTO represents the details of a property along with identifier
       information.
@@ -77,8 +92,8 @@ definitions:
         type: array
       size:
         description: property's size
-        example: 3500 sqft
-        type: string
+        example: 3500
+        type: number
     type: object
   dtos.LoginDTO:
     description: LoginDTO represents a request for user login.
@@ -127,8 +142,8 @@ definitions:
         type: number
       size:
         description: property size
-        example: 3500 sqft
-        type: string
+        example: 3500
+        type: number
       status:
         description: availability status
         example: available
@@ -195,6 +210,18 @@ definitions:
       question:
         example: Is there any flexibility in the lease terms?
         type: string
+    type: object
+  dtos.UpdateReviewDTO:
+    properties:
+      rating:
+        maximum: 5
+        minimum: 0
+        type: integer
+      review_message:
+        type: string
+    required:
+    - rating
+    - review_message
     type: object
   dtos.VerifyOTPDTO:
     properties:
@@ -916,6 +943,10 @@ paths:
         in: query
         name: maxsize
         type: number
+      - description: Minimum rating
+        in: query
+        name: rating
+        type: number
       - description: Order field (price or size)
         in: query
         name: sortby
@@ -1010,4 +1041,156 @@ paths:
       summary: Update a property
       tags:
       - Property
+  /propertyReview/create/:
+    post:
+      consumes:
+      - application/json
+      description: Create a new review for a property by the authenticated lessee.
+      parameters:
+      - description: Review Data
+        in: body
+        name: review
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateReviewDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Review created successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new review
+      tags:
+      - Review
+  /propertyReview/delete/{id}:
+    delete:
+      description: Delete a review by its ID for the authenticated lessee.
+      parameters:
+      - description: Review ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Review deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid review ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a review
+      tags:
+      - Review
+  /propertyReview/get/{propertyID}:
+    get:
+      description: Get all reviews for a specific property. Supports pagination through
+        query parameters.
+      parameters:
+      - description: Property ID
+        in: path
+        name: propertyID
+        required: true
+        type: integer
+      - description: Page number for pagination
+        in: query
+        name: page
+        type: integer
+      - description: Page size for pagination
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reviews retrieved successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid property ID or pagination parameters
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Retrieve all reviews for a property
+      tags:
+      - Review
+  /propertyReview/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update a review by its ID for the authenticated lessee.
+      parameters:
+      - description: Review ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated Review Data
+        in: body
+        name: review
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateReviewDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Review updated successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid review ID or body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update an existing review
+      tags:
+      - Review
 swagger: "2.0"

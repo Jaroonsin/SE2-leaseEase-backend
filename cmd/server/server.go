@@ -11,14 +11,12 @@ import (
 	"syscall"
 	"time"
 
-	_ "LeaseEase/cmd/docs/v2"
+	// _ "LeaseEase/cmd/docs/v2"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/pakornv/scalar-go"
 	"go.uber.org/zap"
-
-	swagger "github.com/arsmn/fiber-swagger/v2"
 )
 
 type FiberHttpServer struct {
@@ -73,8 +71,6 @@ func (s *FiberHttpServer) initHttpServer(version string) fiber.Router {
 		}
 		return c.Type("html").SendString(htmlContent)
 	})
-
-	router.Get("/swagger/*", swagger.HandlerDefault)
 
 	// healthcheck
 	router.Get("/", func(c *fiber.Ctx) error {

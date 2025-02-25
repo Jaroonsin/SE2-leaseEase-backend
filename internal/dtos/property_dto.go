@@ -4,7 +4,7 @@ package dtos
 type PropertyDTO struct {
 	Name               string  `json:"name" example:"Sunset Villa"`                      // name of the property
 	Location           string  `json:"location" example:"California"`                    // property location
-	Size               string  `json:"size" example:"3500 sqft"`                         // property size
+	Size               float64 `json:"size" example:"3500.0"`                            // property size
 	Price              float64 `json:"price" example:"1200000.50"`                       // property price
 	AvailabilityStatus string  `json:"status" example:"available"`                       // availability status
 	Details            string  `json:"details" example:"Spacious villa with a sea view"` // Property details
@@ -16,7 +16,7 @@ type GetPropertyDTO struct {
 	LessorID           uint    `json:"lessor_id" example:"10"`                  // Lessor ID
 	Name               string  `json:"name" example:"Sunset Villa"`             // name of the property
 	Location           string  `json:"location" example:"California"`           // property's location
-	Size               string  `json:"size" example:"3500 sqft"`                // property's size
+	Size               float64 `json:"size" example:"3500.0"`                   // property's size
 	Price              float64 `json:"price" example:"1200000.50"`              // property's price
 	AvailabilityStatus string  `json:"availability_status" example:"available"` // property's availability status
 	Date               string  `json:"date" example:"2024-02-15T10:00:00Z"`     // Property creation date

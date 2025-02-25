@@ -26,6 +26,7 @@ func (r *reviewRepository) CreateReview(review *models.Review, propertyReview *m
 
 		// Insert PropertyReview
 		propertyReview.ReviewID = review.ID
+		print(review.ID)
 		if err := tx.Create(propertyReview).Error; err != nil {
 			return err
 		}

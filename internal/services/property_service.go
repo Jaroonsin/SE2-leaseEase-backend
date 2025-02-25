@@ -109,8 +109,7 @@ func (s *propertyService) GetAllProperty(lessorID uint, page, pageSize int) (*dt
 		if err != nil {
 			logger.Error("Failed to fetch paginated properties", zap.Int("page", page), zap.Int("pageSize", pageSize), zap.Error(err))
 			return nil, err
-		}
-	}
+		} }
 
 	ratings, reviewCounts, reviewIDsList, err := s.propertyRepo.GetPropertyReviewsData(properties)
 	if err != nil {

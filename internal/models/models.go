@@ -23,7 +23,9 @@ type Property struct {
 	Name               string  `gorm:"size:100;not null"` // name of the property
 	LessorID           uint    `gorm:"not null"`
 	Location           string  `gorm:"size:255;not null"`
-	Size               string  `gorm:"size:50;not null"`
+	Size               float64 `gorm:"size:50;not null"`
+	AvgRating          float64 `gorm:"default:0"`
+	ReviewCount        int     `gorm:"default:0"`
 	Price              float64 `gorm:"not null"`
 	AvailabilityStatus string  `gorm:"size:50;not null"`
 	Details            string  `gorm:"type:text;not null"`

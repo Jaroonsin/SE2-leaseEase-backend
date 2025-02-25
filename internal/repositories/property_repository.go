@@ -169,18 +169,24 @@ func (r *propertyRepository) SearchProperty(query map[string]string) ([]models.P
 	}
 
 	// Filter by minimum size if provided.
-	// if minStr, ok := query["minsize"]; ok && minStr != "" {
-	// 	if minVal, err := strconv.ParseFloat(minStr, 64); err == nil {
-	// 		dbQuery = dbQuery.Where("size >= ?", minVal)
-	// 	}
-	// }
+	if minStr, ok := query["minsize"]; ok && minStr != "" {
+		if minVal, err := strconv.ParseFloat(minStr, 64); err == nil {
+			dbQuery = dbQuery.Where("size >= ?", minVal)
+		}
+	}
 
-	// // Filter by maximum size if provided.
-	// if maxStr, ok := query["maxsize"]; ok && maxStr != "" {
-	// 	if maxVal, err := strconv.ParseFloat(maxStr, 64); err == nil {
-	// 		dbQuery = dbQuery.Where("size <= ?", maxVal)
-	// 	}
-	// }
+	// Filter by maximum size if provided.
+	if maxStr, ok := query["maxsize"]; ok && maxStr != "" {
+		if maxVal, err := strconv.ParseFloat(maxStr, 64); err == nil {
+			dbQuery = dbQuery.Where("size <= ?", maxVal)
+		}
+	}
+
+	if minStr, ok := query["rating"]; ok && minStr != "" {
+		if minVal, err := strconv.ParseFloat(minStr, 64); err == nil {
+			dbQuery = dbQuery.Where("avg_rating >= ?", minVal)
+		}
+	}
 
 	// Filter by location if provided.
 	if location, ok := query["location"]; ok && location != "" {

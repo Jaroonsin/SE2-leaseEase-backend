@@ -42,14 +42,14 @@ func (r *authRepository) GetUserByEmail(email string) (*models.User, error) {
 	return &user, err
 }
 
-// Save บันทึกบัญชีชั่วคราว
+// Save Temp User
 func (r *authRepository) SaveTempUser(user models.TempUser) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.userStore[user.User.Email] = user
 }
 
-// FindByEmail ค้นหาบัญชีชั่วคราว
+// FindByEmail Temp User
 func (r *authRepository) FindByEmailTempUser(email string) (models.TempUser, bool) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -57,21 +57,21 @@ func (r *authRepository) FindByEmailTempUser(email string) (models.TempUser, boo
 	return user, exists
 }
 
-// Delete ลบบัญชีชั่วคราว
+// Delete Temp User
 func (r *authRepository) DeleteTempUser(email string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	delete(r.userStore, email)
 }
 
-// Save บันทึก OTP
+// Save OTP
 func (r *authRepository) SaveOTP(otp models.OTP) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.otpStore[otp.Email] = otp
 }
 
-// FindByEmail ค้นหา OTP จากอีเมล
+// FindByEmail OTP
 func (r *authRepository) FindByEmailOTP(email string) (models.OTP, bool) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -79,14 +79,14 @@ func (r *authRepository) FindByEmailOTP(email string) (models.OTP, bool) {
 	return otp, exists
 }
 
-// Delete ลบ OTP หลังจากใช้
+// Delete OTP after used
 func (r *authRepository) DeleteOTP(email string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	delete(r.otpStore, email)
 }
 
-// CleanupExpiredOTP ลบ OTP ที่หมดอายุ
+// CleanupExpiredOTP Delete expired OTP
 func (r *authRepository) cleanupExpiredOTP() {
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -98,7 +98,7 @@ func (r *authRepository) cleanupExpiredOTP() {
 	}
 }
 
-// CleanupExpiredUsers ลบข้อมูลที่หมดอายุ
+// CleanupExpiredUsers Delete expired data
 func (r *authRepository) cleanupExpiredUsers() {
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -110,7 +110,7 @@ func (r *authRepository) cleanupExpiredUsers() {
 	}
 }
 
-// cleanupRoutine Goroutine สำหรับล้าง OTP ทุก 10 วินาที
+// cleanupRoutine Goroutine to clean OTP every 10 seconds
 func (r *authRepository) cleanupRoutine() {
 	ticker := time.NewTicker(10 * time.Second)
 	defer ticker.Stop()

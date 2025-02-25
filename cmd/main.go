@@ -11,8 +11,6 @@ import (
 	"log"
 
 	"github.com/joho/godotenv"
-
-	_ "LeaseEase/cmd/docs/v2"
 )
 
 // @title LeaseEase API

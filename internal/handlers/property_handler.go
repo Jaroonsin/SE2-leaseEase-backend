@@ -207,6 +207,7 @@ func (h *propertyHandler) GetPropertyByID(c *fiber.Ctx) error {
 // @Param maxprice query number false "Maximum price"
 // @Param minsize query number false "Minimum size"
 // @Param maxsize query number false "Maximum size"
+// @Param rating query number false "Minimum rating"
 // @Param sortby query string false "Order field (price or size)"
 // @Param order query string false "Order direction (asc or desc)"
 // @Param availability query bool false "Availability status"
