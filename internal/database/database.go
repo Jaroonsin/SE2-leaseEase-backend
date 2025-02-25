@@ -24,7 +24,12 @@ func ConnectDB(cfg *config.Config) (*gorm.DB, error) {
 
 	log.Println("Database connection successfully.")
 
+	// Run migrations
 	RunMigrations(db)
+	// Setup PostgreSQL function
+	SetupFunctions(db)
+	// Setup PostgreSQL trigger
+	SetupTriggers(db)
 
 	return db, nil
 }

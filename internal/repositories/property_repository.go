@@ -154,6 +154,9 @@ func (r *propertyRepository) SearchProperty(query map[string]string) ([]models.P
 	var properties []models.Property
 	dbQuery := r.db.Model(&models.Property{})
 
+	// Filter by availability status.
+	dbQuery = dbQuery.Where("availability_status = ?", "available")
+
 	// Filter by minimum price if provided.
 	if minStr, ok := query["minprice"]; ok && minStr != "" {
 		if minVal, err := strconv.ParseFloat(minStr, 64); err == nil {
@@ -200,11 +203,6 @@ func (r *propertyRepository) SearchProperty(query map[string]string) ([]models.P
 		dbQuery = dbQuery.Where("name ILIKE ?", keyword)
 	}
 
-	// Filter by availability status if provided.
-	if availabilityStatus, ok := query["availability"]; ok && availabilityStatus != "" {
-		dbQuery = dbQuery.Where("availability_status = ?", availabilityStatus)
-	}
-
 	// Sort by price or size if provided.
 	if sortBy, ok := query["sortby"]; ok && sortBy != "" {
 		order := "ASC"
@@ -243,7 +241,7 @@ func (r *propertyRepository) SearchProperty(query map[string]string) ([]models.P
 
 func (r *propertyRepository) AutoComplete(query string) ([]string, error) {
 	var properties []models.Property
-	err := r.db.Where("name ILIKE ?", query+"%").Find(&properties).Error
+	err := r.db.Where("name ILIKE ?", query+"%").Limit(10).Find(&properties).Error
 	if err != nil {
 		return nil, err
 	}

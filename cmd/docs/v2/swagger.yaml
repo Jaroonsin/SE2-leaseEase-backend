@@ -199,6 +199,35 @@ definitions:
     required:
     - email
     type: object
+  dtos.SearchPropertyDTO:
+    description: SearchPropertyDTO represents the details of a property along with
+      identifier information.
+    properties:
+      id:
+        description: Property ID
+        example: 1
+        type: integer
+      location:
+        description: property's location
+        example: California
+        type: string
+      name:
+        description: name of the property
+        example: Sunset Villa
+        type: string
+      price:
+        description: property's price
+        example: 1.2000005e+06
+        type: number
+      rating:
+        description: Average rating
+        example: 4.5
+        type: number
+      size:
+        description: property's size
+        example: 3500
+        type: number
+    type: object
   dtos.UpdateReservationDTO:
     properties:
       proposedMessage:
@@ -971,7 +1000,7 @@ paths:
               - properties:
                   data:
                     items:
-                      $ref: '#/definitions/dtos.GetPropertyDTO'
+                      $ref: '#/definitions/dtos.SearchPropertyDTO'
                     type: array
                 type: object
             type: array
