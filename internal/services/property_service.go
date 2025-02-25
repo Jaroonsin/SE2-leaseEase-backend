@@ -109,7 +109,8 @@ func (s *propertyService) GetAllProperty(lessorID uint, page, pageSize int) (*dt
 		if err != nil {
 			logger.Error("Failed to fetch paginated properties", zap.Int("page", page), zap.Int("pageSize", pageSize), zap.Error(err))
 			return nil, err
-		} }
+		}
+	}
 
 	ratings, reviewCounts, reviewIDsList, err := s.propertyRepo.GetPropertyReviewsData(properties)
 	if err != nil {
@@ -183,24 +184,23 @@ func (s *propertyService) GetPropertyByID(propertyID uint) (*dtos.GetPropertyDTO
 	return propertyDTO, nil
 }
 
-func (s *propertyService) SearchProperty(query map[string]string) ([]dtos.GetPropertyDTO, error) {
+func (s *propertyService) SearchProperty(query map[string]string) ([]dtos.SearchPropertyDTO, error) {
 	properties, err := s.propertyRepo.SearchProperty(query)
 	if err != nil {
 		return nil, err
 	}
 
 	// Convert to DTO
-	var propertyDTOs []dtos.GetPropertyDTO
+	var propertyDTOs []dtos.SearchPropertyDTO
 	for _, property := range properties {
-		propertyDTO := dtos.GetPropertyDTO{
-			Name:               property.Name,
-			PropertyID:         property.ID,
-			LessorID:           property.LessorID,
-			Location:           property.Location,
-			Size:               property.Size,
-			Price:              property.Price,
-			AvailabilityStatus: property.AvailabilityStatus,
-			Details:            property.Details,
+		propertyDTO := dtos.SearchPropertyDTO{
+			Name:       property.Name,
+			PropertyID: property.ID,
+			Location:   property.Location,
+			Size:       property.Size,
+			Price:      property.Price,
+			ReviewCount:property.ReviewCount,
+			Rating:     property.AvgRating,
 		}
 		propertyDTOs = append(propertyDTOs, propertyDTO)
 	}

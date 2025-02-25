@@ -34,3 +34,14 @@ type GetPropertyPaginatedDTO struct {
 	CurrentPage  int              `json:"current_page"`  // The current page number being retrieved
 	PageSize     int              `json:"page_size"`     // Number of properties displayed per page
 }
+
+// @Description SearchPropertyDTO represents the details of a property along with identifier information.
+type SearchPropertyDTO struct {
+	PropertyID  uint    `json:"id" example:"1"`                // Property ID
+	Name        string  `json:"name" example:"Sunset Villa"`   // name of the property
+	Location    string  `json:"location" example:"California"` // property's location
+	Size        float64 `json:"size" example:"3500.0"`         // property's size
+	Price       float64 `json:"price" example:"1200000.50"`    // property's price
+	Rating      float64 `json:"rating" example:"4.5"`          // Average rating
+	ReviewCount int     `json:"review_count" example:"12"`     // Number of reviews
+}
