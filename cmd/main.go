@@ -39,8 +39,14 @@ func main() {
 		log.Printf("Failed to connect to database: %v", err)
 	}
 
+	// Initialize S3 client
+	s3Client, err := database.InitS3Client()
+	if err != nil {
+		log.Printf("Failed to initialize S3 client: %v", err)
+	}
+
 	// Initialize repositories, services, and handlers
-	repositories := repositories.NewRepository(cfg, db)
+	repositories := repositories.NewRepository(cfg, db, s3Client)
 	services := services.NewService(repositories, logger)
 	handlers := handlers.NewHandler(services)
 
