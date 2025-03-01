@@ -1,68 +1,36 @@
-package database
+package storage
 
 import (
-	"LeaseEase/config"
 	"context"
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	awsconfig "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
-func ConnectDB(cfg *config.Config) (*gorm.DB, error) {
-	var dsn string
-
-	if cfg.DBURL != "" {
-		dsn = cfg.DBURL
-	} else {
-		dsn = fmt.Sprintf(
-			"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Bangkok",
-			cfg.DBHost, cfg.DBPort, cfg.DBUser, cfg.DBPassword, cfg.DBName,
-		)
-	}
-
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-
-	if err != nil {
-		return nil, err
-	}
-
-	log.Println("Database connection successfully.")
-
-	// Run migrations
-	RunMigrations(db)
-	// Setup PostgreSQL function
-	SetupFunctions(db)
-	// Setup PostgreSQL trigger
-	SetupTriggers(db)
-
-	return db, nil
-}
-
 // InitS3Client initializes an S3-compatible client
-func InitS3Client() (*s3.Client, error) {
+func InitS3Client() (*s3.Client, string, error) {
 	provider := os.Getenv("S3_PROVIDER")
 	if provider == "" {
 		provider = "supabase"
 	}
 
-	var endpoint, region, accessKey, secretKey string
+	var endpoint, region, accessKey, secretKey, bucketName string
 
 	if provider == "supabase" {
 		endpoint = os.Getenv("SUPABASE_URL")
 		region = os.Getenv("SUPABASE_REGION")
 		accessKey = os.Getenv("SUPABASE_ACCESS_KEY")
 		secretKey = os.Getenv("SUPABASE_SECRET_KEY")
+		bucketName = "lessor-images"
 	} else {
 		region = os.Getenv("AWS_REGION")
 		accessKey = os.Getenv("AWS_ACCESS_KEY_ID")
 		secretKey = os.Getenv("AWS_SECRET_ACCESS_KEY")
+		bucketName = "lessor-images"
 	}
 
 	if accessKey == "" || secretKey == "" {
@@ -72,9 +40,9 @@ func InitS3Client() (*s3.Client, error) {
 	var cfg aws.Config
 	var err error
 
-	cfg, err = awsconfig.LoadDefaultConfig(context.TODO(),
-		awsconfig.WithRegion(region),
-		awsconfig.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")),
+	cfg, err = config.LoadDefaultConfig(context.TODO(),
+		config.WithRegion(region),
+		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")),
 	)
 
 	if err != nil {
@@ -87,9 +55,9 @@ func InitS3Client() (*s3.Client, error) {
 			o.BaseEndpoint = aws.String(endpoint)
 			o.UsePathStyle = true
 		})
-		return s3Client, nil
+		return s3Client, bucketName, nil
 	}
 
 	// Default AWS S3 client
-	return s3.NewFromConfig(cfg), nil
+	return s3.NewFromConfig(cfg), bucketName, nil
 }

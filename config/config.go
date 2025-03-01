@@ -13,6 +13,7 @@ type Config struct {
 	ServerPort string
 
 	// Database settings: PGSQL
+	DBURL      string
 	DBHost     string
 	DBPort     string
 	DBUser     string
@@ -52,6 +53,7 @@ func LoadConfig() *Config {
 		ServerPort: os.Getenv("SERVER_PORT"),
 
 		// Database: PGSQL
+		DBURL:      os.Getenv("DB_URL"),
 		DBHost:     os.Getenv("DB_HOST"),
 		DBPort:     os.Getenv("DB_PORT"),
 		DBUser:     os.Getenv("DB_USER"),
