@@ -86,9 +86,13 @@ func InitS3Client() (*s3.Client, error) {
 		s3Client := s3.NewFromConfig(cfg, func(o *s3.Options) {
 			o.BaseEndpoint = aws.String(endpoint)
 			o.UsePathStyle = true
+
 		})
+		log.Println("S3 supabase client initialized successfully.")
 		return s3Client, nil
 	}
+
+	log.Println("S3 aws client initialized successfully.")
 
 	// Default AWS S3 client
 	return s3.NewFromConfig(cfg), nil
