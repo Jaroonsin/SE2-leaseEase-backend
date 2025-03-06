@@ -18,3 +18,4 @@ rm_docker:
 	docker-compose down
 	docker volume rm se2-leaseease-backend_postgres_data
 	docker volume rm se2-leaseease-backend_pgadmin_data 
+
