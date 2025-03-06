@@ -3,18 +3,19 @@ package server
 import (
 	"LeaseEase/config"
 	"LeaseEase/internal/handlers"
-	"LeaseEase/internal/middleware"
 	"context"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"time"
 
+	// _ "LeaseEase/cmd/docs/v2"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/pakornv/scalar-go"
 	"go.uber.org/zap"
-
-	swagger "github.com/arsmn/fiber-swagger/v2"
 )
 
 type FiberHttpServer struct {
@@ -33,9 +34,9 @@ func NewFiberHttpServer(cfg *config.Config, logger *zap.Logger, handlers handler
 	}
 }
 
-func (s *FiberHttpServer) initHttpServer() fiber.Router {
+func (s *FiberHttpServer) initHttpServer(version string) fiber.Router {
 	// set global prefix
-	router := s.app.Group("/api/v1")
+	router := s.app.Group("/api/" + version)
 
 	// enable cors
 	router.Use(cors.New(cors.Config{
@@ -54,8 +55,21 @@ func (s *FiberHttpServer) initHttpServer() fiber.Router {
 	// 	TimeZone:   "Asia/Bangkok",
 	// }))
 
-	// swagger
-	router.Get("/swagger/*", swagger.HandlerDefault)
+	// swagger with scalar
+	filePath := filepath.Join("cmd", "docs", version, "swagger.yaml")
+	apiRef, err := scalar.New(filePath, &scalar.Config{
+		Theme: scalar.ThemeElysiajs,
+	})
+	if err != nil {
+		panic(err)
+	}
+	router.Get("/reference", func(c *fiber.Ctx) error {
+		htmlContent, err := apiRef.RenderHTML()
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+		}
+		return c.Type("html").SendString(htmlContent)
+	})
 
 	// healthcheck
 	router.Get("/", func(c *fiber.Ctx) error {
@@ -67,11 +81,13 @@ func (s *FiberHttpServer) initHttpServer() fiber.Router {
 
 func (s *FiberHttpServer) Start() {
 	// init http handler
-	router := s.initHttpServer()
 
-	// init modules
-	s.initAuthRouter(router, s.handlers)
-	s.initPropertyRouter(router, s.handlers, s.cfg)
+	// init version
+	version := "v2"
+
+	// init router
+	router := s.initHttpServer(version)
+	s.initRouter(router)
 
 	// Setup signal capturing for graceful shutdown
 	quit := make(chan os.Signal, 1)
@@ -98,21 +114,4 @@ func (s *FiberHttpServer) Start() {
 	}
 
 	s.logger.Sugar().Info("Server shutdown complete.")
-}
-
-func (s *FiberHttpServer) initAuthRouter(router fiber.Router, httpHandler handlers.Handler) {
-	authRouter := router.Group("/auth")
-
-	authRouter.Post("/register", httpHandler.Auth().Register)
-	authRouter.Post("/login", httpHandler.Auth().Login)
-}
-
-func (s *FiberHttpServer) initPropertyRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
-	propertyRouter := router.Group("/properties", middleware.AuthorizationUserToken(cfg))
-
-	propertyRouter.Post("/create", httpHandler.Property().CreateProperty)
-	propertyRouter.Put("/update/:id", httpHandler.Property().UpdateProperty)
-	propertyRouter.Delete("/delete/:id", httpHandler.Property().DeleteProperty)
-	propertyRouter.Get("/", httpHandler.Property().GetAllProperty)
-	propertyRouter.Get("/:id", httpHandler.Property().GetPropertyByID)
 }

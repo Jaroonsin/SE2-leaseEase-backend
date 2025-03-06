@@ -1,10 +1,12 @@
 package utils
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+)
 
 type Response struct {
-	StatusCode int         `json:"status_code"`
-	Message    string      `json:"message"`
+	StatusCode int         `json:"status_code" example:"888"`
+	Message    string      `json:"message" example:"message"`
 	Data       interface{} `json:"data,omitempty"`
 }
 

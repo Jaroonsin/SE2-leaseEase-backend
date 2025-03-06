@@ -1,7 +1,10 @@
 package handlers
 
 type Handler interface {
-	User() *userHandler
 	Property() *propertyHandler
 	Auth() *authHandler
+	Lessee() *lesseeHandler
+	Review() *reviewHandler
+	Payment() *paymentHandler
+	Lessor() *lessorHandler
 }

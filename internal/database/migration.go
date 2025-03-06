@@ -13,11 +13,13 @@ func RunMigrations(db *gorm.DB) {
 	err := db.AutoMigrate(
 		&models.User{},
 		&models.Property{},
-		&models.Request{},
+		&models.Reservation{},
 		&models.Review{},
 		&models.LessorReview{},
 		&models.PropertyReview{},
+		&models.Payment{},
 	)
+
 	if err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}

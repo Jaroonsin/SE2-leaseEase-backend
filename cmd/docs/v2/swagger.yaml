@@ -1,0 +1,1225 @@
+basePath: /
+definitions:
+  dtos.ApprovalReservationDTO:
+    properties:
+      lesseeEmail:
+        example: lessee@example.com
+        type: string
+      propertyName:
+        example: Example Property
+        type: string
+    type: object
+  dtos.CreateReservationDTO:
+    properties:
+      interestedProperty:
+        example: 1
+        type: integer
+      lesseeID:
+        example: 1
+        type: integer
+      proposedMessage:
+        example: I am very interested in leasing this property.
+        type: string
+      purpose:
+        example: Lease agreement for residential property
+        type: string
+      question:
+        example: Could you provide more details about the lease duration?
+        type: string
+    type: object
+  dtos.CreateReviewDTO:
+    properties:
+      property_id:
+        type: integer
+      rating:
+        maximum: 5
+        minimum: 0
+        type: integer
+      review_message:
+        type: string
+    required:
+    - property_id
+    - rating
+    - review_message
+    type: object
+  dtos.GetPropertyDTO:
+    description: GetPropertyDTO represents the details of a property along with identifier
+      information.
+    properties:
+      availability_status:
+        description: property's availability status
+        example: available
+        type: string
+      date:
+        description: Property creation date
+        example: "2024-02-15T10:00:00Z"
+        type: string
+      details:
+        description: Property details
+        example: Spacious villa with a sea view
+        type: string
+      id:
+        description: Property ID
+        example: 1
+        type: integer
+      lessor_id:
+        description: Lessor ID
+        example: 10
+        type: integer
+      location:
+        description: property's location
+        example: California
+        type: string
+      name:
+        description: name of the property
+        example: Sunset Villa
+        type: string
+      price:
+        description: property's price
+        example: 1.2000005e+06
+        type: number
+      rating:
+        description: Average rating
+        example: 4.5
+        type: number
+      review_count:
+        description: Number of reviews
+        example: 12
+        type: integer
+      review_ids:
+        items:
+          type: integer
+        type: array
+      size:
+        description: property's size
+        example: 3500
+        type: number
+    type: object
+  dtos.LoginDTO:
+    description: LoginDTO represents a request for user login.
+    properties:
+      email:
+        description: user's email
+        example: john.doe@example.com
+        type: string
+      password:
+        description: user's password
+        example: strongPassword123
+        type: string
+    type: object
+  dtos.PaymentDTO:
+    properties:
+      amount:
+        description: Stored in satangs na ja
+        type: integer
+      currency:
+        description: 'Example: "THB", "USD"'
+        type: string
+      token:
+        description: 'Example: "tokn_test_xxyy69btt9rnb5mir5b"'
+        type: string
+      user_id:
+        type: integer
+    type: object
+  dtos.PropertyDTO:
+    description: PropertyDTO represents a property.
+    properties:
+      details:
+        description: Property details
+        example: Spacious villa with a sea view
+        type: string
+      location:
+        description: property location
+        example: California
+        type: string
+      name:
+        description: name of the property
+        example: Sunset Villa
+        type: string
+      price:
+        description: property price
+        example: 1.2000005e+06
+        type: number
+      size:
+        description: property size
+        example: 3500
+        type: number
+      status:
+        description: availability status
+        example: available
+        type: string
+    type: object
+  dtos.RegisterDTO:
+    description: RegisterDTO represents a request for user registration.
+    properties:
+      address:
+        description: user's address
+        example: 1234 Main St, Springfield
+        type: string
+      email:
+        description: user's email
+        example: john.doe@example.com
+        type: string
+      name:
+        description: user's first name
+        example: John
+        type: string
+      password:
+        description: user's password
+        example: strongPassword123
+        type: string
+      role:
+        description: 'role: lessor, lessee'
+        example: lessee
+        type: string
+    type: object
+  dtos.RequestOTPDTO:
+    properties:
+      email:
+        description: user's email
+        example: john.doe@example.com
+        type: string
+    required:
+    - email
+    type: object
+  dtos.ResetPassDTO:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      token:
+        type: string
+    type: object
+  dtos.ResetPassRequestDTO:
+    properties:
+      email:
+        example: john.doe@example.com
+        type: string
+    required:
+    - email
+    type: object
+  dtos.SearchPropertyDTO:
+    description: SearchPropertyDTO represents the details of a property along with
+      identifier information.
+    properties:
+      id:
+        description: Property ID
+        example: 1
+        type: integer
+      location:
+        description: property's location
+        example: California
+        type: string
+      name:
+        description: name of the property
+        example: Sunset Villa
+        type: string
+      price:
+        description: property's price
+        example: 1.2000005e+06
+        type: number
+      rating:
+        description: Average rating
+        example: 4.5
+        type: number
+      size:
+        description: property's size
+        example: 3500
+        type: number
+    type: object
+  dtos.UpdateReservationDTO:
+    properties:
+      proposedMessage:
+        example: I would like to update my earlier message.
+        type: string
+      purpose:
+        example: Updated lease purpose
+        type: string
+      question:
+        example: Is there any flexibility in the lease terms?
+        type: string
+    type: object
+  dtos.UpdateReviewDTO:
+    properties:
+      rating:
+        maximum: 5
+        minimum: 0
+        type: integer
+      review_message:
+        type: string
+    required:
+    - rating
+    - review_message
+    type: object
+  dtos.VerifyOTPDTO:
+    properties:
+      email:
+        description: user's email
+        example: john.doe@example.com
+        type: string
+      otp:
+        description: user's OTP
+        example: "123456"
+        type: string
+    required:
+    - email
+    - otp
+    type: object
+  utils.Response:
+    properties:
+      data: {}
+      message:
+        example: message
+        type: string
+      status_code:
+        example: 888
+        type: integer
+    type: object
+host: localhost:5000/api/v2
+info:
+  contact:
+    email: support@example.com
+    name: API Support
+    url: http://www.example.com/support
+  description: API documentation for LeaseEase.
+  title: LeaseEase API
+  version: "2.0"
+paths:
+  /auth/check:
+    get:
+      description: Validates JWT token and returns authentication status.
+      operationId: "3"
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User is authenticated
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized - Invalid token
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Check authentication status
+      tags:
+      - auth
+  /auth/forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: Generates and sends a password reset link to the provided email
+        address if the user exists.
+      parameters:
+      - description: Request payload containing the user's email
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ResetPassRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reset link sent successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request - Invalid request payload
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Not Found - Email not associated with any account
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error - Failed to send reset email
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Forgot a password
+      tags:
+      - auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and set an authentication cookie.
+      operationId: "2"
+      parameters:
+      - description: Login request payload
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.LoginDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User login successfully
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "400":
+          description: Invalid request payload
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+      summary: Login an existing user
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Clear the authentication cookie to logout the user.
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User logout successfully
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+      summary: Logout an existing user
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user account with the provided details.
+      operationId: "1"
+      parameters:
+      - description: Register request payload
+        in: body
+        name: register
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.RegisterDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'User registered successfully"  example({"staus_code": 201,
+            "message": "User registered successfully", "data": nil})'
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request payload
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+      summary: Register a new user
+      tags:
+      - auth
+  /auth/request-otp:
+    post:
+      consumes:
+      - application/json
+      description: Sends a one-time password (OTP) to the user's contact information
+        provided.
+      parameters:
+      - description: Request payload containing user identifier
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.RequestOTPDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: OTP sent successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data: {}
+              type: object
+        "400":
+          description: Bad Request - Unable to parse request body
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error - Failed to process OTP request
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Request OTP for authentication
+      tags:
+      - auth
+  /auth/reset-password:
+    post:
+      consumes:
+      - application/json
+      description: Resets the user's password using the provided reset token and new
+        password.
+      parameters:
+      - description: Request payload containing the reset token and new password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ResetPassDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password reset successful
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request - Invalid request payload
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized - Invalid or expired reset token
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error - Unable to reset password
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Reset user password
+      tags:
+      - auth
+  /auth/verify-otp:
+    post:
+      consumes:
+      - application/json
+      description: Validates the OTP provided by the user for authentication.
+      parameters:
+      - description: Request payload containing OTP and user identifier
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.VerifyOTPDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OTP verification successful
+          schema:
+            allOf:
+            - $ref: '#/definitions/utils.Response'
+            - properties:
+                data: {}
+              type: object
+        "400":
+          description: Bad Request - Invalid OTP payload or incorrect OTP
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error - Failed to verify OTP
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Verify provided OTP
+      tags:
+      - auth
+  /lessee/create:
+    post:
+      consumes:
+      - application/json
+      description: Parses the reservation body and creates a new lease reservation
+        using the lessee ID from the JWT token.
+      parameters:
+      - description: Lease Reservation Data
+        in: body
+        name: reservation
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateReservationDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Reservation created successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Failed to parse reservation body
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Create a New Lease Reservation
+      tags:
+      - Lessee
+  /lessee/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a lease reservation using the reservation ID provided in
+        the URL.
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reservation deleted successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid reservation ID
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Reservation not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Delete a Lease Reservation
+      tags:
+      - Lessee
+  /lessee/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Parses the reservation body and updates an existing lease reservation
+        identified by its ID.
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Lease Reservation Update Data
+        in: body
+        name: reservation
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateReservationDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reservation updated successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Failed to parse reservation body or invalid reservation ID
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: Reservation not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Update an Existing Lease Reservation
+      tags:
+      - Lessee
+  /lessor/accept/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Accept a reservation by ID
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Reservation details
+        in: body
+        name: reservation
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ApprovalReservationDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reservation accepted successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Failed to accept reservation
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Accept a reservation
+      tags:
+      - Lessor
+  /lessor/decline/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Decline a reservation by ID
+      parameters:
+      - description: Reservation ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Reservation details
+        in: body
+        name: reservation
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ApprovalReservationDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reservation declined successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Failed to decline reservation
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Decline a reservation
+      tags:
+      - Lessor
+  /payments/process:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint processes a payment using the provided user ID, amount,
+        currency, and card token.
+      parameters:
+      - description: Payment details
+        in: body
+        name: payment
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.PaymentDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Payment successful
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Payment process failed
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Process a payment
+      tags:
+      - payments
+  /properties/autocomplete:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve property suggestions based on a partial search query
+      parameters:
+      - description: Partial property name
+        in: query
+        name: query
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Properties retrieved successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - cookieAuth: []
+      summary: Auto complete property search
+      tags:
+      - Property
+  /properties/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new property
+      parameters:
+      - description: Property Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.PropertyDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Property created successfully
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+      security:
+      - cookieAuth: []
+      summary: Create a property
+      tags:
+      - Property
+  /properties/delete/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a property by ID
+      parameters:
+      - description: Property ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Property deleted successfully
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "404":
+          description: Property not found
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+      security:
+      - cookieAuth: []
+      summary: Delete a property
+      tags:
+      - Property
+  /properties/get:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve list of all properties with pagination
+      parameters:
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Page size
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Properties retrieved successfully
+          schema:
+            items:
+              allOf:
+              - $ref: '#/definitions/utils.Response'
+              - properties:
+                  data:
+                    items:
+                      $ref: '#/definitions/dtos.GetPropertyDTO'
+                    type: array
+                type: object
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+      security:
+      - cookieAuth: []
+      summary: Get all properties
+      tags:
+      - Property
+  /properties/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve property details by its ID
+      parameters:
+      - description: Property ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Property retrieved successfully
+          schema:
+            items:
+              allOf:
+              - $ref: '#/definitions/utils.Response'
+              - properties:
+                  data:
+                    $ref: '#/definitions/dtos.GetPropertyDTO'
+                type: object
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+      security:
+      - cookieAuth: []
+      summary: Get property by ID
+      tags:
+      - Property
+  /properties/search:
+    get:
+      consumes:
+      - application/json
+      description: Search properties using query parameters
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: Page size
+        in: query
+        name: pagesize
+        required: true
+        type: integer
+      - description: Property name keyword
+        in: query
+        name: name
+        type: string
+      - description: Minimum price
+        in: query
+        name: minprice
+        type: number
+      - description: Maximum price
+        in: query
+        name: maxprice
+        type: number
+      - description: Minimum size
+        in: query
+        name: minsize
+        type: number
+      - description: Maximum size
+        in: query
+        name: maxsize
+        type: number
+      - description: Minimum rating
+        in: query
+        name: rating
+        type: number
+      - description: Order field (price or size)
+        in: query
+        name: sortby
+        type: string
+      - description: Order direction (asc or desc)
+        in: query
+        name: order
+        type: string
+      - description: Availability status
+        in: query
+        name: availability
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Properties retrieved successfully
+          schema:
+            items:
+              allOf:
+              - $ref: '#/definitions/utils.Response'
+              - properties:
+                  data:
+                    items:
+                      $ref: '#/definitions/dtos.SearchPropertyDTO'
+                    type: array
+                type: object
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+      security:
+      - cookieAuth: []
+      summary: Search properties
+      tags:
+      - Property
+  /properties/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update existing property data
+      parameters:
+      - description: Property ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated property data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.PropertyDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Property updated successfully
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "404":
+          description: Property not found
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            items:
+              $ref: '#/definitions/utils.Response'
+            type: array
+      security:
+      - cookieAuth: []
+      summary: Update a property
+      tags:
+      - Property
+  /propertyReview/create/:
+    post:
+      consumes:
+      - application/json
+      description: Create a new review for a property by the authenticated lessee.
+      parameters:
+      - description: Review Data
+        in: body
+        name: review
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateReviewDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Review created successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new review
+      tags:
+      - Review
+  /propertyReview/delete/{id}:
+    delete:
+      description: Delete a review by its ID for the authenticated lessee.
+      parameters:
+      - description: Review ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Review deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid review ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a review
+      tags:
+      - Review
+  /propertyReview/get/{propertyID}:
+    get:
+      description: Get all reviews for a specific property. Supports pagination through
+        query parameters.
+      parameters:
+      - description: Property ID
+        in: path
+        name: propertyID
+        required: true
+        type: integer
+      - description: Page number for pagination
+        in: query
+        name: page
+        type: integer
+      - description: Page size for pagination
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reviews retrieved successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid property ID or pagination parameters
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Retrieve all reviews for a property
+      tags:
+      - Review
+  /propertyReview/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update a review by its ID for the authenticated lessee.
+      parameters:
+      - description: Review ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated Review Data
+        in: body
+        name: review
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateReviewDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Review updated successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid review ID or body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update an existing review
+      tags:
+      - Review
+swagger: "2.0"

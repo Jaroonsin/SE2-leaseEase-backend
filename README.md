@@ -16,13 +16,15 @@
 ## Docker Setup
 
 1. Create a Docker Compose file  
-Create a file named `docker-compose.yml` in the project root with content similar to the example below:
+   Create a file named `docker-compose.yml` in the project root with content similar to the example below:
+
 ```yaml
 
 ```
 
 2. Launch the Container  
-Run the following command to build and start the container:
+   Run the following command to build and start the container:
+
 ```bash
 docker-compose up --build
 ```
@@ -32,10 +34,13 @@ docker-compose up --build
 Copy the example environment file and update your environment variables accordingly.
 
 For Bash (Linux/macOS Terminal):
+
 ```bash
 cp .env.example .env
 ```
+
 For Windows PowerShell:
+
 ```powershell
 Copy-Item .env.example .env
 ```
@@ -47,5 +52,19 @@ Then, open the `.env` file and configure your environment variables as needed.
 To run the main application, execute the following command:
 
 ```bash
-go run cmd/main.go
+make run
+```
+
+## Air installation
+
+To install air, execute the following command:
+
+```bash
+go install github.com/air-verse/air@latest
+```
+
+To check if Air is installed correctly:
+
+```bash
+air -v
 ```

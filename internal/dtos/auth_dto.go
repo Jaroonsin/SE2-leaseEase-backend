@@ -1,15 +1,44 @@
 package dtos
 
+// @Description RegisterDTO represents a request for user registration.
 type RegisterDTO struct {
-	ID       uint   `json:"id"`       // student id
-	Name     string `json:"name"`     // user's first name
-	Address  string `json:"address"`  // user's address
-	Email    string `json:"email"`    // user's email
-	Password string `json:"password"` // user's password
-	Role     string `json:"role"`     // role: lessor, lessee
+	Email    string `json:"email" example:"john.doe@example.com"`        // user's email
+	Password string `json:"password" example:"strongPassword123"`        // user's password
+	Name     string `json:"name" example:"John"`                         // user's first name
+	Address  string `json:"address" example:"1234 Main St, Springfield"` // user's address
+	Role     string `json:"role" example:"lessee"`                       // role: lessor, lessee
 }
 
+// @Description LoginDTO represents a request for user login.
 type LoginDTO struct {
-	Email    string `json:"email"`    // user's email
-	Password string `json:"password"` // user's password
+	Email    string `json:"email" example:"john.doe@example.com"` // user's email
+	Password string `json:"password" example:"strongPassword123"` // user's password
+}
+
+type JWTDTO struct {
+	UserID uint   `json:"user_id" example:"1"`    // user's ID
+	Role   string `json:"role" example:"lessee" ` // user's role
+}
+type AuthCheckDTO struct {
+	UserID uint   `json:"user_id" example:"1"`    // user's ID
+	Role   string `json:"role" example:"lessee" ` // user's role
+}
+
+type RequestOTPDTO struct {
+	Email string `json:"email" example:"john.doe@example.com" binding:"required"` // user's email
+}
+
+type VerifyOTPDTO struct {
+	Email string `json:"email" example:"john.doe@example.com" binding:"required"` // user's email
+	OTP   string `json:"otp" example:"123456" binding:"required"`                 // user's OTP
+}
+
+type ResetPassRequestDTO struct {
+	Email string `json:"email" example:"john.doe@example.com" binding:"required"`
+}
+
+type ResetPassDTO struct {
+	Email    string `json:"email"`
+	Token    string `json:"token"`
+	Password string `json:"password"`
 }

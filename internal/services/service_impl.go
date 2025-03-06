@@ -1,23 +1,29 @@
 package services
 
-import "LeaseEase/internal/repositories"
+import (
+	"LeaseEase/internal/repositories"
+
+	"go.uber.org/zap"
+)
 
 type service struct {
-	UserService     UserService
 	PropertyService PropertyService
 	AuthService     AuthService
+	LesseeService   LesseeService
+	ReviewService   ReviewService
+	PaymentService  PaymentService
+	LessorService   LessorService
 }
 
-func NewService(repo repositories.Repository) Service {
+func NewService(repo repositories.Repository, logger *zap.Logger) Service {
 	return &service{
-		UserService:     NewUserService(repo.User()),
-		PropertyService: NewPropertyService(repo.Property()),
-		AuthService:     NewAuthService(repo.Auth()),
+		PropertyService: NewPropertyService(repo.Property(), logger),
+		AuthService:     NewAuthService(repo.Auth(), logger),
+		LesseeService:   NewLesseeService(repo.Lessee(), logger),
+		ReviewService:   NewReviewService(repo.Review(), logger),
+		PaymentService:  NewPaymentService(repo.Payment(), logger),
+		LessorService:   NewLessorService(repo.Lessor(), logger),
 	}
-}
-
-func (s *service) User() UserService {
-	return s.UserService
 }
 
 func (s *service) Property() PropertyService {
@@ -26,4 +32,20 @@ func (s *service) Property() PropertyService {
 
 func (s *service) Auth() AuthService {
 	return s.AuthService
+}
+
+func (s *service) Lessee() LesseeService {
+	return s.LesseeService
+}
+
+func (s *service) Review() ReviewService {
+	return s.ReviewService
+}
+
+func (s *service) Payment() PaymentService {
+	return s.PaymentService
+}
+
+func (s *service) Lessor() LessorService {
+	return s.LessorService
 }
