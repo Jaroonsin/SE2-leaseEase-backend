@@ -1,7 +1,7 @@
 name: CI/CD for Golang Backend
 
 on:
-    push:
+    pull_request:
         branches:
             - main
 
