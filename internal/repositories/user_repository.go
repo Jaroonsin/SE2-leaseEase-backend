@@ -16,12 +16,22 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	}
 }
 
-func (u *userRepository) UpdateUser(user *models.User) error {
-	return u.db.Save(user).Error
+func (r *userRepository) UpdateUser(user *models.User) error {
+	result := r.db.Model(&user).Updates(*user)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return nil
 }
 
-func (u *userRepository) GetUserByID(userID uint) (*models.User, error) {
+func (r *userRepository) GetUserByID(userID uint) (*models.User, error) {
 	user := models.User{}
-	err := u.db.Where("id = ?", userID).First(&user).Error
+	err := r.db.Where("id = ?", userID).First(&user).Error
 	return &user, err
 }

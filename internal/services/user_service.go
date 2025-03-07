@@ -6,6 +6,7 @@ import (
 	"LeaseEase/internal/repositories"
 	"LeaseEase/utils"
 	"errors"
+	"log"
 
 	"go.uber.org/zap"
 )
@@ -34,17 +35,24 @@ func (s *userService) UpdateUser(userID uint, User dtos.UpdateUserDTO) error {
 }
 
 func (s *userService) UpdateImage(userID uint, Image dtos.UpdateImageDTO) error {
+	logger := s.logger.Named("UpdateImage")
+	if Image.ImageURL == "" {
+		logger.Error("no image URL provided")
+		return errors.New("no image URL provided")
+	}
+	log.Print("Image URL: ", Image.ImageURL)
 
 	user := models.User{
 		ID:       userID,
 		ImageURL: Image.ImageURL,
 	}
 
+	logger.Info("updating user image", zap.Uint("UserID", userID), zap.String("ImageURL", Image.ImageURL))
 	return s.UserRepo.UpdateUser(&user)
 }
 
 func (s *userService) CheckUser(token string) (*dtos.CheckUserDTO, error) {
-	logger := s.logger.Named("AuthCheck")
+	logger := s.logger.Named("CheckUser")
 	if token == "" {
 		logger.Error("no token provided")
 		return nil, errors.New("no token provided")

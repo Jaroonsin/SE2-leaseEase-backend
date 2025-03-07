@@ -69,8 +69,8 @@ func initPaymentRouter(router fiber.Router, httpHandler handlers.Handler, cfg *c
 func initUserRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
 	userRouter := router.Group("/user", middleware.AuthRequired(cfg))
 
-	userRouter.Put("/updateUser", httpHandler.User().UpdateUser)
-	userRouter.Put("/updateImage", httpHandler.User().UpdateUser)
+	userRouter.Put("/user", httpHandler.User().UpdateUser)
+	userRouter.Put("/image", httpHandler.User().UpdateImage)
 	userRouter.Post("/check", httpHandler.User().CheckUser)
 
 }
