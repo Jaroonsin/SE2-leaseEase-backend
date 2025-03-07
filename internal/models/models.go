@@ -9,6 +9,7 @@ type User struct {
 	Password    string `gorm:"size:100;not null"`
 	Name        string `gorm:"size:100;not null"`
 	Address     string `gorm:"size:255"`
+	ImageURL    string `gorm:"size:255"`
 	CreatedAt   time.Time
 	UserType    string `gorm:"size:50;not null"` // lessor, lessee
 	ResetToken  string

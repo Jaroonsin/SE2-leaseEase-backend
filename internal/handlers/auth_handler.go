@@ -85,32 +85,6 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 	return utils.SuccessResponse(c, fiber.StatusCreated, "User login successfully", nil)
 }
 
-// AuthCheck godoc
-// @Summary Check authentication status
-// @Description Validates JWT token and returns authentication status.
-// @ID 3
-// @Tags auth
-// @Produce json
-// @Success 200 {object} utils.Response "User is authenticated"
-// @Failure 401 {object} utils.Response "Unauthorized - Invalid token"
-// @Router /auth/check [get]
-func (h *authHandler) AuthCheck(c *fiber.Ctx) error {
-	// Retrieve the JWT token from cookies
-	token := c.Cookies("auth_token")
-	if token == "" {
-		return utils.ErrorResponse(c, fiber.StatusUnauthorized, "No token provided")
-	}
-
-	// Validate token using the AuthCheck service
-	claims, err := h.authService.AuthCheck(token)
-	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusUnauthorized, err.Error())
-	}
-
-	// Return success response with user details
-	return utils.SuccessResponse(c, fiber.StatusOK, "User is authenticated", claims)
-}
-
 // Login godoc
 // @Summary Logout an existing user
 // @Description Clear the authentication cookie to logout the user.
