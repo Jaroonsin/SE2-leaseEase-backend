@@ -15,13 +15,13 @@ func (s *FiberHttpServer) initRouter(router fiber.Router) {
 	initLessorRouter(router, s.handlers, s.cfg)
 	initPropertyReviewRouter(router, s.handlers, s.cfg)
 	initPaymentRouter(router, s.handlers, s.cfg)
+	initUserRouter(router, s.handlers, s.cfg)
 }
 
 func initAuthRouter(router fiber.Router, httpHandler handlers.Handler) {
 	authRouter := router.Group("/auth")
 	authRouter.Post("/register", httpHandler.Auth().Register)
 	authRouter.Post("/login", httpHandler.Auth().Login)
-	authRouter.Get("/check", httpHandler.Auth().AuthCheck)
 	authRouter.Post("/logout", httpHandler.Auth().Logout)
 	authRouter.Post("/request-otp", httpHandler.Auth().RequestOTP)
 	authRouter.Post("/verify-otp", httpHandler.Auth().VerifyOTP)
@@ -64,4 +64,13 @@ func initPropertyReviewRouter(router fiber.Router, httpHandler handlers.Handler,
 func initPaymentRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
 	paymentRouter := router.Group("/payments", middleware.AuthRequired(cfg))
 	paymentRouter.Post("/process", httpHandler.Payment().HandlePayment)
+}
+
+func initUserRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
+	userRouter := router.Group("/user", middleware.AuthRequired(cfg))
+
+	userRouter.Put("/user", httpHandler.User().UpdateUser)
+	userRouter.Put("/image", httpHandler.User().UpdateImage)
+	userRouter.Post("/check", httpHandler.User().CheckUser)
+
 }

@@ -223,10 +223,19 @@ definitions:
         description: Average rating
         example: 4.5
         type: number
+      review_count:
+        description: Number of reviews
+        example: 12
+        type: integer
       size:
         description: property's size
         example: 3500
         type: number
+    type: object
+  dtos.UpdateImageDTO:
+    properties:
+      image_url:
+        type: string
     type: object
   dtos.UpdateReservationDTO:
     properties:
@@ -251,6 +260,13 @@ definitions:
     required:
     - rating
     - review_message
+    type: object
+  dtos.UpdateUserDTO:
+    properties:
+      address:
+        type: string
+      name:
+        type: string
     type: object
   dtos.VerifyOTPDTO:
     properties:
@@ -286,24 +302,6 @@ info:
   title: LeaseEase API
   version: "2.0"
 paths:
-  /auth/check:
-    get:
-      description: Validates JWT token and returns authentication status.
-      operationId: "3"
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: User is authenticated
-          schema:
-            $ref: '#/definitions/utils.Response'
-        "401":
-          description: Unauthorized - Invalid token
-          schema:
-            $ref: '#/definitions/utils.Response'
-      summary: Check authentication status
-      tags:
-      - auth
   /auth/forgot-password:
     post:
       consumes:
@@ -1222,4 +1220,90 @@ paths:
       summary: Update an existing review
       tags:
       - Review
+  /user/check:
+    post:
+      consumes:
+      - application/json
+      description: Validates the auth token from cookies and returns user information
+        if authenticated
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User is authenticated with claims data
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized - No token provided or invalid token
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - CookieAuth: []
+      summary: Verify user authentication
+      tags:
+      - users
+  /user/image:
+    put:
+      consumes:
+      - application/json
+      description: Updates the profile image for the authenticated user
+      parameters:
+      - description: Image update information
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateImageDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Image updated successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Failed to update image
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - CookieAuth: []
+      summary: Update user profile image
+      tags:
+      - users
+  /user/user:
+    put:
+      consumes:
+      - application/json
+      description: Updates user details for the authenticated user
+      parameters:
+      - description: User update information
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User updated successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Failed to update user
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - CookieAuth: []
+      summary: Update user information
+      tags:
+      - users
 swagger: "2.0"
