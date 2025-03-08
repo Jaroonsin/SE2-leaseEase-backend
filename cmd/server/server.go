@@ -40,7 +40,7 @@ func (s *FiberHttpServer) initHttpServer(version string) fiber.Router {
 
 	// enable cors
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:3000",
+		AllowOrigins:     s.cfg.ClientURL,
 		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS,PATCH",
 		AllowHeaders:     "Origin,X-PINGOTHER,Accept,Authorization,Content-Type,X-CSRF-Token",
 		ExposeHeaders:    "Link",
