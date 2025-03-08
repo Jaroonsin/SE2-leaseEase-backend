@@ -71,7 +71,7 @@ func (r *lessorRepository) DeclineReservation(reservationID uint, lessorID uint)
 
 func (r *lessorRepository) GetReservationByPropertiesID(propertyID uint, limit int, offset int) ([]models.Reservation, error) {
 	var reservations []models.Reservation
-	result := r.db.Where("interested_property = ?", propertyID).Offset(offset).Limit(limit).Find(&reservations)
+	result := r.db.Preload("Property").Where("interested_property = ?", propertyID).Offset(offset).Limit(limit).Find(&reservations)
 	if result.Error != nil {
 		return nil, result.Error
 	}

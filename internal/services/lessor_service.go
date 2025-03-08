@@ -68,6 +68,7 @@ func (s *lessorService) GetReservationsByPropertyID(propertyID uint, limit int, 
 			Status:          reservation.Status,
 			PropertyID:      reservation.InterestedProperty,
 			LesseeID:        reservation.LesseeID,
+			PropertyName:    reservation.Property.Name,
 		}
 		GetReservationDTOs = append(GetReservationDTOs, GetReservationDTO)
 	}
