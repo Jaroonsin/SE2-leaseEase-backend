@@ -99,6 +99,30 @@ definitions:
         example: 3500
         type: number
     type: object
+  dtos.GetReservationDTO:
+    properties:
+      id:
+        example: 1
+        type: integer
+      interestedProperty:
+        example: 1
+        type: integer
+      lesseeID:
+        example: 1
+        type: integer
+      proposedMessage:
+        example: I am very interested in leasing this property.
+        type: string
+      purpose:
+        example: Lease agreement for residential property
+        type: string
+      question:
+        example: Could you provide more details about the lease duration?
+        type: string
+      status:
+        example: pending
+        type: string
+    type: object
   dtos.LoginDTO:
     description: LoginDTO represents a request for user login.
     properties:
@@ -619,6 +643,41 @@ paths:
       summary: Delete a Lease Reservation
       tags:
       - Lessee
+  /lessee/reservations:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves lease reservations for the lessee identified by the JWT
+        token.
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reservations retrieved successfully
+          schema:
+            items:
+              $ref: '#/definitions/dtos.GetReservationDTO'
+            type: array
+        "400":
+          description: Invalid query parameters
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Get Reservations by Lessee ID
+      tags:
+      - Lessee
   /lessee/update/{id}:
     put:
       consumes:
@@ -727,6 +786,43 @@ paths:
           schema:
             $ref: '#/definitions/utils.Response'
       summary: Decline a reservation
+      tags:
+      - Lessor
+  /lessor/reservations/{propID}:
+    get:
+      consumes:
+      - application/json
+      description: Get reservations by property ID with pagination
+      parameters:
+      - description: Property ID
+        in: path
+        name: propID
+        required: true
+        type: integer
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reservations retrieved successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid page or pageSize parameter
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Failed to retrieve reservations
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Get reservations by property ID
       tags:
       - Lessor
   /payments/process:

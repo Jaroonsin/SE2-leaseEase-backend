@@ -65,3 +65,12 @@ func (r *lesseeRepository) DeleteReservation(reservationID uint, lesseeID uint) 
 
 	return nil
 }
+
+func (r *lesseeRepository) GetReservationByLesseeID(lesseeID uint, limit int, offset int) ([]models.Reservation, error) {
+	var reservations []models.Reservation
+	result := r.db.Where("lessee_id = ?", lesseeID).Limit(limit).Offset(offset).Find(&reservations)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return reservations, nil
+}
