@@ -61,7 +61,7 @@ func (h *authHandler) Register(c *fiber.Ctx) error {
 // @Failure 500 {array} utils.Response "Internal server error"
 // @Router /auth/login [post]
 func (h *authHandler) Login(c *fiber.Ctx) error {
-
+	Secure := config.LoadEnv() == "production" || config.LoadEnv() == "staging"
 	var req dtos.LoginDTO
 	if err := c.BodyParser(&req); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, constant.ErrParsebody)
@@ -76,9 +76,9 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 		Name:     "auth_token",
 		Value:    token,
 		HTTPOnly: true,
-		Secure:   true, // Requires HTTPS ? true for Prod
+		Secure:   Secure, // Requires HTTPS ? true for Prod
 		SameSite: fiber.CookieSameSiteNoneMode,
-		Domain:   config.LoadConfig().ClientURL,
+		//Domain:   config.LoadConfig().ClientURL,
 		Path:     "/",
 		Expires:  time.Now().Add(time.Hour * 3),
 	})
@@ -95,15 +95,15 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 // @Success 201 {array} utils.Response "User logout successfully"
 // @Router /auth/logout [post]
 func (h *authHandler) Logout(c *fiber.Ctx) error {
-
+	Secure := config.LoadEnv() == "production" || config.LoadEnv() == "staging"
 	c.Cookie(&fiber.Cookie{
 		Name:     "auth_token",
 		Value:    "delete",
 		HTTPOnly: true,
-		Secure:   true, // Requires HTTPS ? true for Prod
+		Secure:   Secure, // Requires HTTPS ? true for Prod
 		SameSite: fiber.CookieSameSiteNoneMode,
 		Path:     "/",
-		Domain:   config.LoadConfig().ClientURL,
+		//Domain:   config.LoadConfig().ClientURL,
 		Expires:  time.Now().Add(time.Second * -3),
 	})
 
@@ -147,6 +147,7 @@ func (h *authHandler) RequestOTP(c *fiber.Ctx) error {
 // @Failure 500 {object} utils.Response "Internal Server Error - Failed to verify OTP"
 // @Router /auth/verify-otp [post]
 func (h *authHandler) VerifyOTP(c *fiber.Ctx) error {
+
 	var req dtos.VerifyOTPDTO
 	if err := c.BodyParser(&req); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, constant.ErrParsebody)

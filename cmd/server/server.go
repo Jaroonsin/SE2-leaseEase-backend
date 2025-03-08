@@ -4,6 +4,7 @@ import (
 	"LeaseEase/config"
 	"LeaseEase/internal/handlers"
 	"context"
+	"log"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -37,7 +38,7 @@ func NewFiberHttpServer(cfg *config.Config, logger *zap.Logger, handlers handler
 func (s *FiberHttpServer) initHttpServer(version string) fiber.Router {
 	// set global prefix
 	router := s.app.Group("/api/" + version)
-
+	log.Print()
 	// enable cors
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     s.cfg.ClientURL,
