@@ -69,10 +69,9 @@ func (r *lessorRepository) DeclineReservation(reservationID uint, lessorID uint)
 	return nil
 }
 
-func (r *lessorRepository) GetReservationByPropertiesID(propertyID uint, page int, pageSize int) ([]models.Reservation, error) {
+func (r *lessorRepository) GetReservationByPropertiesID(propertyID uint, limit int, offset int) ([]models.Reservation, error) {
 	var reservations []models.Reservation
-	offset := (page - 1) * pageSize
-	result := r.db.Where("interested_property = ?", propertyID).Offset(offset).Limit(pageSize).Find(&reservations)
+	result := r.db.Where("interested_property = ?", propertyID).Offset(offset).Limit(limit).Find(&reservations)
 	if result.Error != nil {
 		return nil, result.Error
 	}

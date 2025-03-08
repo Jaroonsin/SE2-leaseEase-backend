@@ -52,8 +52,8 @@ func (s *lessorService) DeclineReservation(reservationID uint, req *dtos.Approva
 	return nil
 }
 
-func (s *lessorService) GetReservationsByPropertyID(propertyID uint, page int, pageSize int) ([]dtos.GetReservationDTO, error) {
-	reservations, err := s.lessorRepo.GetReservationByPropertiesID(propertyID, page, pageSize)
+func (s *lessorService) GetReservationsByPropertyID(propertyID uint, limit int, offset int) ([]dtos.GetReservationDTO, error) {
+	reservations, err := s.lessorRepo.GetReservationByPropertiesID(propertyID, limit, offset)
 	if err != nil {
 		s.logger.Error("failed to get reservations by property ID", zap.Uint("propertyID", propertyID), zap.Error(err))
 		return nil, err
