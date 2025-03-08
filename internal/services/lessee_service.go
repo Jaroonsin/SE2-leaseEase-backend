@@ -46,3 +46,27 @@ func (r *lesseeService) UpdateReservation(reservationDTO *dtos.UpdateReservation
 func (r *lesseeService) DeleteReservation(reservationID uint, lesseeID uint) error {
 	return r.lesseeRepo.DeleteReservation(reservationID, lesseeID)
 }
+
+func (r *lesseeService) GetReservationsByLesseeID(lesseeID uint, limit int, offset int) ([]dtos.GetReservationDTO, error) {
+	reservations, err := r.lesseeRepo.GetReservationByLesseeID(lesseeID, limit, offset)
+	if err != nil {
+		r.logger.Error("failed to get reservations by lessee ID", zap.Error(err))
+		return nil, err
+	}
+
+	var GetReservationDTOs []dtos.GetReservationDTO
+	for _, reservation := range reservations {
+		reservationDTO := dtos.GetReservationDTO{
+			ID:              reservation.ID,
+			LesseeID:        reservation.LesseeID,
+			Purpose:         reservation.Purpose,
+			ProposedMessage: reservation.ProposedMessage,
+			Status:          reservation.Status,
+			Question:        reservation.Question,
+			PropertyID:      reservation.InterestedProperty,
+		}
+		GetReservationDTOs = append(GetReservationDTOs, reservationDTO)
+	}
+
+	return GetReservationDTOs, nil
+}
