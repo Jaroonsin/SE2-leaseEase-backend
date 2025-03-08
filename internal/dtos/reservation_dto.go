@@ -31,4 +31,5 @@ type GetReservationDTO struct {
 	PropertyID      uint   `json:"interestedProperty" example:"1"`
 	LesseeID        uint   `json:"lesseeID" example:"1"`
 	PropertyName    string `json:"propertyName" example:"Example Property"`
+	LastModified    string `json:"lastModified" example:"2022-01-01T00:00:00Z"`
 }
