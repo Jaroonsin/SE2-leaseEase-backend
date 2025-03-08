@@ -77,7 +77,7 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 		Value:    token,
 		HTTPOnly: true,
 		Secure:   true, // Requires HTTPS ? true for Prod
-		SameSite: fiber.CookieSameSiteLaxMode,
+		SameSite: fiber.CookieSameSiteNoneMode,
 		Path:     "/",
 		Expires:  time.Now().Add(time.Hour * 3),
 	})
@@ -100,7 +100,7 @@ func (h *authHandler) Logout(c *fiber.Ctx) error {
 		Value:    "delete",
 		HTTPOnly: true,
 		Secure:   true, // Requires HTTPS ? true for Prod
-		SameSite: "None",
+		SameSite: fiber.CookieSameSiteNoneMode,
 		Path:     "/",
 		Expires:  time.Now().Add(time.Second * -3),
 	})
