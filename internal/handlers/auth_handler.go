@@ -78,6 +78,7 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 		HTTPOnly: true,
 		Secure:   true, // Requires HTTPS ? true for Prod
 		SameSite: fiber.CookieSameSiteNoneMode,
+		Domain:   config.LoadConfig().ClientURL,
 		Path:     "/",
 		Expires:  time.Now().Add(time.Hour * 3),
 	})
@@ -102,6 +103,7 @@ func (h *authHandler) Logout(c *fiber.Ctx) error {
 		Secure:   true, // Requires HTTPS ? true for Prod
 		SameSite: fiber.CookieSameSiteNoneMode,
 		Path:     "/",
+		Domain:   config.LoadConfig().ClientURL,
 		Expires:  time.Now().Add(time.Second * -3),
 	})
 
