@@ -108,3 +108,37 @@ func (h *lesseeHandler) DeleteReservation(c *fiber.Ctx) error {
 
 	return utils.SuccessResponse(c, fiber.StatusOK, "Reservation deleted successfully", nil)
 }
+
+// GetReservationsByLesseeID godoc
+// @Summary      Get Reservations by Lessee ID
+// @Description  Retrieves lease reservations for the lessee identified by the JWT token.
+// @Tags         Lessee
+// @Accept       json
+// @Produce      json
+// @Param        limit   query     int  false  "Limit"
+// @Param        offset  query     int  false  "Offset"
+// @Success      200     {array}   dtos.GetReservationDTO  "Reservations retrieved successfully"
+// @Failure      400     {object}  utils.Response          "Invalid query parameters"
+// @Failure      500     {object}  utils.Response          "Internal server error"
+// @Router       /lessee/reservations [get]
+func (h *lesseeHandler) GetReservationsByLesseeID(c *fiber.Ctx) error {
+	page, err := strconv.Atoi(c.Query("page", "1"))
+	if err != nil || page < 1 {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid page parameter")
+	}
+	pageSize, err := strconv.Atoi(c.Query("pageSize", "10"))
+	if err != nil || pageSize < 1 {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid pageSize parameter")
+	}
+
+	offset := (page - 1) * pageSize
+
+	lesseeID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
+
+	reservations, err := h.lesseeService.GetReservationsByLesseeID(lesseeID, pageSize, offset)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+	}
+
+	return utils.SuccessResponse(c, fiber.StatusOK, "Reservations retrieved successfully", reservations)
+}
