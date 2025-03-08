@@ -9,7 +9,7 @@ type PropertyRepository interface {
 	GetAllProperty(lessorID uint) ([]models.Property, error)
 	GetPaginatedProperty(lessorID uint, limit, offset int) ([]models.Property, error)
 	GetPropertyById(propertyID uint) (*models.Property, error)
-	SearchProperty(query map[string]string) ([]models.Property, error)
+	SearchProperty(query map[string]string) ([]models.Property, uint, error)
 	AutoComplete(query string) ([]string, error)
 	CountPropertiesByLessor(lessorID uint, totalRecords *int64) error
 	GetPropertyReviewsData(properties []models.Property) ([]float64, []int, [][]uint, error)

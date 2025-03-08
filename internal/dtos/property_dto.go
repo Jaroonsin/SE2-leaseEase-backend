@@ -8,6 +8,7 @@ type PropertyDTO struct {
 	Price              float64 `json:"price" example:"1200000.50"`                       // property price
 	AvailabilityStatus string  `json:"status" example:"available"`                       // availability status
 	Details            string  `json:"details" example:"Spacious villa with a sea view"` // Property details
+	ImageURL           string  `json:"image_url" example:"http://example.com/image.jpg"` // Image URLs
 }
 
 // @Description GetPropertyDTO represents the details of a property along with identifier information.
@@ -24,6 +25,7 @@ type GetPropertyDTO struct {
 	ReviewCount        int     `json:"review_count" example:"12"`               // Number of reviews
 	ReviewIDs          []uint  `json:"review_ids"`
 	Details            string  `json:"details" example:"Spacious villa with a sea view"` // Property details
+	ImageURL           string  `json:"image_url" example:"http://example.com/image.jpg"` // Image URLs
 }
 
 // @Description GetPropertyPaginatedDTO represents the response structure for retrieving a list of properties with pagination details.
@@ -36,12 +38,18 @@ type GetPropertyPaginatedDTO struct {
 }
 
 // @Description SearchPropertyDTO represents the details of a property along with identifier information.
+type SearchPropertyDataDTO struct {
+	PropertyID  uint    `json:"id" example:"1"`                                   // Property ID
+	Name        string  `json:"name" example:"Sunset Villa"`                      // name of the property
+	Location    string  `json:"location" example:"California"`                    // property's location
+	Size        float64 `json:"size" example:"3500.0"`                            // property's size
+	Price       float64 `json:"price" example:"1200000.50"`                       // property's price
+	Rating      float64 `json:"rating" example:"4.5"`                             // Average rating
+	ReviewCount int     `json:"review_count" example:"12"`                        // Number of reviews
+	ImageURL    string  `json:"image_url" example:"http://example.com/image.jpg"` // Image URLs
+}
+
 type SearchPropertyDTO struct {
-	PropertyID  uint    `json:"id" example:"1"`                // Property ID
-	Name        string  `json:"name" example:"Sunset Villa"`   // name of the property
-	Location    string  `json:"location" example:"California"` // property's location
-	Size        float64 `json:"size" example:"3500.0"`         // property's size
-	Price       float64 `json:"price" example:"1200000.50"`    // property's price
-	Rating      float64 `json:"rating" example:"4.5"`          // Average rating
-	ReviewCount int     `json:"review_count" example:"12"`     // Number of reviews
+	Properties []SearchPropertyDataDTO `json:"properties"` // List of properties retrieved from the database
+	LastPage   uint                    `json:"last_page"`  // Total number of pages based on total records and page size
 }

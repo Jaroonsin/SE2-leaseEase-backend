@@ -62,6 +62,10 @@ definitions:
         description: Property ID
         example: 1
         type: integer
+      image_url:
+        description: Image URLs
+        example: http://example.com/image.jpg
+        type: string
       lessor_id:
         description: Lessor ID
         example: 10
@@ -127,6 +131,10 @@ definitions:
       details:
         description: Property details
         example: Spacious villa with a sea view
+        type: string
+      image_url:
+        description: Image URLs
+        example: http://example.com/image.jpg
         type: string
       location:
         description: property location
@@ -200,6 +208,17 @@ definitions:
     - email
     type: object
   dtos.SearchPropertyDTO:
+    properties:
+      last_page:
+        description: Total number of pages based on total records and page size
+        type: integer
+      properties:
+        description: List of properties retrieved from the database
+        items:
+          $ref: '#/definitions/dtos.SearchPropertyDataDTO'
+        type: array
+    type: object
+  dtos.SearchPropertyDataDTO:
     description: SearchPropertyDTO represents the details of a property along with
       identifier information.
     properties:
@@ -207,6 +226,10 @@ definitions:
         description: Property ID
         example: 1
         type: integer
+      image_url:
+        description: Image URLs
+        example: http://example.com/image.jpg
+        type: string
       location:
         description: property's location
         example: California
@@ -997,9 +1020,7 @@ paths:
               - $ref: '#/definitions/utils.Response'
               - properties:
                   data:
-                    items:
-                      $ref: '#/definitions/dtos.SearchPropertyDTO'
-                    type: array
+                    $ref: '#/definitions/dtos.SearchPropertyDTO'
                 type: object
             type: array
         "400":
