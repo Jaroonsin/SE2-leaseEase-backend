@@ -650,13 +650,13 @@ paths:
       description: Retrieves lease reservations for the lessee identified by the JWT
         token.
       parameters:
-      - description: Limit
+      - description: Page number
         in: query
-        name: limit
+        name: page
         type: integer
-      - description: Offset
+      - description: Page size
         in: query
-        name: offset
+        name: pageSize
         type: integer
       produces:
       - application/json

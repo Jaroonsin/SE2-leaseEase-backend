@@ -79,8 +79,8 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 		Secure:   Secure, // Requires HTTPS ? true for Prod
 		SameSite: fiber.CookieSameSiteNoneMode,
 		//Domain:   config.LoadConfig().ClientURL,
-		Path:     "/",
-		Expires:  time.Now().Add(time.Hour * 3),
+		Path:    "/",
+		Expires: time.Now().Add(time.Hour * 3),
 	})
 
 	return utils.SuccessResponse(c, fiber.StatusCreated, "User login successfully", nil)
@@ -104,7 +104,7 @@ func (h *authHandler) Logout(c *fiber.Ctx) error {
 		SameSite: fiber.CookieSameSiteNoneMode,
 		Path:     "/",
 		//Domain:   config.LoadConfig().ClientURL,
-		Expires:  time.Now().Add(time.Second * -3),
+		Expires: time.Now().Add(time.Second * -3),
 	})
 
 	return utils.SuccessResponse(c, fiber.StatusCreated, "User logout successfully", nil)

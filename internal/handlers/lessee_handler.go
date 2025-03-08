@@ -115,8 +115,8 @@ func (h *lesseeHandler) DeleteReservation(c *fiber.Ctx) error {
 // @Tags         Lessee
 // @Accept       json
 // @Produce      json
-// @Param        limit   query     int  false  "Limit"
-// @Param        offset  query     int  false  "Offset"
+// @Param        page   query     int  false  "Page number"
+// @Param        pageSize  query     int  false  "Page size"
 // @Success      200     {array}   dtos.GetReservationDTO  "Reservations retrieved successfully"
 // @Failure      400     {object}  utils.Response          "Invalid query parameters"
 // @Failure      500     {object}  utils.Response          "Internal server error"
