@@ -31,6 +31,7 @@ type Property struct {
 	AvailabilityStatus string  `gorm:"size:50;not null"`
 	Details            string  `gorm:"type:text;not null"`
 	Lessor             User    `gorm:"foreignKey:LessorID;references:ID"`
+	ImageURL           string  `gorm:"size:255"`
 }
 
 // Request struct with properly mapped fields

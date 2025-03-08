@@ -34,6 +34,7 @@ func (s *propertyService) CreateProperty(propertyDTO *dtos.PropertyDTO, lessorID
 		Price:              propertyDTO.Price,
 		AvailabilityStatus: propertyDTO.AvailabilityStatus,
 		Details:            propertyDTO.Details,
+		ImageURL:           propertyDTO.ImageURL,
 	}
 
 	err := s.propertyRepo.CreateProperty(property)
@@ -58,6 +59,7 @@ func (s *propertyService) UpdateProperty(propertyDTO *dtos.PropertyDTO, property
 		Price:              propertyDTO.Price,
 		AvailabilityStatus: propertyDTO.AvailabilityStatus,
 		Details:            propertyDTO.Details,
+		ImageURL:           propertyDTO.ImageURL,
 	}
 
 	err := s.propertyRepo.UpdateProperty(property)
@@ -138,6 +140,7 @@ func (s *propertyService) GetAllProperty(lessorID uint, page, pageSize int) (*dt
 			ReviewCount:        reviewCounts[i],
 			ReviewIDs:          reviewIDsList[i],
 			Details:            property.Details,
+			ImageURL:           property.ImageURL,
 		}
 		propertyDTOs = append(propertyDTOs, propertyDTO)
 	}
@@ -178,31 +181,38 @@ func (s *propertyService) GetPropertyByID(propertyID uint) (*dtos.GetPropertyDTO
 		ReviewCount:        reviewCount,
 		ReviewIDs:          reviewIDs,
 		Details:            property.Details,
+		ImageURL:           property.ImageURL,
 	}
 
 	logger.Info(constant.SuccessGetByIDProp, zap.Uint("propertyID", propertyID))
 	return propertyDTO, nil
 }
 
-func (s *propertyService) SearchProperty(query map[string]string) ([]dtos.SearchPropertyDTO, error) {
-	properties, err := s.propertyRepo.SearchProperty(query)
+func (s *propertyService) SearchProperty(query map[string]string) (dtos.SearchPropertyDTO, error) {
+	properties, lastPage, err := s.propertyRepo.SearchProperty(query)
 	if err != nil {
-		return nil, err
+		return dtos.SearchPropertyDTO{}, err
 	}
 
 	// Convert to DTO
-	var propertyDTOs []dtos.SearchPropertyDTO
+	var propertyDataDTOs []dtos.SearchPropertyDataDTO
 	for _, property := range properties {
-		propertyDTO := dtos.SearchPropertyDTO{
-			Name:       property.Name,
-			PropertyID: property.ID,
-			Location:   property.Location,
-			Size:       property.Size,
-			Price:      property.Price,
-			ReviewCount:property.ReviewCount,
-			Rating:     property.AvgRating,
+		propertyDataDTO := dtos.SearchPropertyDataDTO{
+			Name:        property.Name,
+			PropertyID:  property.ID,
+			Location:    property.Location,
+			Size:        property.Size,
+			Price:       property.Price,
+			ReviewCount: property.ReviewCount,
+			Rating:      property.AvgRating,
+			ImageURL:    property.ImageURL,
 		}
-		propertyDTOs = append(propertyDTOs, propertyDTO)
+		propertyDataDTOs = append(propertyDataDTOs, propertyDataDTO)
+	}
+
+	propertyDTOs := dtos.SearchPropertyDTO{
+		Properties: propertyDataDTOs,
+		LastPage:   lastPage,
 	}
 
 	return propertyDTOs, nil

@@ -150,8 +150,9 @@ func (r *propertyRepository) GetPropertyById(propertyID uint) (*models.Property,
 	return &property, nil
 }
 
-func (r *propertyRepository) SearchProperty(query map[string]string) ([]models.Property, error) {
+func (r *propertyRepository) SearchProperty(query map[string]string) ([]models.Property, uint, error) {
 	var properties []models.Property
+	var totalRecords int64
 	dbQuery := r.db.Model(&models.Property{})
 
 	// Filter by availability status.
@@ -230,13 +231,26 @@ func (r *propertyRepository) SearchProperty(query map[string]string) ([]models.P
 			}
 		}
 
+		// Count total records.
+		err = dbQuery.Count(&totalRecords).Error
+		if err != nil {
+			return nil, 0, err
+		}
+
+		// Calculate offset and limit.
 		offset := (page - 1) * pageSize
 		dbQuery = dbQuery.Limit(pageSize).Offset(offset)
 	}
 
+	// calculate last page
+	lastPage := int(totalRecords) / 10
+	if int(totalRecords)%10 != 0 {
+		lastPage++
+	}
+
 	// Execute the query.
 	err := dbQuery.Find(&properties).Error
-	return properties, err
+	return properties, uint(lastPage), err
 }
 
 func (r *propertyRepository) AutoComplete(query string) ([]string, error) {
