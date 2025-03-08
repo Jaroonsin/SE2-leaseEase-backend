@@ -45,12 +45,16 @@ func initLesseeRouter(router fiber.Router, httpHandler handlers.Handler, cfg *co
 	lesseeRouter.Post("/create", httpHandler.Lessee().CreateReservation)
 	lesseeRouter.Put("/update/:id", httpHandler.Lessee().UpdateReservation)
 	lesseeRouter.Delete("/delete/:id", httpHandler.Lessee().DeleteReservation)
+	lesseeRouter.Get("/get/:id", httpHandler.Lessee().GetReservationsByLesseeID)
+	lesseeRouter.Get("/reservations/:propID", httpHandler.Lessee().GetReservationsByLesseeID)
+	lesseeRouter.Get("/reservations", httpHandler.Lessee().GetReservationsByLesseeID)
 }
 
 func initLessorRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
 	lessorRouter := router.Group("/lessor", middleware.AuthRequired(cfg))
 	lessorRouter.Post("/accept/:id", httpHandler.Lessor().AcceptReservation)
 	lessorRouter.Post("/decline/:id", httpHandler.Lessor().DeclineReservation)
+	lessorRouter.Get("/reservations/:propID", httpHandler.Lessor().GetReservationsByPropID)
 }
 
 func initPropertyReviewRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
