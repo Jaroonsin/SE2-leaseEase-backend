@@ -140,5 +140,9 @@ func (h *lesseeHandler) GetReservationsByLesseeID(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
+	if reservations == nil {
+		return utils.ErrorResponse(c, fiber.StatusNotFound, "No reservations found")
+	}
+
 	return utils.SuccessResponse(c, fiber.StatusOK, "Reservations retrieved successfully", reservations)
 }

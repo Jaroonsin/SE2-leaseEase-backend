@@ -118,6 +118,9 @@ func (h *lessorHandler) GetReservationsByPropID(c *fiber.Ctx) error {
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Failed to retrieve reservations")
 	}
+	if reservations == nil {
+		return utils.ErrorResponse(c, fiber.StatusNotFound, "No reservations found")
+	}
 
 	return utils.SuccessResponse(c, fiber.StatusOK, "Reservations retrieved successfully", reservations)
 }
