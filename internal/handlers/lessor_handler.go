@@ -107,7 +107,7 @@ func (h *lessorHandler) GetReservationsByPropID(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid page parameter")
 	}
 
-	pageSize, err := strconv.Atoi(c.Query("pageSize", "10"))
+	pageSize, err := strconv.Atoi(c.Query("pageSize", "100"))
 	if err != nil || pageSize < 1 {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid pageSize parameter")
 	}
