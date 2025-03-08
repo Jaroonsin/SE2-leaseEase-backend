@@ -11,6 +11,7 @@ type handler struct {
 	ReviewHandler   *reviewHandler
 	PaymentHandler  *paymentHandler
 	lessorHandler   *lessorHandler
+	userHandler     *userHandler
 }
 
 // LEssor implements Handler.
@@ -23,6 +24,7 @@ func NewHandler(service services.Service) Handler {
 		ReviewHandler:   NewReviewHandler(service.Review()),
 		PaymentHandler:  NewPaymentHandler(service.Payment()),
 		lessorHandler:   NewLessorHandler(service.Lessor()),
+		userHandler:     NewUserHandler(service.User()),
 	}
 }
 
@@ -47,4 +49,8 @@ func (h *handler) Payment() *paymentHandler {
 }
 func (h *handler) Lessor() *lessorHandler {
 	return h.lessorHandler
+}
+
+func (h *handler) User() *userHandler {
+	return h.userHandler
 }
