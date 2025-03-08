@@ -41,7 +41,8 @@ type Reservation struct {
 	ProposedMessage    string `gorm:"type:text"`
 	Question           string `gorm:"type:text"`
 	Status             string `gorm:"size:50"`
-	CreateAt           time.Time
+	CreatedAt          time.Time
+	UpdatedAt          time.Time
 	InterestedProperty uint     `gorm:"not null"`
 	Property           Property `gorm:"foreignKey:InterestedProperty;references:ID"`
 	LesseeID           uint     `gorm:"not null"`

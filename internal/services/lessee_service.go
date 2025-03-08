@@ -64,6 +64,8 @@ func (r *lesseeService) GetReservationsByLesseeID(lesseeID uint, limit int, offs
 			Status:          reservation.Status,
 			Question:        reservation.Question,
 			PropertyID:      reservation.InterestedProperty,
+			PropertyName:    reservation.Property.Name,
+			LastModified:    reservation.UpdatedAt.Format("2006-01-02T15:04:05Z"),
 		}
 		GetReservationDTOs = append(GetReservationDTOs, reservationDTO)
 	}

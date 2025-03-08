@@ -14,9 +14,6 @@ definitions:
       interestedProperty:
         example: 1
         type: integer
-      lesseeID:
-        example: 1
-        type: integer
       proposedMessage:
         example: I am very interested in leasing this property.
         type: string
@@ -110,6 +107,9 @@ definitions:
       lesseeID:
         example: 1
         type: integer
+      propertyName:
+        example: Example Property
+        type: string
       proposedMessage:
         example: I am very interested in leasing this property.
         type: string
