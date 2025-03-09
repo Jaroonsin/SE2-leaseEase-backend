@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/models"
 	"errors"
 
@@ -17,56 +18,64 @@ func NewLessorRepository(db *gorm.DB) LessorRepository {
 	}
 }
 
-func (r *lessorRepository) AcceptReservation(reservationID uint, lessorID uint) (string, uint, error) {
+func (r *lessorRepository) AcceptReservation(reservationID uint, lessorID uint) (*dtos.ApprovalReservationDTO, uint, error) {
 
 	var reservation models.Reservation
-	result := r.db.Preload("Property").First(&reservation, reservationID)
+	result := r.db.Preload("Property").Preload("Lessee").First(&reservation, reservationID)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return "", 0, gorm.ErrRecordNotFound
+		return nil, 0, gorm.ErrRecordNotFound
 	} else if result.Error != nil {
-		return "", 0, result.Error
+		return nil, 0, result.Error
 	}
 
 	if reservation.Property.LessorID != lessorID {
-		return "", 0, gorm.ErrRecordNotFound
+		return nil, 0, gorm.ErrRecordNotFound
 	}
 
 	if reservation.Status != "pending" {
-		return "", 0, errors.New("reservation can only be accepted if it is pending")
+		return nil, 0, errors.New("reservation can only be accepted if it is pending")
 	}
 
 	reservation.Status = "waiting"
 	if err := r.db.Save(&reservation).Error; err != nil {
-		return "", 0, err
+		return nil, 0, err
 	}
 
-	return reservation.Property.Name, reservation.ID, nil
+	approvalDTO := &dtos.ApprovalReservationDTO{
+		LesseeEmail:  reservation.Lessee.Email,
+		PropertyName: reservation.Property.Name,
+	}
+	return approvalDTO, reservation.ID, nil
 }
 
-func (r *lessorRepository) DeclineReservation(reservationID uint, lessorID uint) (string, uint, error) {
+func (r *lessorRepository) DeclineReservation(reservationID uint, lessorID uint) (*dtos.ApprovalReservationDTO, uint, error) {
 
 	var reservation models.Reservation
-	result := r.db.Preload("Property").First(&reservation, reservationID)
+	result := r.db.Preload("Property").Preload("Lessor").First(&reservation, reservationID)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return "", 0, gorm.ErrRecordNotFound
+		return nil, 0, gorm.ErrRecordNotFound
 	} else if result.Error != nil {
-		return "", 0, result.Error
+		return nil, 0, result.Error
 	}
 
 	if reservation.Property.LessorID != lessorID {
-		return "", 0, gorm.ErrRecordNotFound
+		return nil, 0, gorm.ErrRecordNotFound
 	}
 
 	if reservation.Status != "pending" {
-		return "", 0, errors.New("reservation can only be declined if it is pending")
+		return nil, 0, errors.New("reservation can only be declined if it is pending")
 	}
 
 	reservation.Status = "cancel"
 	if err := r.db.Save(&reservation).Error; err != nil {
-		return "", 0, err
+		return nil, 0, err
 	}
 
-	return reservation.Property.Name, reservation.ID, nil
+	approvalDTO := &dtos.ApprovalReservationDTO{
+		LesseeEmail:  reservation.Lessee.Email,
+		PropertyName: reservation.Property.Name,
+	}
+	return approvalDTO, reservation.ID, nil
 }
 
 func (r *lessorRepository) GetReservationByPropertiesID(propertyID uint, limit int, offset int) ([]models.Reservation, error) {

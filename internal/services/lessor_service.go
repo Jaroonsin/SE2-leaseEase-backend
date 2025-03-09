@@ -20,13 +20,12 @@ func NewLessorService(lessorRepo repositories.LessorRepository, logger *zap.Logg
 	}
 }
 
-func (s *lessorService) AcceptReservation(reservationID uint, req *dtos.ApprovalReservationDTO, lessorID uint) (*dtos.ReservationResponseDTO, error) {
-	propName, ID, err := s.lessorRepo.AcceptReservation(reservationID, lessorID)
+func (s *lessorService) AcceptReservation(reservationID uint, lessorID uint) (*dtos.ReservationResponseDTO, error) {
+	req, ID, err := s.lessorRepo.AcceptReservation(reservationID, lessorID)
 	if err != nil {
 		s.logger.Error("failed to accept reservation", zap.Uint("reservationID", reservationID), zap.Error(err))
 		return nil, err
 	}
-	req.PropertyName = propName
 	err = utils.SendLessorAcceptanceEmail(req)
 	if err != nil {
 		s.logger.Error("failed to send acceptance email", zap.Uint("reservationID", reservationID), zap.Error(err))
@@ -40,13 +39,12 @@ func (s *lessorService) AcceptReservation(reservationID uint, req *dtos.Approval
 	return reservationResponse, nil
 }
 
-func (s *lessorService) DeclineReservation(reservationID uint, req *dtos.ApprovalReservationDTO, lessorID uint) (*dtos.ReservationResponseDTO, error) {
-	propName, ID, err := s.lessorRepo.DeclineReservation(reservationID, lessorID)
+func (s *lessorService) DeclineReservation(reservationID uint, lessorID uint) (*dtos.ReservationResponseDTO, error) {
+	req, ID, err := s.lessorRepo.DeclineReservation(reservationID, lessorID)
 	if err != nil {
 		s.logger.Error("failed to decline reservation", zap.Uint("reservationID", reservationID), zap.Error(err))
 		return nil, err
 	}
-	req.PropertyName = propName
 	err = utils.SendLessorDeclineEmail(req.LesseeEmail, req.PropertyName)
 	if err != nil {
 		s.logger.Error("failed to send decline email", zap.Uint("reservationID", reservationID), zap.Error(err))

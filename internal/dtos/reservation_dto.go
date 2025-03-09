@@ -17,10 +17,6 @@ type UpdateReservationDTO struct {
 	Question        string `json:"question" example:"Is there any flexibility in the lease terms?"`
 }
 
-type ApproveReservationDTO struct {
-	Status string `json:"status" example:"approved"`
-}
-
 type ApprovalReservationDTO struct {
 	LesseeEmail  string `json:"lesseeEmail" example:"lessee@example.com"`
 	PropertyName string `json:"propertyName" example:"Example Property"`
