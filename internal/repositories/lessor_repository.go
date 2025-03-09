@@ -51,7 +51,7 @@ func (r *lessorRepository) AcceptReservation(reservationID uint, lessorID uint) 
 func (r *lessorRepository) DeclineReservation(reservationID uint, lessorID uint) (*dtos.ApprovalReservationDTO, uint, error) {
 
 	var reservation models.Reservation
-	result := r.db.Preload("Property").Preload("Lessor").First(&reservation, reservationID)
+	result := r.db.Preload("Property").Preload("Lessee").First(&reservation, reservationID)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, 0, gorm.ErrRecordNotFound
 	} else if result.Error != nil {
