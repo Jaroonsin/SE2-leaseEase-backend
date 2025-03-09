@@ -20,7 +20,7 @@ func NewLesseeService(lesseeRepo repositories.LesseeRepository, logger *zap.Logg
 	}
 }
 
-func (r *lesseeService) CreateReservation(reservationDTO *dtos.CreateReservationDTO, lesseeID uint) (dtos.ReservationResponseDTO, error) {
+func (r *lesseeService) CreateReservation(reservationDTO *dtos.CreateReservationDTO, lesseeID uint) (*dtos.ReservationResponseDTO, error) {
 	reservation := &models.Reservation{
 		LesseeID:           lesseeID,
 		Purpose:            reservationDTO.Purpose,
@@ -32,14 +32,15 @@ func (r *lesseeService) CreateReservation(reservationDTO *dtos.CreateReservation
 
 	id, err := r.lesseeRepo.CreateReservation(reservation)
 	if err != nil {
-		return dtos.ReservationResponseDTO{}, err
+		return nil, err
 	}
-	var CreateReservationResponseDTO dtos.ReservationResponseDTO
-	CreateReservationResponseDTO.ID = id
+	CreateReservationResponseDTO := &dtos.ReservationResponseDTO{
+		ID: id,
+	}
 	return CreateReservationResponseDTO, nil
 }
 
-func (r *lesseeService) UpdateReservation(reservationDTO *dtos.UpdateReservationDTO, reservationID uint, lesseeID uint) (dtos.ReservationResponseDTO, error) {
+func (r *lesseeService) UpdateReservation(reservationDTO *dtos.UpdateReservationDTO, reservationID uint, lesseeID uint) (*dtos.ReservationResponseDTO, error) {
 	reservation := &models.Reservation{
 		ID:              reservationID,
 		Purpose:         reservationDTO.Purpose,
@@ -48,20 +49,23 @@ func (r *lesseeService) UpdateReservation(reservationDTO *dtos.UpdateReservation
 	}
 	id, err := r.lesseeRepo.UpdateReservation(reservation, lesseeID)
 	if err != nil {
-		return dtos.ReservationResponseDTO{}, err
+		return nil, err
 	}
-	var updateReservationResponseDTO dtos.ReservationResponseDTO
-	updateReservationResponseDTO.ID = id
+	updateReservationResponseDTO := &dtos.ReservationResponseDTO{
+		ID: id,
+	}
+
 	return updateReservationResponseDTO, nil
 }
 
-func (r *lesseeService) DeleteReservation(reservationID uint, lesseeID uint) (dtos.ReservationResponseDTO, error) {
+func (r *lesseeService) DeleteReservation(reservationID uint, lesseeID uint) (*dtos.ReservationResponseDTO, error) {
 	id, err := r.lesseeRepo.DeleteReservation(reservationID, lesseeID)
 	if err != nil {
-		return dtos.ReservationResponseDTO{}, err
+		return nil, err
 	}
-	var deleteReservationResponseDTO dtos.ReservationResponseDTO
-	deleteReservationResponseDTO.ID = id
+	deleteReservationResponseDTO := &dtos.ReservationResponseDTO{
+		ID: id,
+	}
 	return deleteReservationResponseDTO, nil
 }
 

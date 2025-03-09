@@ -104,6 +104,9 @@ definitions:
       interestedProperty:
         example: 1
         type: integer
+      lastModified:
+        example: "2022-01-01T00:00:00Z"
+        type: string
       lesseeID:
         example: 1
         type: integer

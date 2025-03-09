@@ -44,11 +44,12 @@ func (h *lessorHandler) AcceptReservation(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
 	}
 
-	if err := h.lessorService.AcceptReservation(uint(reservationID), &req, lesseeID); err != nil {
+	reservation, err := h.lessorService.AcceptReservation(uint(reservationID), &req, lesseeID)
+	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Failed to accept reservation")
 	}
+	return utils.SuccessResponse(c, fiber.StatusOK, "Reservation accepted successfully", reservation)
 
-	return utils.SuccessResponse(c, fiber.StatusOK, "Reservation accepted successfully", nil)
 }
 
 // DeclineReservation godoc
@@ -75,11 +76,12 @@ func (h *lessorHandler) DeclineReservation(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
 	}
 
-	if err := h.lessorService.DeclineReservation(uint(reservationID), &req, lesseeID); err != nil {
+	reservation, err := h.lessorService.DeclineReservation(uint(reservationID), &req, lesseeID)
+	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Failed to decline reservation")
 	}
+	return utils.SuccessResponse(c, fiber.StatusOK, "Reservation declined successfully", reservation)
 
-	return utils.SuccessResponse(c, fiber.StatusOK, "Reservation declined successfully", nil)
 }
 
 // GetReservationsByPropID godoc

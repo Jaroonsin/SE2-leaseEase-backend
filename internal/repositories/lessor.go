@@ -5,7 +5,7 @@ import (
 )
 
 type LessorRepository interface {
-	AcceptReservation(reservationID uint, lessorID uint) error
-	DeclineReservation(reservationID uint, lessorID uint) error
+	AcceptReservation(reservationID uint, lessorID uint) (string, uint, error)
+	DeclineReservation(reservationID uint, lessorID uint) (string, uint, error)
 	GetReservationByPropertiesID(propertyID uint, limit int, offset int) ([]models.Reservation, error)
 }
