@@ -7,6 +7,10 @@ type CreateReservationDTO struct {
 	InterestedProperty uint   `json:"interestedProperty" example:"1"`
 }
 
+type ReservationResponseDTO struct {
+	ID uint `json:"reservation_id" example:"1"`
+}
+
 type UpdateReservationDTO struct {
 	Purpose         string `json:"purpose" example:"Updated lease purpose"`
 	ProposedMessage string `json:"proposedMessage" example:"I would like to update my earlier message."`
