@@ -40,11 +40,11 @@ func (h *lesseeHandler) CreateReservation(c *fiber.Ctx) error {
 
 	lesseeID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
 
-	err := h.lesseeService.CreateReservation(&req, lesseeID)
+	response, err := h.lesseeService.CreateReservation(&req, lesseeID)
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
-	return utils.SuccessResponse(c, fiber.StatusCreated, "Reservation created successfully", nil)
+	return utils.SuccessResponse(c, fiber.StatusCreated, "Reservation created successfully", response)
 }
 
 // UpdateReservation godoc
@@ -70,14 +70,14 @@ func (h *lesseeHandler) UpdateReservation(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid reservation ID")
 	}
 	lesseeID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
-	err = h.lesseeService.UpdateReservation(&req, uint(reservationID), lesseeID)
+	response, err := h.lesseeService.UpdateReservation(&req, uint(reservationID), lesseeID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return utils.ErrorResponse(c, fiber.StatusNotFound, "Reservation not found")
 		}
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
-	return utils.SuccessResponse(c, fiber.StatusOK, "Reservation updated successfully", nil)
+	return utils.SuccessResponse(c, fiber.StatusOK, "Reservation updated successfully", response)
 }
 
 // DeleteReservation godoc
@@ -98,7 +98,7 @@ func (h *lesseeHandler) DeleteReservation(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid reservation ID")
 	}
 	lesseeID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
-	err = h.lesseeService.DeleteReservation(uint(reservationID), lesseeID)
+	response, err := h.lesseeService.DeleteReservation(uint(reservationID), lesseeID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return utils.ErrorResponse(c, fiber.StatusNotFound, "Reservation not found")
@@ -106,7 +106,7 @@ func (h *lesseeHandler) DeleteReservation(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return utils.SuccessResponse(c, fiber.StatusOK, "Reservation deleted successfully", nil)
+	return utils.SuccessResponse(c, fiber.StatusOK, "Reservation deleted successfully", response)
 }
 
 // GetReservationsByLesseeID godoc

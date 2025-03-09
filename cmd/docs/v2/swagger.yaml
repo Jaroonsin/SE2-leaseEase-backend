@@ -1,14 +1,5 @@
 basePath: /
 definitions:
-  dtos.ApprovalReservationDTO:
-    properties:
-      lesseeEmail:
-        example: lessee@example.com
-        type: string
-      propertyName:
-        example: Example Property
-        type: string
-    type: object
   dtos.CreateReservationDTO:
     properties:
       interestedProperty:
@@ -104,6 +95,9 @@ definitions:
       interestedProperty:
         example: 1
         type: integer
+      lastModified:
+        example: "2022-01-01T00:00:00Z"
+        type: string
       lesseeID:
         example: 1
         type: integer
@@ -729,12 +723,6 @@ paths:
         name: id
         required: true
         type: integer
-      - description: Reservation details
-        in: body
-        name: reservation
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.ApprovalReservationDTO'
       produces:
       - application/json
       responses:
@@ -743,7 +731,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Response'
         "400":
-          description: Invalid request body
+          description: Invalid reservation ID
           schema:
             $ref: '#/definitions/utils.Response'
         "500":
@@ -764,12 +752,6 @@ paths:
         name: id
         required: true
         type: integer
-      - description: Reservation details
-        in: body
-        name: reservation
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.ApprovalReservationDTO'
       produces:
       - application/json
       responses:
@@ -778,7 +760,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Response'
         "400":
-          description: Invalid request body
+          description: Invalid reservation ID
           schema:
             $ref: '#/definitions/utils.Response'
         "500":
