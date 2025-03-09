@@ -19,10 +19,7 @@ type JWTDTO struct {
 	UserID uint   `json:"user_id" example:"1"`    // user's ID
 	Role   string `json:"role" example:"lessee" ` // user's role
 }
-type AuthCheckDTO struct {
-	UserID uint   `json:"user_id" example:"1"`    // user's ID
-	Role   string `json:"role" example:"lessee" ` // user's role
-}
+
 
 type RequestOTPDTO struct {
 	Email string `json:"email" example:"john.doe@example.com" binding:"required"` // user's email
