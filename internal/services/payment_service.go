@@ -22,7 +22,7 @@ func NewPaymentService(paymentRepo repositories.PaymentRepository, logger *zap.L
 	}
 }
 
-func (s *paymentService) ProcessPayment(userID uint, currency, token string, reservationID uint) error {
+func (s *paymentService) ProcessPayment(userID uint, currency string, token string, reservationID uint) error {
 	logger := s.logger.Named("ProcessPayment")
 	charge := &omise.Charge{}
 	client, err := utils.NewOmiseClient()
