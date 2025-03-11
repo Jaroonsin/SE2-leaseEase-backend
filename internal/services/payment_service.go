@@ -22,7 +22,7 @@ func NewPaymentService(paymentRepo repositories.PaymentRepository, logger *zap.L
 	}
 }
 
-func (s *paymentService) ProcessPayment(userID uint, amount int64, currency, token string) error {
+func (s *paymentService) ProcessPayment(userID uint, amount int64, currency, token string, reservationID uint) error {
 	logger := s.logger.Named("ProcessPayment")
 	charge := &omise.Charge{}
 	client, err := utils.NewOmiseClient()
@@ -65,8 +65,21 @@ func (s *paymentService) ProcessPayment(userID uint, amount int64, currency, tok
 		return err
 	}
 
-	logger.Info("Payment record saved successfully",
+	logger.Info("Payment record saved successfully waiting for reservation update",
 		zap.String("chargeID", charge.ID),
 	)
+
+	if err := s.paymentRepo.UpdatePaymentStatus(reservationID, "accept"); err != nil {
+		logger.Error("Failed to update reservation",
+			zap.String("chargeID", charge.ID),
+			zap.Error(err),
+		)
+		return err
+	}
+
+	logger.Info("Reservation updated successfully",
+		zap.Uint("reservationID", reservationID),
+	)
+
 	return nil
 }

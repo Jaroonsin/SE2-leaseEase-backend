@@ -6,6 +6,7 @@ import (
 	"LeaseEase/utils"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 type paymentHandler struct {
@@ -34,7 +35,8 @@ func (h *paymentHandler) HandlePayment(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request body")
 	}
 
-	err := h.paymentService.ProcessPayment(req.UserID, req.Amount, req.Currency, req.Token)
+	lesseeID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
+	err := h.paymentService.ProcessPayment(lesseeID, req.Amount, req.Currency, req.Token, req.ReservationID)
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Payment process failed")
 	}
