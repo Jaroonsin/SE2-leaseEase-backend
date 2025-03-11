@@ -36,7 +36,7 @@ func (h *paymentHandler) HandlePayment(c *fiber.Ctx) error {
 	}
 
 	lesseeID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
-	err := h.paymentService.ProcessPayment(lesseeID, req.Amount, req.Currency, req.Token, req.ReservationID)
+	err := h.paymentService.ProcessPayment(lesseeID, req.Currency, req.Token, req.ReservationID)
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Payment process failed")
 	}

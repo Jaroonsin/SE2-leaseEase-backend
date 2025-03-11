@@ -25,3 +25,16 @@ func (r *paymentRepository) UpdatePaymentStatus(id uint, status string) error {
 	}
 	return nil
 }
+
+func (r *paymentRepository) GetAmountByReservationID(reservationID uint) (float64, error) {
+	var amount float64
+	err := r.db.Table("reservations").
+		Select("properties.price").
+		Joins("join properties on properties.id = reservations.interested_property").
+		Where("reservations.id = ?", reservationID).
+		Scan(&amount).Error
+	if err != nil {
+		return 0, err
+	}
+	return amount, nil
+}
