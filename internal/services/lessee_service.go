@@ -21,6 +21,7 @@ func NewLesseeService(lesseeRepo repositories.LesseeRepository, logger *zap.Logg
 }
 
 func (r *lesseeService) CreateReservation(reservationDTO *dtos.CreateReservationDTO, lesseeID uint) (*dtos.ReservationResponseDTO, error) {
+	logger := r.logger.Named("CreateReservation")
 	reservation := &models.Reservation{
 		LesseeID:           lesseeID,
 		Purpose:            reservationDTO.Purpose,
@@ -32,8 +33,11 @@ func (r *lesseeService) CreateReservation(reservationDTO *dtos.CreateReservation
 
 	id, err := r.lesseeRepo.CreateReservation(reservation)
 	if err != nil {
+		logger.Error("Failed to create reservation", zap.Error(err))
 		return nil, err
 	}
+	logger.Info("Reservation created successfully", zap.Uint("reservationID", id))
+
 	CreateReservationResponseDTO := &dtos.ReservationResponseDTO{
 		ID: id,
 	}
@@ -41,6 +45,7 @@ func (r *lesseeService) CreateReservation(reservationDTO *dtos.CreateReservation
 }
 
 func (r *lesseeService) UpdateReservation(reservationDTO *dtos.UpdateReservationDTO, reservationID uint, lesseeID uint) (*dtos.ReservationResponseDTO, error) {
+	logger := r.logger.Named("UpdateReservation")
 	reservation := &models.Reservation{
 		ID:              reservationID,
 		Purpose:         reservationDTO.Purpose,
@@ -49,8 +54,11 @@ func (r *lesseeService) UpdateReservation(reservationDTO *dtos.UpdateReservation
 	}
 	id, err := r.lesseeRepo.UpdateReservation(reservation, lesseeID)
 	if err != nil {
+		logger.Error("Failed to update reservation", zap.Error(err))
 		return nil, err
 	}
+	logger.Info("Reservation updated successfully", zap.Uint("reservationID", id))
+
 	updateReservationResponseDTO := &dtos.ReservationResponseDTO{
 		ID: id,
 	}
@@ -59,10 +67,14 @@ func (r *lesseeService) UpdateReservation(reservationDTO *dtos.UpdateReservation
 }
 
 func (r *lesseeService) DeleteReservation(reservationID uint, lesseeID uint) (*dtos.ReservationResponseDTO, error) {
+	logger := r.logger.Named("DeleteReservation")
 	id, err := r.lesseeRepo.DeleteReservation(reservationID, lesseeID)
 	if err != nil {
+		logger.Error("Failed to delete reservation", zap.Error(err))
 		return nil, err
 	}
+	logger.Info("Reservation deleted successfully", zap.Uint("reservationID", id))
+
 	deleteReservationResponseDTO := &dtos.ReservationResponseDTO{
 		ID: id,
 	}
@@ -70,9 +82,10 @@ func (r *lesseeService) DeleteReservation(reservationID uint, lesseeID uint) (*d
 }
 
 func (r *lesseeService) GetReservationsByLesseeID(lesseeID uint, limit int, offset int) ([]dtos.GetReservationDTO, error) {
+	logger := r.logger.Named("GetReservationsByLesseeID")
 	reservations, err := r.lesseeRepo.GetReservationByLesseeID(lesseeID, limit, offset)
 	if err != nil {
-		r.logger.Error("failed to get reservations by lessee ID", zap.Error(err))
+		logger.Error("Failed to get reservations by lessee ID", zap.Error(err))
 		return nil, err
 	}
 
@@ -92,5 +105,6 @@ func (r *lesseeService) GetReservationsByLesseeID(lesseeID uint, limit int, offs
 		GetReservationDTOs = append(GetReservationDTOs, reservationDTO)
 	}
 
+	logger.Info("Reservations fetched successfully", zap.Int("count", len(GetReservationDTOs)))
 	return GetReservationDTOs, nil
 }
