@@ -58,15 +58,15 @@ func (s *lessorService) DeclineReservation(reservationID uint, lessorID uint) (*
 	return reservationResponse, nil
 }
 
-func (s *lessorService) GetReservationsByPropertyID(propertyID uint, limit int, offset int) ([]dtos.GetReservationDTO, error) {
+func (s *lessorService) GetReservationsByPropertyID(propertyID uint, limit int, offset int) ([]dtos.GetPropReservationDTO, error) {
 	reservations, err := s.lessorRepo.GetReservationByPropertiesID(propertyID, limit, offset)
 	if err != nil {
 		s.logger.Error("failed to get reservations by property ID", zap.Uint("propertyID", propertyID), zap.Error(err))
 		return nil, err
 	}
-	var GetReservationDTOs []dtos.GetReservationDTO
+	var GetPropReservationDTOs []dtos.GetPropReservationDTO
 	for _, reservation := range reservations {
-		GetReservationDTO := dtos.GetReservationDTO{
+		GetPropReservationDTO := dtos.GetPropReservationDTO{
 			ID:              reservation.ID,
 			Purpose:         reservation.Purpose,
 			ProposedMessage: reservation.ProposedMessage,
@@ -74,11 +74,13 @@ func (s *lessorService) GetReservationsByPropertyID(propertyID uint, limit int, 
 			Status:          reservation.Status,
 			PropertyID:      reservation.InterestedProperty,
 			LesseeID:        reservation.LesseeID,
+			LesseeName:      reservation.Lessee.Name,
+			ImageURL:        reservation.Lessee.ImageURL,
 			PropertyName:    reservation.Property.Name,
 			LastModified:    reservation.UpdatedAt.Format("2006-01-02T15:04:05Z"),
 		}
-		GetReservationDTOs = append(GetReservationDTOs, GetReservationDTO)
+		GetPropReservationDTOs = append(GetPropReservationDTOs, GetPropReservationDTO)
 	}
 
-	return GetReservationDTOs, nil
+	return GetPropReservationDTOs, nil
 }
