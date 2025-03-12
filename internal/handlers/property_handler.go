@@ -211,7 +211,7 @@ func (h *propertyHandler) GetPropertyByID(c *fiber.Ctx) error {
 // @Param sortby query string false "Order field (price or size)"
 // @Param order query string false "Order direction (asc or desc)"
 // @Param availability query bool false "Availability status"
-// @Success 200 {array} utils.Response{data=[]dtos.SearchPropertyDTO} "Properties retrieved successfully"
+// @Success 200 {array} utils.Response{data=dtos.SearchPropertyDTO} "Properties retrieved successfully"
 // @Failure 400 {array} utils.Response "Bad Request"
 // @Failure 500 {array} utils.Response "Internal Server Error"
 // @Router /properties/search [get]

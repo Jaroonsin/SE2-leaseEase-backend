@@ -86,37 +86,6 @@ func (s *authService) Login(loginDTO *dtos.LoginDTO) (string, error) {
 	return token, nil
 }
 
-func (s *authService) AuthCheck(token string) (*dtos.AuthCheckDTO, error) {
-	logger := s.logger.Named("AuthCheck")
-	if token == "" {
-		logger.Error("no token provided")
-		return nil, errors.New("no token provided")
-	}
-
-	claims, err := utils.ParseJWT(token)
-	if err != nil {
-		logger.Error("invalid or expired token", zap.Error(err))
-		return nil, errors.New("invalid or expired token")
-	}
-
-	userIDFloat, ok1 := claims["user_id"].(float64)
-	role, ok2 := claims["role"].(string)
-	if !ok1 || !ok2 {
-		logger.Error("invalid token payload")
-		return nil, errors.New("invalid token payload")
-	}
-	if role != "lessor" && role != "lessee" {
-		logger.Error("invalid role")
-		return nil, errors.New("invalid role")
-	}
-
-	userID := uint(userIDFloat)
-	logger.Info("user authenticated", zap.Uint("UserID", userID), zap.String("Role", role))
-	return &dtos.AuthCheckDTO{
-		UserID: userID,
-		Role:   role,
-	}, nil
-}
 func (s *authService) RequestOTP(requestOTPDTO *dtos.RequestOTPDTO) error {
 	logger := s.logger.Named("RequestOTP")
 	otp := utils.GenerateOTP()

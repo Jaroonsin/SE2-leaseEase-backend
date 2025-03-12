@@ -1,4 +1,5 @@
 .PHONY: run docker swag
+.PHONY: test
 
 # 'swag' target to initialize Swagger
 swag:
@@ -18,4 +19,7 @@ rm_docker:
 	docker-compose down
 	docker volume rm se2-leaseease-backend_postgres_data
 	docker volume rm se2-leaseease-backend_pgadmin_data 
+
+test:
+	go test -v ./test/main_test.go
 

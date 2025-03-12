@@ -40,11 +40,11 @@ func (h *lesseeHandler) CreateReservation(c *fiber.Ctx) error {
 
 	lesseeID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
 
-	err := h.lesseeService.CreateReservation(&req, lesseeID)
+	response, err := h.lesseeService.CreateReservation(&req, lesseeID)
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
-	return utils.SuccessResponse(c, fiber.StatusCreated, "Reservation created successfully", nil)
+	return utils.SuccessResponse(c, fiber.StatusCreated, "Reservation created successfully", response)
 }
 
 // UpdateReservation godoc
@@ -70,14 +70,14 @@ func (h *lesseeHandler) UpdateReservation(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid reservation ID")
 	}
 	lesseeID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
-	err = h.lesseeService.UpdateReservation(&req, uint(reservationID), lesseeID)
+	response, err := h.lesseeService.UpdateReservation(&req, uint(reservationID), lesseeID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return utils.ErrorResponse(c, fiber.StatusNotFound, "Reservation not found")
 		}
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
-	return utils.SuccessResponse(c, fiber.StatusOK, "Reservation updated successfully", nil)
+	return utils.SuccessResponse(c, fiber.StatusOK, "Reservation updated successfully", response)
 }
 
 // DeleteReservation godoc
@@ -98,7 +98,7 @@ func (h *lesseeHandler) DeleteReservation(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid reservation ID")
 	}
 	lesseeID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
-	err = h.lesseeService.DeleteReservation(uint(reservationID), lesseeID)
+	response, err := h.lesseeService.DeleteReservation(uint(reservationID), lesseeID)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return utils.ErrorResponse(c, fiber.StatusNotFound, "Reservation not found")
@@ -106,5 +106,43 @@ func (h *lesseeHandler) DeleteReservation(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return utils.SuccessResponse(c, fiber.StatusOK, "Reservation deleted successfully", nil)
+	return utils.SuccessResponse(c, fiber.StatusOK, "Reservation deleted successfully", response)
+}
+
+// GetReservationsByLesseeID godoc
+// @Summary      Get Reservations by Lessee ID
+// @Description  Retrieves lease reservations for the lessee identified by the JWT token.
+// @Tags         Lessee
+// @Accept       json
+// @Produce      json
+// @Param        page   query     int  false  "Page number"
+// @Param        pageSize  query     int  false  "Page size"
+// @Success      200     {array}   dtos.GetReservationDTO  "Reservations retrieved successfully"
+// @Failure      400     {object}  utils.Response          "Invalid query parameters"
+// @Failure      500     {object}  utils.Response          "Internal server error"
+// @Router       /lessee/reservations [get]
+func (h *lesseeHandler) GetReservationsByLesseeID(c *fiber.Ctx) error {
+	page, err := strconv.Atoi(c.Query("page", "1"))
+	if err != nil || page < 1 {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid page parameter")
+	}
+	pageSize, err := strconv.Atoi(c.Query("pageSize", "100"))
+	if err != nil || pageSize < 1 {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid pageSize parameter")
+	}
+
+	offset := (page - 1) * pageSize
+
+	lesseeID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
+
+	reservations, err := h.lesseeService.GetReservationsByLesseeID(lesseeID, pageSize, offset)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+	}
+
+	if reservations == nil {
+		return utils.ErrorResponse(c, fiber.StatusNotFound, "No reservations found")
+	}
+
+	return utils.SuccessResponse(c, fiber.StatusOK, "Reservations retrieved successfully", reservations)
 }

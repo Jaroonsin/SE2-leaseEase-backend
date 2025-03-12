@@ -5,6 +5,10 @@ import (
 )
 
 type Config struct {
+	// Client settings
+	// ClientName string
+	// ClientEnv  string
+	ClientURL string
 	// Server settings
 	// ServerName string
 	ServerEnv string
@@ -45,6 +49,11 @@ type Config struct {
 
 func LoadConfig() *Config {
 	return &Config{
+		// Client settings
+		// ClientName: os.Getenv("CLIENT_NAME"),	//not used
+		// ClientEnv:  os.Getenv("CLIENT_ENV"),	//not used
+		ClientURL: os.Getenv("CLIENT_URL"),
+
 		// Server settings
 		// ServerName: os.Getenv("SERVER_NAME"),	//not used
 		ServerEnv: os.Getenv("SERVER_ENV"),

@@ -22,7 +22,7 @@ func NewPaymentService(paymentRepo repositories.PaymentRepository, logger *zap.L
 	}
 }
 
-func (s *paymentService) ProcessPayment(userID uint, amount int64, currency, token string) error {
+func (s *paymentService) ProcessPayment(userID uint, currency string, token string, reservationID uint) error {
 	logger := s.logger.Named("ProcessPayment")
 	charge := &omise.Charge{}
 	client, err := utils.NewOmiseClient()
@@ -30,8 +30,22 @@ func (s *paymentService) ProcessPayment(userID uint, amount int64, currency, tok
 		logger.Error("Fail to create omise client", zap.Error(err))
 	}
 
+	amount, err := s.paymentRepo.GetAmountByReservationID(reservationID)
+	amount = amount * 100
+	logger.Info("Amount fetched successfully",
+		zap.Uint("reservationID", reservationID),
+		zap.Float64("amount", amount),
+	)
+
+	if err != nil {
+		logger.Error("Failed to get amount by reservation ID",
+			zap.Uint("reservationID", reservationID),
+			zap.Error(err),
+		)
+	}
+
 	err = client.Do(charge, &operations.CreateCharge{
-		Amount:   amount,
+		Amount:   int64(amount),
 		Currency: currency,
 		Card:     token,
 	})
@@ -52,7 +66,7 @@ func (s *paymentService) ProcessPayment(userID uint, amount int64, currency, tok
 	payment := &models.Payment{
 		ID:       charge.ID,
 		UserID:   userID,
-		Amount:   amount,
+		Amount:   int64(amount),
 		Currency: currency,
 		Status:   string(charge.Status),
 	}
@@ -65,8 +79,21 @@ func (s *paymentService) ProcessPayment(userID uint, amount int64, currency, tok
 		return err
 	}
 
-	logger.Info("Payment record saved successfully",
+	logger.Info("Payment record saved successfully waiting for reservation update",
 		zap.String("chargeID", charge.ID),
 	)
+
+	if err := s.paymentRepo.UpdatePaymentStatus(reservationID, "accept"); err != nil {
+		logger.Error("Failed to update reservation",
+			zap.String("chargeID", charge.ID),
+			zap.Error(err),
+		)
+		return err
+	}
+
+	logger.Info("Reservation updated successfully",
+		zap.Uint("reservationID", reservationID),
+	)
+
 	return nil
 }
