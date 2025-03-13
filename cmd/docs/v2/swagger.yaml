@@ -131,17 +131,14 @@ definitions:
     type: object
   dtos.PaymentDTO:
     properties:
-      amount:
-        description: Stored in satangs na ja
-        type: integer
       currency:
         description: 'Example: "THB", "USD"'
         type: string
+      reservation_id:
+        type: integer
       token:
         description: 'Example: "tokn_test_xxyy69btt9rnb5mir5b"'
         type: string
-      user_id:
-        type: integer
     type: object
   dtos.PropertyDTO:
     description: PropertyDTO represents a property.
@@ -1339,6 +1336,41 @@ paths:
       security:
       - CookieAuth: []
       summary: Verify user authentication
+      tags:
+      - users
+  /user/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves user details for the authenticated user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User details retrieved successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Failed to retrieve user
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - CookieAuth: []
+      summary: Get user information
       tags:
       - users
   /user/image:

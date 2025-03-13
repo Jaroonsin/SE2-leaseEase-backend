@@ -92,3 +92,20 @@ func (s *userService) CheckUser(token string) (*dtos.CheckUserDTO, error) {
 		ImageURL: user.ImageURL,
 	}, nil
 }
+
+func (s *userService) GetUser(userID uint) (*dtos.GetUserDTO, error) {
+	logger := s.logger.Named("GetUser")
+
+	user, err := s.UserRepo.GetUserByID(userID)
+	if err != nil {
+		logger.Error("user not found", zap.Error(err))
+		return nil, errors.New("user not found")
+	}
+
+	logger.Info("user found", zap.Uint("UserID", userID))
+	return &dtos.GetUserDTO{
+		Name:     user.Name,
+		Address:  user.Address,
+		ImageURL: user.ImageURL,
+	}, nil
+}

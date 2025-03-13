@@ -76,5 +76,6 @@ func initUserRouter(router fiber.Router, httpHandler handlers.Handler, cfg *conf
 	userRouter.Put("/user", httpHandler.User().UpdateUser)
 	userRouter.Put("/image", httpHandler.User().UpdateImage)
 	userRouter.Post("/check", httpHandler.User().CheckUser)
+	userRouter.Get("/get/:id", httpHandler.User().GetUser)
 
 }

@@ -17,3 +17,9 @@ type CheckUserDTO struct {
 	Address  string `json:"address" example:"1234 Main St, Springfield"`       // user's address
 	ImageURL string `json:"image_url" example:"https://example.com/image.jpg"` // user's image URL
 }
+
+type GetUserDTO struct {
+	Name     string `json:"name" example:"John"`                               // user's first name
+	Address  string `json:"address" example:"1234 Main St, Springfield"`       // user's address
+	ImageURL string `json:"image_url" example:"https://example.com/image.jpg"` // user's image URL
+}

@@ -4,6 +4,7 @@ import (
 	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/services"
 	"LeaseEase/utils"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
@@ -92,4 +93,31 @@ func (h *userHandler) CheckUser(c *fiber.Ctx) error {
 
 	// Return success response with user details
 	return utils.SuccessResponse(c, fiber.StatusOK, "User is authenticated", claims)
+}
+
+// GetUser godoc
+// @Summary      Get user information
+// @Description  Retrieves user details for the authenticated user
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id  path  uint  true  "User ID"
+// @Success      200  {object}  utils.Response  "User details retrieved successfully"
+// @Failure      400  {object}  utils.Response  "Invalid request"
+// @Failure      404  {object}  utils.Response  "User not found"
+// @Failure      500  {object}  utils.Response  "Failed to retrieve user"
+// @Router       /user/get/{id} [get]
+// @Security     CookieAuth
+func (h *userHandler) GetUser(c *fiber.Ctx) error {
+
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil || id <= 0 {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid request")
+	}
+	userID := uint(id)
+	user, err := h.UserService.GetUser(userID)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusNotFound, "User not found")
+	}
+	return utils.SuccessResponse(c, fiber.StatusOK, "User details retrieved successfully", user)
 }
