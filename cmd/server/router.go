@@ -6,6 +6,7 @@ import (
 	"LeaseEase/internal/middleware"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/websocket/v2"
 )
 
 func (s *FiberHttpServer) initRouter(router fiber.Router) {
@@ -16,6 +17,7 @@ func (s *FiberHttpServer) initRouter(router fiber.Router) {
 	initPropertyReviewRouter(router, s.handlers, s.cfg)
 	initPaymentRouter(router, s.handlers, s.cfg)
 	initUserRouter(router, s.handlers, s.cfg)
+	initChatRouter(router, s.handlers, s.cfg)
 }
 
 func initAuthRouter(router fiber.Router, httpHandler handlers.Handler) {
@@ -76,5 +78,13 @@ func initUserRouter(router fiber.Router, httpHandler handlers.Handler, cfg *conf
 	userRouter.Put("/user", httpHandler.User().UpdateUser)
 	userRouter.Put("/image", httpHandler.User().UpdateImage)
 	userRouter.Post("/check", httpHandler.User().CheckUser)
+}
 
+func initChatRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
+	chatRouter := router.Group("/chat")
+
+	chatRouter.Get("/ws", httpHandler.Chat().HandleWebSocketUpgrade)
+	chatRouter.Get("/ws", websocket.New(func(ws *websocket.Conn) {
+		httpHandler.Chat().HandleWebSocket(ws)
+	}))
 }
