@@ -4,7 +4,6 @@ import (
 	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/services"
 	"LeaseEase/utils"
-	"fmt"
 	"log"
 	"strconv"
 
@@ -25,29 +24,14 @@ func NewChatHandler(chatService services.ChatService) *chatHandler {
 }
 
 func (h *chatHandler) HandleWebSocketUpgrade(c *fiber.Ctx) error {
-	// retrieve senderID
-	tokenString := c.Get("Authorization")
+	senderID := c.Query("senderID")
+	receiverID := c.Query("receiverID")
 
-	if tokenString == "" {
-		log.Println("Authorization token missing")
-		return utils.ErrorResponse(c, fiber.StatusUnauthorized, "Authorization token missing")
-	}
-
-	// Parse the token and extract user_id (use your JWT parsing function)
-	claims, err := utils.ParseJWT(tokenString)
-	if err != nil {
-		log.Printf("Invalid token : %v", err)
-		return utils.ErrorResponse(c, fiber.StatusUnauthorized, "Invalid token")
-	}
-
-	// Extract user_id from the claims
-	senderID := fmt.Sprintf("%v", claims["user_id"])
-	// Validate senderID
 	if senderID == "" {
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Invalid senderID")
+		log.Println("Sender ID missing")
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Sender ID missing")
 	}
 
-	receiverID := c.Get("Receiver-ID")
 	if receiverID == "" {
 		log.Println("Receiver ID missing")
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Receiver ID missing")
@@ -76,14 +60,6 @@ func (h *chatHandler) HandleWebSocket(ws *websocket.Conn) {
 
 	h.clients[senderID] = ws
 	log.Printf("User connected: %s, Total connected users: %d", senderID, len(h.clients))
-
-	// Read the first message to get receiverID
-	// var req dtos.SendMessageRequest
-	// if err := ws.ReadJSON(&req); err != nil {
-	// 	log.Println("Error reading initial message:", err)
-	// 	delete(h.clients, senderID)
-	// 	return
-	// }
 
 	//receiverID := strconv.FormatUint(uint64(req.ReceiverID), 10) // Convert receiver ID to string
 	log.Println("ReceiverID from message:", receiverID)
