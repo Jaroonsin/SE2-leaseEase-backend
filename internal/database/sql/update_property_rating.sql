@@ -4,12 +4,12 @@ RETURNS TRIGGER AS $$
 BEGIN
     UPDATE properties
     SET 
-        avg_rating = (
+        avg_rating = Round( (
             SELECT COALESCE(AVG(reviews.rating), 0)
             FROM property_reviews
             JOIN reviews ON property_reviews.review_id = reviews.id
             WHERE property_reviews.property_id = NEW.property_id
-        ),
+        ),1),
         review_count = (
             SELECT COUNT(*)
             FROM property_reviews

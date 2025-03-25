@@ -83,7 +83,7 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 		Expires: time.Now().Add(time.Hour * 3),
 	})
 
-	return utils.SuccessResponse(c, fiber.StatusCreated, "User login successfully", nil)
+	return utils.SuccessResponse(c, fiber.StatusCreated, "User login successfully", fiber.Map{"token": token})
 }
 
 // Login godoc

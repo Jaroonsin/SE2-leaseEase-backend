@@ -43,6 +43,36 @@ func (_m *UserService) CheckUser(token string) (*dtos.CheckUserDTO, error) {
 	return r0, r1
 }
 
+// GetUser provides a mock function with given fields: userID
+func (_m *UserService) GetUser(userID uint) (*dtos.GetUserDTO, error) {
+	ret := _m.Called(userID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetUser")
+	}
+
+	var r0 *dtos.GetUserDTO
+	var r1 error
+	if rf, ok := ret.Get(0).(func(uint) (*dtos.GetUserDTO, error)); ok {
+		return rf(userID)
+	}
+	if rf, ok := ret.Get(0).(func(uint) *dtos.GetUserDTO); ok {
+		r0 = rf(userID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*dtos.GetUserDTO)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(uint) error); ok {
+		r1 = rf(userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // UpdateImage provides a mock function with given fields: userID, Image
 func (_m *UserService) UpdateImage(userID uint, Image dtos.UpdateImageDTO) error {
 	ret := _m.Called(userID, Image)
