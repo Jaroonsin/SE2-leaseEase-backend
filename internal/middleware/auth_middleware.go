@@ -3,6 +3,7 @@ package middleware
 import (
 	"LeaseEase/config"
 	"LeaseEase/utils"
+	"log"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -16,8 +17,7 @@ func AuthRequired(cfg *config.Config) fiber.Handler {
 			// Store token claims in locals if needed for later use in request context
 			c.Locals("user", claims)
 		}
-		
-
+		log.Println("Auth middleware passed")
 		return c.Next()
 	}
 }

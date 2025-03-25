@@ -8,4 +8,5 @@ type Handler interface {
 	Payment() *paymentHandler
 	Lessor() *lessorHandler
 	User() *userHandler
+	Chat() *chatHandler
 }
