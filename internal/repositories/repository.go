@@ -8,4 +8,5 @@ type Repository interface {
 	Review() ReviewRepository
 	Payment() PaymentRepository
 	Lessor() LessorRepository
+	Chat() ChatRepository
 }

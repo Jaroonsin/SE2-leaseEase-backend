@@ -8,4 +8,5 @@ type Service interface {
 	Payment() PaymentService
 	Lessor() LessorService
 	User() UserService
+	Chat() ChatService
 }

@@ -14,6 +14,7 @@ type repository struct {
 	ReviewRepository   ReviewRepository
 	PaymentRepository  PaymentRepository
 	LessorRepository   LessorRepository
+	ChatRepository     ChatRepository
 }
 
 // Lessor implements Repository.
@@ -27,6 +28,7 @@ func NewRepository(cfg *config.Config, db *gorm.DB) Repository {
 		ReviewRepository:   NewReviewRepository(db),
 		PaymentRepository:  NewPaymentRepository(db),
 		LessorRepository:   NewLessorRepository(db),
+		ChatRepository:     NewChatRepository(db),
 	}
 }
 
@@ -56,4 +58,8 @@ func (r *repository) Review() ReviewRepository {
 
 func (r *repository) Payment() PaymentRepository {
 	return r.PaymentRepository
+}
+
+func (r *repository) Chat() ChatRepository {
+	return r.ChatRepository
 }
