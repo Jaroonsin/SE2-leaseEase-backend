@@ -76,7 +76,7 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 		Name:     "auth_token",
 		Value:    token,
 		HTTPOnly: true,
-		Secure:   Secure, // Requires HTTPS ? true for Prod
+		// Secure:   Secure, // Requires HTTPS ? true for Prod
 		SameSite: fiber.CookieSameSiteNoneMode,
 		//Domain:   config.LoadConfig().ClientURL,
 		Path:    "/",
