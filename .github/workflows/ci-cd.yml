@@ -41,10 +41,10 @@ jobs:
                   docker build -t ${{ secrets.DOCKER_USERNAME }}/leaseease-backend:latest .
                   docker push ${{ secrets.DOCKER_USERNAME }}/leaseease-backend:latest
 
-    deploy:
-        needs: build-and-push-docker
-        runs-on: ubuntu-latest
-        steps:
-            - name: Deploy to Render
-              run: |
-                  curl -X POST https://api.render.com/deploy/${{ secrets.RENDER_SERVICE_ID }}
+    # deploy:
+    #     needs: build-and-push-docker
+    #     runs-on: ubuntu-latest
+    #     steps:
+    #         - name: Deploy to Render
+    #           run: |
+    #               curl -X POST https://api.render.com/deploy/${{ secrets.RENDER_SERVICE_ID }}

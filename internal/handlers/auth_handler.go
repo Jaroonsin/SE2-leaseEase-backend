@@ -61,7 +61,8 @@ func (h *authHandler) Register(c *fiber.Ctx) error {
 // @Failure 500 {array} utils.Response "Internal server error"
 // @Router /auth/login [post]
 func (h *authHandler) Login(c *fiber.Ctx) error {
-	Secure := config.LoadEnv() == "production" || config.LoadEnv() == "staging"
+	// Secure := config.LoadEnv() == "production" || config.LoadEnv() == "staging"
+
 	var req dtos.LoginDTO
 	if err := c.BodyParser(&req); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, constant.ErrParsebody)
@@ -77,7 +78,7 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 		Value:    token,
 		HTTPOnly: true,
 		// Secure:   Secure, // Requires HTTPS ? true for Prod
-		SameSite: fiber.CookieSameSiteNoneMode,
+		SameSite: fiber.CookieSameSiteStrictMode,
 		//Domain:   config.LoadConfig().ClientURL,
 		Path:    "/",
 		Expires: time.Now().Add(time.Hour * 3),
