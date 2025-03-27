@@ -1,5 +1,5 @@
 package services
 
 type PaymentService interface {
-	ProcessPayment(userID uint, amount int64, currency, token string) error
+	ProcessPayment(userID uint, currency string, token string, reservationID uint) error
 }

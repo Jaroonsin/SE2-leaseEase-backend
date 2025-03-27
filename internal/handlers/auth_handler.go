@@ -61,6 +61,7 @@ func (h *authHandler) Register(c *fiber.Ctx) error {
 // @Failure 500 {array} utils.Response "Internal server error"
 // @Router /auth/login [post]
 func (h *authHandler) Login(c *fiber.Ctx) error {
+	// Secure := config.LoadEnv() == "production" || config.LoadEnv() == "staging"
 
 	var req dtos.LoginDTO
 	if err := c.BodyParser(&req); err != nil {
@@ -76,39 +77,14 @@ func (h *authHandler) Login(c *fiber.Ctx) error {
 		Name:     "auth_token",
 		Value:    token,
 		HTTPOnly: true,
-		Secure:   true, // Requires HTTPS ? true for Prod
-		SameSite: fiber.CookieSameSiteLaxMode,
-		Path:     "/",
-		Expires:  time.Now().Add(time.Hour * 3),
+		// Secure:   Secure, // Requires HTTPS ? true for Prod
+		SameSite: fiber.CookieSameSiteStrictMode,
+		//Domain:   config.LoadConfig().ClientURL,
+		Path:    "/",
+		Expires: time.Now().Add(time.Hour * 3),
 	})
 
-	return utils.SuccessResponse(c, fiber.StatusCreated, "User login successfully", nil)
-}
-
-// AuthCheck godoc
-// @Summary Check authentication status
-// @Description Validates JWT token and returns authentication status.
-// @ID 3
-// @Tags auth
-// @Produce json
-// @Success 200 {object} utils.Response "User is authenticated"
-// @Failure 401 {object} utils.Response "Unauthorized - Invalid token"
-// @Router /auth/check [get]
-func (h *authHandler) AuthCheck(c *fiber.Ctx) error {
-	// Retrieve the JWT token from cookies
-	token := c.Cookies("auth_token")
-	if token == "" {
-		return utils.ErrorResponse(c, fiber.StatusUnauthorized, "No token provided")
-	}
-
-	// Validate token using the AuthCheck service
-	claims, err := h.authService.AuthCheck(token)
-	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusUnauthorized, err.Error())
-	}
-
-	// Return success response with user details
-	return utils.SuccessResponse(c, fiber.StatusOK, "User is authenticated", claims)
+	return utils.SuccessResponse(c, fiber.StatusCreated, "User login successfully", fiber.Map{"token": token})
 }
 
 // Login godoc
@@ -120,15 +96,16 @@ func (h *authHandler) AuthCheck(c *fiber.Ctx) error {
 // @Success 201 {array} utils.Response "User logout successfully"
 // @Router /auth/logout [post]
 func (h *authHandler) Logout(c *fiber.Ctx) error {
-
+	Secure := config.LoadEnv() == "production" || config.LoadEnv() == "staging"
 	c.Cookie(&fiber.Cookie{
 		Name:     "auth_token",
 		Value:    "delete",
 		HTTPOnly: true,
-		Secure:   true, // Requires HTTPS ? true for Prod
-		SameSite: "None",
+		Secure:   Secure, // Requires HTTPS ? true for Prod
+		SameSite: fiber.CookieSameSiteNoneMode,
 		Path:     "/",
-		Expires:  time.Now().Add(time.Second * -3),
+		//Domain:   config.LoadConfig().ClientURL,
+		Expires: time.Now().Add(time.Second * -3),
 	})
 
 	return utils.SuccessResponse(c, fiber.StatusCreated, "User logout successfully", nil)
@@ -171,6 +148,7 @@ func (h *authHandler) RequestOTP(c *fiber.Ctx) error {
 // @Failure 500 {object} utils.Response "Internal Server Error - Failed to verify OTP"
 // @Router /auth/verify-otp [post]
 func (h *authHandler) VerifyOTP(c *fiber.Ctx) error {
+
 	var req dtos.VerifyOTPDTO
 	if err := c.BodyParser(&req); err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, constant.ErrParsebody)

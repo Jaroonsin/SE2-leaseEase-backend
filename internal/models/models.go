@@ -9,6 +9,7 @@ type User struct {
 	Password    string `gorm:"size:100;not null"`
 	Name        string `gorm:"size:100;not null"`
 	Address     string `gorm:"size:255"`
+	ImageURL    string `gorm:"size:255"`
 	CreatedAt   time.Time
 	UserType    string `gorm:"size:50;not null"` // lessor, lessee
 	ResetToken  string
@@ -30,6 +31,7 @@ type Property struct {
 	AvailabilityStatus string  `gorm:"size:50;not null"`
 	Details            string  `gorm:"type:text;not null"`
 	Lessor             User    `gorm:"foreignKey:LessorID;references:ID"`
+	ImageURL           string  `gorm:"size:255"`
 }
 
 // Request struct with properly mapped fields
@@ -39,7 +41,8 @@ type Reservation struct {
 	ProposedMessage    string `gorm:"type:text"`
 	Question           string `gorm:"type:text"`
 	Status             string `gorm:"size:50"`
-	CreateAt           time.Time
+	CreatedAt          time.Time
+	UpdatedAt          time.Time
 	InterestedProperty uint     `gorm:"not null"`
 	Property           Property `gorm:"foreignKey:InterestedProperty;references:ID"`
 	LesseeID           uint     `gorm:"not null"`

@@ -18,6 +18,7 @@ func RunMigrations(db *gorm.DB) {
 		&models.LessorReview{},
 		&models.PropertyReview{},
 		&models.Payment{},
+		&models.Message{},
 	)
 
 	if err != nil {

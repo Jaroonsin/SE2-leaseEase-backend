@@ -7,4 +7,6 @@ type Service interface {
 	Review() ReviewService
 	Payment() PaymentService
 	Lessor() LessorService
+	User() UserService
+	Chat() ChatService
 }

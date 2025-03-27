@@ -1,20 +1,8 @@
 basePath: /
 definitions:
-  dtos.ApprovalReservationDTO:
-    properties:
-      lesseeEmail:
-        example: lessee@example.com
-        type: string
-      propertyName:
-        example: Example Property
-        type: string
-    type: object
   dtos.CreateReservationDTO:
     properties:
       interestedProperty:
-        example: 1
-        type: integer
-      lesseeID:
         example: 1
         type: integer
       proposedMessage:
@@ -62,6 +50,10 @@ definitions:
         description: Property ID
         example: 1
         type: integer
+      image_url:
+        description: Image URLs
+        example: http://example.com/image.jpg
+        type: string
       lessor_id:
         description: Lessor ID
         example: 10
@@ -95,6 +87,36 @@ definitions:
         example: 3500
         type: number
     type: object
+  dtos.GetReservationDTO:
+    properties:
+      id:
+        example: 1
+        type: integer
+      interestedProperty:
+        example: 1
+        type: integer
+      lastModified:
+        example: "2022-01-01T00:00:00Z"
+        type: string
+      lesseeID:
+        example: 1
+        type: integer
+      propertyName:
+        example: Example Property
+        type: string
+      proposedMessage:
+        example: I am very interested in leasing this property.
+        type: string
+      purpose:
+        example: Lease agreement for residential property
+        type: string
+      question:
+        example: Could you provide more details about the lease duration?
+        type: string
+      status:
+        example: pending
+        type: string
+    type: object
   dtos.LoginDTO:
     description: LoginDTO represents a request for user login.
     properties:
@@ -109,17 +131,14 @@ definitions:
     type: object
   dtos.PaymentDTO:
     properties:
-      amount:
-        description: Stored in satangs na ja
-        type: integer
       currency:
         description: 'Example: "THB", "USD"'
         type: string
+      reservation_id:
+        type: integer
       token:
         description: 'Example: "tokn_test_xxyy69btt9rnb5mir5b"'
         type: string
-      user_id:
-        type: integer
     type: object
   dtos.PropertyDTO:
     description: PropertyDTO represents a property.
@@ -127,6 +146,10 @@ definitions:
       details:
         description: Property details
         example: Spacious villa with a sea view
+        type: string
+      image_url:
+        description: Image URLs
+        example: http://example.com/image.jpg
         type: string
       location:
         description: property location
@@ -200,6 +223,17 @@ definitions:
     - email
     type: object
   dtos.SearchPropertyDTO:
+    properties:
+      last_page:
+        description: Total number of pages based on total records and page size
+        type: integer
+      properties:
+        description: List of properties retrieved from the database
+        items:
+          $ref: '#/definitions/dtos.SearchPropertyDataDTO'
+        type: array
+    type: object
+  dtos.SearchPropertyDataDTO:
     description: SearchPropertyDTO represents the details of a property along with
       identifier information.
     properties:
@@ -207,6 +241,10 @@ definitions:
         description: Property ID
         example: 1
         type: integer
+      image_url:
+        description: Image URLs
+        example: http://example.com/image.jpg
+        type: string
       location:
         description: property's location
         example: California
@@ -223,10 +261,19 @@ definitions:
         description: Average rating
         example: 4.5
         type: number
+      review_count:
+        description: Number of reviews
+        example: 12
+        type: integer
       size:
         description: property's size
         example: 3500
         type: number
+    type: object
+  dtos.UpdateImageDTO:
+    properties:
+      image_url:
+        type: string
     type: object
   dtos.UpdateReservationDTO:
     properties:
@@ -251,6 +298,13 @@ definitions:
     required:
     - rating
     - review_message
+    type: object
+  dtos.UpdateUserDTO:
+    properties:
+      address:
+        type: string
+      name:
+        type: string
     type: object
   dtos.VerifyOTPDTO:
     properties:
@@ -286,24 +340,6 @@ info:
   title: LeaseEase API
   version: "2.0"
 paths:
-  /auth/check:
-    get:
-      description: Validates JWT token and returns authentication status.
-      operationId: "3"
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: User is authenticated
-          schema:
-            $ref: '#/definitions/utils.Response'
-        "401":
-          description: Unauthorized - Invalid token
-          schema:
-            $ref: '#/definitions/utils.Response'
-      summary: Check authentication status
-      tags:
-      - auth
   /auth/forgot-password:
     post:
       consumes:
@@ -598,6 +634,41 @@ paths:
       summary: Delete a Lease Reservation
       tags:
       - Lessee
+  /lessee/reservations:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves lease reservations for the lessee identified by the JWT
+        token.
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reservations retrieved successfully
+          schema:
+            items:
+              $ref: '#/definitions/dtos.GetReservationDTO'
+            type: array
+        "400":
+          description: Invalid query parameters
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Get Reservations by Lessee ID
+      tags:
+      - Lessee
   /lessee/update/{id}:
     put:
       consumes:
@@ -649,12 +720,6 @@ paths:
         name: id
         required: true
         type: integer
-      - description: Reservation details
-        in: body
-        name: reservation
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.ApprovalReservationDTO'
       produces:
       - application/json
       responses:
@@ -663,7 +728,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Response'
         "400":
-          description: Invalid request body
+          description: Invalid reservation ID
           schema:
             $ref: '#/definitions/utils.Response'
         "500":
@@ -684,12 +749,6 @@ paths:
         name: id
         required: true
         type: integer
-      - description: Reservation details
-        in: body
-        name: reservation
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.ApprovalReservationDTO'
       produces:
       - application/json
       responses:
@@ -698,7 +757,7 @@ paths:
           schema:
             $ref: '#/definitions/utils.Response'
         "400":
-          description: Invalid request body
+          description: Invalid reservation ID
           schema:
             $ref: '#/definitions/utils.Response'
         "500":
@@ -706,6 +765,43 @@ paths:
           schema:
             $ref: '#/definitions/utils.Response'
       summary: Decline a reservation
+      tags:
+      - Lessor
+  /lessor/reservations/{propID}:
+    get:
+      consumes:
+      - application/json
+      description: Get reservations by property ID with pagination
+      parameters:
+      - description: Property ID
+        in: path
+        name: propID
+        required: true
+        type: integer
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reservations retrieved successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid page or pageSize parameter
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Failed to retrieve reservations
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Get reservations by property ID
       tags:
       - Lessor
   /payments/process:
@@ -999,9 +1095,7 @@ paths:
               - $ref: '#/definitions/utils.Response'
               - properties:
                   data:
-                    items:
-                      $ref: '#/definitions/dtos.SearchPropertyDTO'
-                    type: array
+                    $ref: '#/definitions/dtos.SearchPropertyDTO'
                 type: object
             type: array
         "400":
@@ -1222,4 +1316,125 @@ paths:
       summary: Update an existing review
       tags:
       - Review
+  /user/check:
+    post:
+      consumes:
+      - application/json
+      description: Validates the auth token from cookies and returns user information
+        if authenticated
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User is authenticated with claims data
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized - No token provided or invalid token
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - CookieAuth: []
+      summary: Verify user authentication
+      tags:
+      - users
+  /user/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves user details for the authenticated user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User details retrieved successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Failed to retrieve user
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - CookieAuth: []
+      summary: Get user information
+      tags:
+      - users
+  /user/image:
+    put:
+      consumes:
+      - application/json
+      description: Updates the profile image for the authenticated user
+      parameters:
+      - description: Image update information
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateImageDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Image updated successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Failed to update image
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - CookieAuth: []
+      summary: Update user profile image
+      tags:
+      - users
+  /user/user:
+    put:
+      consumes:
+      - application/json
+      description: Updates user details for the authenticated user
+      parameters:
+      - description: User update information
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User updated successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Failed to update user
+          schema:
+            $ref: '#/definitions/utils.Response'
+      security:
+      - CookieAuth: []
+      summary: Update user information
+      tags:
+      - users
 swagger: "2.0"
