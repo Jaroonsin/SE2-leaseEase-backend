@@ -3,6 +3,7 @@ package repositories
 import (
 	"LeaseEase/config"
 
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"gorm.io/gorm"
 )
 
@@ -15,11 +16,12 @@ type repository struct {
 	PaymentRepository  PaymentRepository
 	LessorRepository   LessorRepository
 	ChatRepository     ChatRepository
+	ImageRepository    ImageRepository
 }
 
 // Lessor implements Repository.
 
-func NewRepository(cfg *config.Config, db *gorm.DB) Repository {
+func NewRepository(cfg *config.Config, db *gorm.DB, s3 *s3.Client) Repository {
 	return &repository{
 		UserRepository:     NewUserRepository(db),
 		PropertyRepository: NewPropertyRepository(db),
@@ -29,6 +31,7 @@ func NewRepository(cfg *config.Config, db *gorm.DB) Repository {
 		PaymentRepository:  NewPaymentRepository(db),
 		LessorRepository:   NewLessorRepository(db),
 		ChatRepository:     NewChatRepository(db),
+		ImageRepository:    NewImageRepository(s3),
 	}
 }
 
@@ -62,4 +65,8 @@ func (r *repository) Payment() PaymentRepository {
 
 func (r *repository) Chat() ChatRepository {
 	return r.ChatRepository
+}
+
+func (r *repository) Image() ImageRepository {
+	return r.ImageRepository
 }

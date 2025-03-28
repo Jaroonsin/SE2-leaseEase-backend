@@ -41,6 +41,20 @@ type Config struct {
 	// Omise settings
 	OmisePublicKey string
 	OmiseSecretKey string
+
+	// S3 Provider: "supabase" or "amazon"
+	S3Provider string
+
+	// S3 supabase settings
+	SupabaseRegion    string
+	SupabaseURL       string
+	SupabaseAccessKey string
+	SupabaseSecretKey string
+
+	// S3 amazon settings
+	AmazonRegion    string
+	AmazonAccessKey string
+	AmazonSecretKey string
 }
 
 func LoadConfig() *Config {
@@ -81,6 +95,19 @@ func LoadConfig() *Config {
 		// Omise settings
 		OmisePublicKey: os.Getenv("OMISE_PUBLIC_KEY"),
 		OmiseSecretKey: os.Getenv("OMISE_SECRET_KEY"),
+
+		// S3 Provider: "supabase" or "amazon"
+		S3Provider: os.Getenv("S3_PROVIDER"),
+		// S3 supabase settings
+		SupabaseRegion:    os.Getenv("SUPABASE_REGION"),
+		SupabaseURL:       os.Getenv("SUPABASE_URL"),
+		SupabaseAccessKey: os.Getenv("SUPABASE_ACCESS_KEY"),
+		SupabaseSecretKey: os.Getenv("SUPABASE_SECRET_KEY"),
+
+		// S3 amazon settings
+		AmazonRegion:    os.Getenv("AWS_REGION"),
+		AmazonAccessKey: os.Getenv("AWS_ACCESS_KEY_ID"),
+		AmazonSecretKey: os.Getenv("AWS_SECRET_ACCESS_KEY"),
 	}
 }
 

@@ -9,4 +9,5 @@ type Repository interface {
 	Payment() PaymentRepository
 	Lessor() LessorRepository
 	Chat() ChatRepository
+	Image() ImageRepository
 }
