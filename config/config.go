@@ -6,14 +6,10 @@ import (
 
 type Config struct {
 	// Client settings
-	// ClientName string
-	// ClientEnv  string
 	ClientURL string
+
 	// Server settings
-	// ServerName string
-	ServerEnv string
-	// ServerURL  string
-	// ServerHost string
+	ServerEnv  string
 	ServerPort string
 
 	// Database settings: PGSQL
@@ -50,15 +46,10 @@ type Config struct {
 func LoadConfig() *Config {
 	return &Config{
 		// Client settings
-		// ClientName: os.Getenv("CLIENT_NAME"),	//not used
-		// ClientEnv:  os.Getenv("CLIENT_ENV"),	//not used
 		ClientURL: os.Getenv("CLIENT_URL"),
 
 		// Server settings
-		// ServerName: os.Getenv("SERVER_NAME"),	//not used
-		ServerEnv: os.Getenv("SERVER_ENV"),
-		// ServerURL:  os.Getenv("SERVER_URL"), 	//not used
-		// ServerHost: os.Getenv("SERVER_HOST"),	//not used
+		ServerEnv:  os.Getenv("SERVER_ENV"),
 		ServerPort: os.Getenv("SERVER_PORT"),
 
 		// Database: PGSQL
