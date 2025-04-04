@@ -84,8 +84,5 @@ func initUserRouter(router fiber.Router, httpHandler handlers.Handler, cfg *conf
 func initChatRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
 	chatRouter := router.Group("/chat")
 
-	chatRouter.Get("/ws", httpHandler.Chat().HandleWebSocketUpgrade)
-	chatRouter.Get("/ws", websocket.New(func(ws *websocket.Conn) {
-		httpHandler.Chat().HandleWebSocket(ws)
-	}))
+	chatRouter.Get("/ws", httpHandler.Chat().HandleWebSocketUpgrade,websocket.New(httpHandler.Chat().HandleWebSocket))
 }
