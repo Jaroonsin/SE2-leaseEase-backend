@@ -11,6 +11,7 @@ import (
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/smithy-go/middleware"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -46,6 +47,12 @@ func ConnectDB(cfg *config.Config) (*gorm.DB, error) {
 }
 
 // InitS3Client initializes an S3-compatible client
+func removeDisableGzip() func(*middleware.Stack) error {
+	return func(stack *middleware.Stack) error {
+		_, err := stack.Finalize.Remove("DisableAcceptEncodingGzip")
+		return err
+	}
+}
 
 func InitS3Client(cfg *config.Config) (*s3.Client, error) {
 
@@ -93,6 +100,7 @@ func InitS3Client(cfg *config.Config) (*s3.Client, error) {
 		s3Client := s3.NewFromConfig(AWScfg, func(o *s3.Options) {
 			o.BaseEndpoint = aws.String(endpoint)
 			o.UsePathStyle = true
+			o.APIOptions = append(o.APIOptions, removeDisableGzip())
 
 		})
 		log.Println("S3 supabase client initialized successfully.")

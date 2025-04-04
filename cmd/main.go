@@ -9,7 +9,6 @@ import (
 	"LeaseEase/internal/repositories"
 	"LeaseEase/internal/services"
 	"log"
-	"path/filepath"
 
 	"github.com/joho/godotenv"
 )
@@ -51,14 +50,6 @@ func main() {
 	repositories := repositories.NewRepository(cfg, db, s3Client)
 	services := services.NewService(repositories, logger)
 	handlers := handlers.NewHandler(services)
-
-	filePath := filepath.Join("turtle.png")
-	key, err := repositories.Image().UploadFile("image", filePath, "a.png")
-	if err != nil {
-		log.Printf("Failed to upload file: %v", err)
-	} else {
-		log.Printf("File uploaded successfully, key: %s", key)
-	}
 
 	servers := server.NewFiberHttpServer(cfg, logger, handlers)
 
