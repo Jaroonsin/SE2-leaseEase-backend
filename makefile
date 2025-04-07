@@ -8,11 +8,15 @@ swag:
 docker:
 	docker-compose up -d
 	air
+	export API_HOST="staging.example.com"
+	export API_PORT="8080"
 	go run cmd/main.go
 
 # 'run2' target to just run the Go application
 run:
 	air
+	export API_HOST="staging.example.com"
+	export API_PORT="8080"
 	go run cmd/main.go
 
 rm_docker:

@@ -20,7 +20,7 @@ import (
 // @contact.name API Support
 // @contact.url http://www.example.com/support
 // @contact.email support@example.com
-// @host localhost:5000/api/v2
+// @host localhost:8080/api/v2
 // @BasePath /
 func main() {
 	// Load configuration

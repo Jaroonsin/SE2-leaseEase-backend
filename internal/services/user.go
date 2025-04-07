@@ -7,4 +7,5 @@ type UserService interface {
 	UpdateImage(userID uint, Image dtos.UpdateImageDTO) error
 	CheckUser(token string) (*dtos.CheckUserDTO, error)
 	GetUser(userID uint) (*dtos.GetUserDTO, error)
+	ChangePassword(changePassDTO *dtos.ChangePassDTO, userID uint) error
 }

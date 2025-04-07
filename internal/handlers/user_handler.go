@@ -4,6 +4,7 @@ import (
 	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/services"
 	"LeaseEase/utils"
+	"LeaseEase/utils/constant"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -120,4 +121,32 @@ func (h *userHandler) GetUser(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusNotFound, "User not found")
 	}
 	return utils.SuccessResponse(c, fiber.StatusOK, "User details retrieved successfully", user)
+}
+
+// ChangePassword godoc
+// @Summary Change user password
+// @Description Changes the user's password using the provided old and new passwords.
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param  request body dtos.ChangePassDTO true "Request payload containing the old and new passwords"
+// @Success 200 {object} utils.Response "Password change successful"
+// @Failure 400 {object} utils.Response "Bad Request - Invalid request payload"
+// @Failure 401 {object} utils.Response "Unauthorized - Invalid old password"
+// @Failure 500 {object} utils.Response "Internal Server Error - Unable to change password"
+// @Router /user/change-password [post]
+func (h *userHandler) ChangePassword(c *fiber.Ctx) error {
+	var req dtos.ChangePassDTO
+	if err := c.BodyParser(&req); err != nil {
+		return utils.ErrorResponse(c, fiber.StatusBadRequest, constant.ErrParsebody)
+	}
+
+	UserID := uint(c.Locals("user").(jwt.MapClaims)["user_id"].(float64))
+
+	err := h.UserService.ChangePassword(&req,UserID)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+	}
+
+	return utils.SuccessResponse(c, fiber.StatusOK, "Password changed successfully", nil)
 }

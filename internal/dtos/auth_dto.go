@@ -20,7 +20,6 @@ type JWTDTO struct {
 	Role   string `json:"role" example:"lessee" ` // user's role
 }
 
-
 type RequestOTPDTO struct {
 	Email string `json:"email" example:"john.doe@example.com" binding:"required"` // user's email
 }

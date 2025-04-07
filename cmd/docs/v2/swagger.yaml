@@ -1,5 +1,14 @@
 basePath: /
 definitions:
+  dtos.ChangePassDTO:
+    properties:
+      new_password:
+        example: superstrongPassword123
+        type: string
+      old_password:
+        example: strongPassword123
+        type: string
+    type: object
   dtos.CreateReservationDTO:
     properties:
       interestedProperty:
@@ -330,7 +339,7 @@ definitions:
         example: 888
         type: integer
     type: object
-host: localhost:5000/api/v2
+host: localhost:8080/api/v2
 info:
   contact:
     email: support@example.com
@@ -1316,6 +1325,40 @@ paths:
       summary: Update an existing review
       tags:
       - Review
+  /user/change-password:
+    post:
+      consumes:
+      - application/json
+      description: Changes the user's password using the provided old and new passwords.
+      parameters:
+      - description: Request payload containing the old and new passwords
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ChangePassDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Password change successful
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Bad Request - Invalid request payload
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "401":
+          description: Unauthorized - Invalid old password
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Internal Server Error - Unable to change password
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Change user password
+      tags:
+      - users
   /user/check:
     post:
       consumes:
