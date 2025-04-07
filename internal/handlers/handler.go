@@ -9,4 +9,5 @@ type Handler interface {
 	Lessor() *lessorHandler
 	User() *userHandler
 	Chat() *chatHandler
+	Image() *imageHandler
 }

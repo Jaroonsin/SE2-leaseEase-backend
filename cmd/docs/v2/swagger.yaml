@@ -126,6 +126,8 @@ definitions:
         example: pending
         type: string
     type: object
+  dtos.ImageUploadRequestDTO:
+    type: object
   dtos.LoginDTO:
     description: LoginDTO represents a request for user login.
     properties:
@@ -578,6 +580,36 @@ paths:
       summary: Verify provided OTP
       tags:
       - auth
+  /images/upload:
+    post:
+      consumes:
+      - application/json
+      description: Upload an image to the system
+      parameters:
+      - description: Image data
+        in: body
+        name: imageRequest
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ImageUploadRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Image uploaded successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request payload
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Failed to upload image
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Upload an image
+      tags:
+      - images
   /lessee/create:
     post:
       consumes:
