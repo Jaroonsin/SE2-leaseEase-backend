@@ -23,3 +23,8 @@ type GetUserDTO struct {
 	Address  string `json:"address" example:"1234 Main St, Springfield"`       // user's address
 	ImageURL string `json:"image_url" example:"https://example.com/image.jpg"` // user's image URL
 }
+
+type ChangePassDTO struct {
+	OldPassword string `json:"old_password" example:"strongPassword123"`
+	NewPassword string `json:"new_password" example:"superstrongPassword123"`
+}

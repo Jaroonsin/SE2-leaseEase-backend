@@ -79,6 +79,7 @@ func initUserRouter(router fiber.Router, httpHandler handlers.Handler, cfg *conf
 	userRouter.Put("/image", httpHandler.User().UpdateImage)
 	userRouter.Post("/check", httpHandler.User().CheckUser)
 	userRouter.Get("/get/:id", httpHandler.User().GetUser)
+	userRouter.Post("/change-password", httpHandler.User().ChangePassword)
 }
 
 func initChatRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {

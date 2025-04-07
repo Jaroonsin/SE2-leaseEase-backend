@@ -109,3 +109,30 @@ func (s *userService) GetUser(userID uint) (*dtos.GetUserDTO, error) {
 		ImageURL: user.ImageURL,
 	}, nil
 }
+
+func (s *userService) ChangePassword(changePassDTO *dtos.ChangePassDTO, userID uint) error {
+	logger := s.logger.Named("ChangePassword")
+
+	// Validate the old password
+	user, err := s.UserRepo.GetUserByID(userID)
+	if err != nil {
+		logger.Error("user not found", zap.Error(err))
+		return errors.New("user not found")
+	}
+
+	if !utils.CheckPasswordHash(changePassDTO.OldPassword, user.Password) {
+		logger.Error("old password does not match")
+		return errors.New("old password does not match")
+	}
+
+	// Hash the new password
+	hashedPassword, err := utils.HashPassword(changePassDTO.NewPassword)
+	if err != nil {
+		logger.Error("cannot hash new password", zap.Error(err))
+		return err
+	}
+
+	user.Password = hashedPassword
+
+	return s.UserRepo.UpdateUser(user)
+}
