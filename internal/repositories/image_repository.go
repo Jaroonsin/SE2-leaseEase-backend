@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"mime/multipart"
-	"os"
 	"path/filepath"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -21,12 +20,12 @@ type imageRepository struct {
 func NewImageRepository(s3 *s3.Client) ImageRepository {
 	return &imageRepository{
 		s3:         s3,
-		bucketName: "image",
+		bucketName: "images",
 	}
 }
 
 func (r *imageRepository) UploadFile(ctx context.Context, key string, fileHeader *multipart.FileHeader) (string, error) {
-	file, err := os.Open("uploads/image1_0.jpg")
+	file, err := fileHeader.Open()
 	if err != nil {
 		return "", fmt.Errorf("failed to open file '%s': %w", fileHeader.Filename, err)
 	}
@@ -36,11 +35,6 @@ func (r *imageRepository) UploadFile(ctx context.Context, key string, fileHeader
 
 	ext := filepath.Ext(fileHeader.Filename)
 
-	// 	// Get file info
-	fileInfo, err := file.Stat()
-	if err != nil {
-		return "", fmt.Errorf("failed to get file info: %v", err)
-	}
 	key = fmt.Sprintf("%s%s", key, ext)
 	// Upload request
 	input := &s3.PutObjectInput{
@@ -48,7 +42,7 @@ func (r *imageRepository) UploadFile(ctx context.Context, key string, fileHeader
 		Key:           aws.String(key),
 		Body:          file,
 		ContentType:   aws.String(contentType),
-		ContentLength: aws.Int64(fileInfo.Size()),
+		ContentLength: aws.Int64(fileHeader.Size),
 	}
 
 	_, err = r.s3.PutObject(context.TODO(), input)
@@ -57,8 +51,8 @@ func (r *imageRepository) UploadFile(ctx context.Context, key string, fileHeader
 	}
 
 	s3URL := fmt.Sprintf("https://khgvvndokfqibyevapec.supabase.co/storage/v1/object/public/%s/%s", r.bucketName, key)
-	file.Close()
 	log.Printf("✅ Uploaded '%s' to '%s/%s'", fileHeader.Filename, r.bucketName, key)
+	file.Close()
 	return s3URL, nil
 }
 

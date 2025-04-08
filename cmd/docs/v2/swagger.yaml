@@ -126,8 +126,6 @@ definitions:
         example: pending
         type: string
     type: object
-  dtos.ImageUploadRequestDTO:
-    type: object
   dtos.LoginDTO:
     description: LoginDTO represents a request for user login.
     properties:
@@ -583,17 +581,26 @@ paths:
   /images/upload:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: Upload an image to the system
       parameters:
-      - description: Image data
-        in: body
-        name: imageRequest
+      - description: ID of the related entity
+        in: formData
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/dtos.ImageUploadRequestDTO'
+        type: string
+      - description: Image category (profiles or properties)
+        in: formData
+        name: category
+        required: true
+        type: string
+      - description: Image file
+        in: formData
+        name: image
+        required: true
+        type: file
       produces:
-      - application/json
+      - multipart/form-data
       responses:
         "200":
           description: Image uploaded successfully
