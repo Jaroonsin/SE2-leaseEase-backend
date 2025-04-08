@@ -91,18 +91,24 @@ func InitS3Client(cfg *config.Config) (*s3.Client, error) {
 		awsconfig.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")),
 	)
 
+	Spbcfg := aws.Config{
+		Region:       region,
+		BaseEndpoint: &endpoint,
+		Credentials:  credentials.NewStaticCredentialsProvider(accessKey, secretKey, ""),
+		APIOptions:   []func(*middleware.Stack) error{removeDisableGzip()},
+	}
+
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
 	if provider == "supabase" {
 		// Create S3 client with custom endpoint options for Supabase
-		s3Client := s3.NewFromConfig(AWScfg, func(o *s3.Options) {
-			o.BaseEndpoint = aws.String(endpoint)
+		s3Client := s3.NewFromConfig(Spbcfg, func(o *s3.Options) {
+			o.BaseEndpoint = &endpoint
 			o.UsePathStyle = true
-			o.APIOptions = append(o.APIOptions, removeDisableGzip())
-
 		})
+
 		log.Println("S3 supabase client initialized successfully.")
 		return s3Client, nil
 

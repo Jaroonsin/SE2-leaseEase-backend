@@ -18,6 +18,7 @@ func (s *FiberHttpServer) initRouter(router fiber.Router) {
 	initPaymentRouter(router, s.handlers, s.cfg)
 	initUserRouter(router, s.handlers, s.cfg)
 	initChatRouter(router, s.handlers, s.cfg)
+	initImageRouter(router, s.handlers, s.cfg)
 }
 
 func initAuthRouter(router fiber.Router, httpHandler handlers.Handler) {
@@ -88,4 +89,9 @@ func initChatRouter(router fiber.Router, httpHandler handlers.Handler, cfg *conf
 
 	chatRouter.Post("/create", httpHandler.Chat().CreateChatroom)
 	chatRouter.Get("/ws", websocket.New(httpHandler.Chat().HandleWebSocket))
+}
+
+func initImageRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
+	imageRouter := router.Group("/images", middleware.AuthRequired(cfg))
+	imageRouter.Post("/upload", httpHandler.Image().UploadImage)
 }

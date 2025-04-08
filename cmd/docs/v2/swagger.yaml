@@ -578,6 +578,45 @@ paths:
       summary: Verify provided OTP
       tags:
       - auth
+  /images/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload an image to the system
+      parameters:
+      - description: ID of the related entity
+        in: formData
+        name: id
+        required: true
+        type: string
+      - description: Image category (profiles or properties)
+        in: formData
+        name: category
+        required: true
+        type: string
+      - description: Image file
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - multipart/form-data
+      responses:
+        "200":
+          description: Image uploaded successfully
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "400":
+          description: Invalid request payload
+          schema:
+            $ref: '#/definitions/utils.Response'
+        "500":
+          description: Failed to upload image
+          schema:
+            $ref: '#/definitions/utils.Response'
+      summary: Upload an image
+      tags:
+      - images
   /lessee/create:
     post:
       consumes:
