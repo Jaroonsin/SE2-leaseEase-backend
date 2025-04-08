@@ -50,11 +50,6 @@ func (h *imageHandler) UploadImage(c *fiber.Ctx) error {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Failed to retrieve image file")
 	}
 
-	err = c.SaveFile(fileHeader, "./uploads/"+fileHeader.Filename)
-	if err != nil {
-		return utils.ErrorResponse(c, fiber.StatusInternalServerError, "Failed to save image file")
-	}
-
 	imageRequest := dtos.ImageUploadRequestDTO{
 		ID:            uint(id),
 		ImageCategory: category,
