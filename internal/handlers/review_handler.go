@@ -158,3 +158,49 @@ func (h *reviewHandler) GetAllReviews(c *fiber.Ctx) error {
 	}
 	return utils.SuccessResponse(c, fiber.StatusOK, "Success", reviews)
 }
+
+// GetAllReviewsForAdmin godoc
+// @Summary      Retrieve all reviews for admin
+// @Description  Get all reviews for admin. Supports pagination through query parameters.
+// @Tags         Review
+// @Produce      json
+// @Param        page     query     int     false "Page number for pagination"
+// @Param        pageSize query     int     false "Page size for pagination"
+// @Success      200      {object}  map[string]string"Reviews retrieved successfully"
+// @Failure      400      {object}  map[string]string"Invalid pagination parameters"
+// @Failure      500      {object}  map[string]string"Internal server error"
+// @Router       /propertyReview/get [get]
+func (h *reviewHandler) GetAllReviewsForAdmin(c *fiber.Ctx) error {
+	pageStr := c.Query("page", "")
+	pageSizeStr := c.Query("pageSize", "")
+	propName := c.Query("name", "")
+	sortParameter := c.Query("sort", "")
+	direction := c.Query("dir", "")
+
+	if pageStr == "" && pageSizeStr == "" {
+		reviews, err := h.reviewService.GetAllReviewsForAdmin(0, 0, propName, sortParameter, direction)
+		if err != nil {
+			return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+		}
+		return utils.SuccessResponse(c, fiber.StatusOK, "Success", reviews)
+	}
+
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	pageSize := 10
+	if pageSizeStr != "" {
+		pageSize, err = strconv.Atoi(pageSizeStr)
+		if err != nil || pageSize < 1 {
+			pageSize = 10
+		}
+	}
+
+	reviews, err := h.reviewService.GetAllReviewsForAdmin(page, pageSize, propName, sortParameter, direction)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+	}
+	return utils.SuccessResponse(c, fiber.StatusOK, "Success", reviews)
+}

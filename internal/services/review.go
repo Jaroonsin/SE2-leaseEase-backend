@@ -7,4 +7,5 @@ type ReviewService interface {
 	UpdateReview(reviewID uint, dto *dtos.UpdateReviewDTO, lesseeID uint) error
 	DeleteReview(reviewID uint, lesseeID uint) error
 	GetAllReviews(propertyID uint, page, pageSize int) (*dtos.GetReviewPaginatedDTO, error)
+	GetAllReviewsForAdmin(page int, pageSize int, queryString string, sortParam string, direction string) (*dtos.GetReviewPaginatedDTO, error)
 }
