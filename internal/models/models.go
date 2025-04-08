@@ -15,6 +15,7 @@ type User struct {
 	ResetToken  string
 	TokenExpiry time.Time
 	Payments    []Payment `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"` // One-to-Many Relationship
+	Messages    []Message `gorm:"foreignKey:SenderID" json:"messages,omitempty"`
 }
 
 type Property struct {

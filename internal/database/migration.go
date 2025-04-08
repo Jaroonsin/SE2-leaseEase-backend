@@ -18,7 +18,10 @@ func RunMigrations(db *gorm.DB) {
 		&models.LessorReview{},
 		&models.PropertyReview{},
 		&models.Payment{},
+		&models.Chatroom{},
 		&models.Message{},
+		&models.ChatroomMember{},
+		&models.MessageRead{},
 	)
 
 	if err != nil {

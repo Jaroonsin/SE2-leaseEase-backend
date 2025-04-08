@@ -1,18 +1,38 @@
 package dtos
 
-import "time"
-
-type SendMessageRequest struct {
-	SenderID   uint   `json:"sender_id" validate:"required"`
-	ReceiverID uint   `json:"receiver_id" validate:"required"`
-	Content    string `json:"content" validate:"required"`
+// MessageDTO represents the structure of the message sent over WebSocket
+type MessageDTO struct {
+	Type       string `json:"type"`
+	ChatroomID string `json:"chatroom_id"`
+	SenderID   string `json:"sender_id"`
+	Content    string `json:"content"`
+	MessageID  string `json:"message_id,omitempty"` // Used when marking a message as read
+	Timestamp  string `json:"timestamp,omitempty"`
+	Limit      int    `json:"limit,omitempty"`
+	Offset     int    `json:"offset,omitempty"`
 }
 
-type MessageResponse struct {
-	ID         uint      `json:"id"`
-	SenderID   uint      `json:"sender_id"`
-	ReceiverID uint      `json:"receiver_id"`
-	Content    string    `json:"content"`
-	Timestamp  time.Time `json:"timestamp"`
-	Delivered  bool      `json:"delivered"`
+// ReadStatusDTO represents the structure for marking a message as read
+type ReadStatusDTO struct {
+	MessageID string `json:"message_id"`
+	UserID    string `json:"user_id"`
+}
+
+// JoinChatroomDTO represents the structure for a user joining a chatroom
+type JoinChatroomDTO struct {
+	ChatroomID string `json:"chatroom_id"`
+	UserID     string `json:"user_id"`
+}
+
+// LeaveChatroomDTO represents the structure for a user leaving a chatroom
+type LeaveChatroomDTO struct {
+	ChatroomID string `json:"chatroom_id"`
+	UserID     string `json:"user_id"`
+}
+
+// CreateChatroomDTO represents the structure for creating a new chatroom
+type CreateChatroomDTO struct {
+	Name      string   `json:"name"`
+	Members   []string `json:"members"` // List of user IDs to add to the chatroom
+	IsPrivate bool     `json:"is_private"`
 }
