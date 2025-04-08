@@ -3,9 +3,8 @@ package handlers
 import (
 	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/services"
-	"LeaseEase/utils"
 	"log"
-	"strconv"
+	"sync"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
@@ -14,6 +13,7 @@ import (
 type chatHandler struct {
 	chatService services.ChatService
 	clients     map[string]*websocket.Conn
+	mu          sync.RWMutex // protects clients map
 }
 
 func NewChatHandler(chatService services.ChatService) *chatHandler {
@@ -23,95 +23,171 @@ func NewChatHandler(chatService services.ChatService) *chatHandler {
 	}
 }
 
-func (h *chatHandler) HandleWebSocketUpgrade(c *fiber.Ctx) error {
-	senderID := c.Query("senderID")
-	receiverID := c.Query("receiverID")
-
-	if senderID == "" {
-		log.Println("Sender ID missing")
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Sender ID missing")
-	}
-
-	if receiverID == "" {
-		log.Println("Receiver ID missing")
-		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Receiver ID missing")
-	}
-
-	// Upgrade the HTTP connection to WebSocket + add senderID to header
-	if websocket.IsWebSocketUpgrade(c) {
-		c.Locals("senderID", senderID)
-		c.Locals("receiverID", receiverID)
-		return c.Next()
-	}
-	return utils.ErrorResponse(c, fiber.StatusUpgradeRequired, "Upgrade required")
-}
-
 // Handle WebSocket connections
 func (h *chatHandler) HandleWebSocket(ws *websocket.Conn) {
 	defer ws.Close()
 
-	senderID := ws.Locals("senderID").(string)
-	receiverID := ws.Locals("receiverID").(string)
-
-	if senderID == "" || receiverID == "" {
-		log.Println("Error: Missing senderID or receiverID")
-		return
-	}
-
-	h.clients[senderID] = ws
-	log.Printf("User connected: %s, Total connected users: %d", senderID, len(h.clients))
-
-	//receiverID := strconv.FormatUint(uint64(req.ReceiverID), 10) // Convert receiver ID to string
-	log.Println("ReceiverID from message:", receiverID)
-
-	// Deliver history messages
-	historyMessages, err := h.chatService.DeliverHistoryMessages(senderID, receiverID)
-	if err != nil {
-		log.Println("Error fetching chat history:", err)
-	} else {
-		for _, msg := range historyMessages {
-			ws.WriteJSON(msg)
-		}
-		log.Printf("Finished delivering history messages to %s", senderID)
-	}
-
-	// Deliver offline messages
-	offlineMessages, err := h.chatService.DeliverOfflineMessages(senderID, receiverID)
-	if err == nil {
-		for _, msg := range offlineMessages {
-			ws.WriteJSON(msg)
-		}
-		log.Printf("Finished delivering offline messages to %s", senderID)
-	} else {
-		log.Println("Error fetching offline messages:", err)
-	}
-
 	for {
-		var req dtos.SendMessageRequest
-		if err := ws.ReadJSON(&req); err != nil {
+		var msg dtos.MessageDTO
+
+		if err := ws.ReadJSON(&msg); err != nil {
 			log.Println("Error reading message:", err)
-			delete(h.clients, senderID)
-			break
+			return
 		}
 
-		log.Println("Message received: ", req)
+		switch msg.Type {
+		case "message":
+			if err := h.HandleNewMessage(&msg); err != nil {
+				log.Println("Error handling message:", err)
+			}
+		case "read":
+			if err := h.HandleMessageRead(msg.MessageID, msg.SenderID); err != nil {
+				log.Println("Error marking message as read:", err)
+			}
+		case "join":
+			h.mu.Lock()
+			h.clients[msg.SenderID] = ws
+			h.mu.Unlock()
 
-		// Check if receiver is online
-		receiverIDStr := strconv.FormatUint(uint64(req.ReceiverID), 10)
-		_, receiverOnline := h.clients[receiverIDStr]
+			if err := h.HandleUserJoinChatroom(msg.SenderID, msg.ChatroomID); err != nil {
+				log.Println("Error handling join:", err)
+			}
+		case "leave":
+			if err := h.HandleUserLeaveChatroom(msg.SenderID, msg.ChatroomID); err != nil {
+				log.Println("Error handling leave:", err)
+			}
 
-		log.Print("Receiver online status: ", receiverOnline)
+			h.mu.Lock()
+			delete(h.clients, msg.SenderID)
+			h.mu.Unlock()
+		case "history":
+			err := h.HandleRetrieveChatHistory(ws, msg.ChatroomID, msg.Limit, msg.Offset)
+			if err != nil {
+				log.Println("Error retrieving chat history:", err)
+			}
+		case "start":
+			h.mu.Lock()
+			h.clients[msg.SenderID] = ws
+			h.mu.Unlock()
+			if err := h.HandleStartPage(ws, msg.SenderID, msg.Limit, msg.Offset); err != nil {
+				log.Println("Error handling start page:", err)
+			}
+		default:
+			log.Println("Unknown message type:", msg.Type)
+		}
+	}
+}
 
-		// Store message
-		err := h.chatService.ProcessMessage(req, receiverOnline)
-		if err != nil {
-			log.Println("Error processing message:", err)
+func (h *chatHandler) HandleNewMessage(message *dtos.MessageDTO) error {
+	if err := h.chatService.CreateMessage(message.ChatroomID, message.SenderID, message.Content); err != nil {
+		log.Println("Error saving message to database:", err)
+		return err
+	}
+
+	log.Printf("New message from %s in chatroom %s: %s\n", message.SenderID, message.ChatroomID, message.Content)
+	return h.BroadcastMessageToChatroom(message.ChatroomID, message)
+}
+
+func (h *chatHandler) BroadcastMessageToChatroom(chatroomID string, message *dtos.MessageDTO) error {
+	log.Printf("Broadcasting message to chatroom %s: %+v\n", chatroomID, message)
+
+	// Example: get members from DB (pseudo-code)
+	members, err := h.chatService.GetChatroomMembers(chatroomID)
+	if err != nil {
+		return err
+	}
+	log.Printf("Members in chatroom %s: %v\n", chatroomID, members)
+
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
+	for _, userID := range members {
+		if userID == message.SenderID {
+			log.Printf("Skipping message broadcast to sender %s\n", userID)
 			continue
 		}
 
-		// If receiver is online, send the message
-		if receiverOnline {
-			h.clients[string(receiverIDStr)].WriteJSON(req)
+		if ws, ok := h.clients[userID]; ok {
+			if err := ws.WriteJSON(message); err != nil {
+				log.Printf("Error sending message to user %s: %v\n", userID, err)
+			}
+			log.Printf("Message sent to user %s\n", userID)
 		}
 	}
+
+	return nil
+}
+
+func (h *chatHandler) HandleUserDisconnect(userID string) error {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+
+	delete(h.clients, userID)
+	log.Printf("User %s disconnected\n", userID)
+	return nil
+}
+
+func (h *chatHandler) HandleMessageRead(messageID, userID string) error {
+	log.Printf("Marking message %s as read by user %s\n", messageID, userID)
+	return h.chatService.MarkMessageAsRead(messageID, userID)
+}
+
+func (h *chatHandler) HandleUserJoinChatroom(userID, chatroomID string) error {
+	log.Printf("User %s joined chatroom %s\n", userID, chatroomID)
+	return h.chatService.JoinChatroom(userID, chatroomID)
+}
+
+func (h *chatHandler) HandleUserLeaveChatroom(userID, chatroomID string) error {
+	log.Printf("User %s left chatroom %s\n", userID, chatroomID)
+	return h.chatService.LeaveChatroom(userID, chatroomID)
+}
+
+func (h *chatHandler) HandleRetrieveChatHistory(ws *websocket.Conn, chatroomID string, limit int, offset int) error {
+	messages, err := h.chatService.GetChatHistory(chatroomID, limit, offset)
+	if err != nil {
+		return err
+	}
+
+	for _, msg := range messages {
+		if err := ws.WriteJSON(msg); err != nil {
+			log.Println("Failed to send message history to user:", err)
+		}
+	}
+
+	return nil
+}
+
+func (h *chatHandler) CreateChatroom(c *fiber.Ctx) error {
+	log.Printf("Creating chatroom\n")
+
+	var createChatroomDTO dtos.CreateChatroomDTO
+	if err := c.BodyParser(&createChatroomDTO); err != nil {
+		log.Println("Error parsing request body:", err)
+		return err
+	}
+	_, err := h.chatService.CreateChatroom(createChatroomDTO.Name, createChatroomDTO.Members, createChatroomDTO.IsPrivate)
+	return err
+}
+
+func (h *chatHandler) HandleStartPage(ws *websocket.Conn, userID string, limit int, offset int) error {
+	log.Printf("Handling start page for user %s\n", userID)
+
+	// Example: Fetch chatrooms and messages for the user (pseudo-code)
+	chatrooms, err := h.chatService.GetChatroomsForUser(userID, limit, offset)
+	if err != nil {
+		return err
+	}
+
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
+	for _, chatroom := range chatrooms {
+		if ws, ok := h.clients[userID]; ok {
+			if err := ws.WriteJSON(chatroom); err != nil {
+				log.Printf("Error sending chatroom data to user %s: %v\n", userID, err)
+			}
+		}
+	}
+
+	return nil
 }

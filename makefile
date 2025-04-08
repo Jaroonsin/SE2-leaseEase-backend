@@ -6,6 +6,7 @@ swag:
 	swag init -g cmd/main.go -o cmd/docs/v2  --ot yaml
 # 'run' target to run the Go application and the Docker containers
 docker:
+	docker-compose build --no-cache
 	docker-compose up -d
 	air
 	export API_HOST="staging.example.com"
@@ -20,9 +21,9 @@ run:
 	go run cmd/main.go
 
 rm_docker:
-	docker-compose down
-	docker volume rm se2-leaseease-backend_postgres_data
-	docker volume rm se2-leaseease-backend_pgadmin_data 
+	docker-compose down -v
+	docker volume rm leaseease_postgres_data
+	docker volume rm leaseease_pgadmin_data
 
 test:
 	go test -v ./test/main_test.go

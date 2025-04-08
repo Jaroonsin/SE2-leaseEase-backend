@@ -83,7 +83,9 @@ func initUserRouter(router fiber.Router, httpHandler handlers.Handler, cfg *conf
 }
 
 func initChatRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
+	// chatRouter := router.Group("/chat", middleware.AuthRequired(cfg))
 	chatRouter := router.Group("/chat")
 
-	chatRouter.Get("/ws", httpHandler.Chat().HandleWebSocketUpgrade,websocket.New(httpHandler.Chat().HandleWebSocket))
+	chatRouter.Post("/create", httpHandler.Chat().CreateChatroom)
+	chatRouter.Get("/ws", websocket.New(httpHandler.Chat().HandleWebSocket))
 }
