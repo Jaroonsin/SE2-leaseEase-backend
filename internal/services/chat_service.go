@@ -4,7 +4,6 @@ import (
 	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/repositories"
 	"strconv"
-	"strings"
 
 	"go.uber.org/zap"
 )
@@ -232,28 +231,34 @@ func (s *chatService) CreateChatroom(name string, members []string, isPrivate bo
 	return chatroomIDStr, nil
 }
 
-func (s *chatService) GetChatroomsForUser(userID string, limit int, offset int) (string, error) {
+func (s *chatService) GetChatroomsForUser(userID string, limit int, offset int) ([]dtos.ChatroomDTO, error) {
 	logger := s.logger.Named("GetChatroomsForUser")
 	logger.Info("Fetching chatrooms for user", zap.String("userID", userID), zap.Int("limit", limit), zap.Int("offset", offset))
 
 	userIDUint, err := strconv.ParseUint(userID, 10, 0)
 	if err != nil {
 		logger.Error("Invalid user ID", zap.Error(err))
-		return "", err
+		return nil, err
 	}
 
 	chatrooms, err := s.chatRepo.GetChatroomsByUser(uint(userIDUint), limit, offset)
 	if err != nil {
 		logger.Error("Failed to fetch chatrooms", zap.Error(err))
-		return "", err
+		return nil, err
 	}
 
-	var chatroomIDs []string
+	var chatroomDTOs []dtos.ChatroomDTO
 	for _, chatroom := range chatrooms {
-		chatroomIDs = append(chatroomIDs, strconv.FormatUint(uint64(chatroom.ChatroomID), 10))
+		chatroomDTO := dtos.ChatroomDTO{
+			ChatroomID:    strconv.FormatUint(uint64(chatroom.ChatroomID), 10),
+			Name:          chatroom.Name,
+			IsPrivate:     chatroom.IsPrivate,
+			LastMessageID: strconv.FormatUint(uint64(*chatroom.LastMessageID), 10), // depending on your struct
+			// add other fields as needed
+		}
+		chatroomDTOs = append(chatroomDTOs, chatroomDTO)
 	}
 
-	chatroomIDsStr := strings.Join(chatroomIDs, ",")
-	logger.Info("Chatrooms fetched successfully", zap.String("chatroomIDs", chatroomIDsStr))
-	return chatroomIDsStr, nil
+	logger.Info("Chatrooms fetched successfully", zap.Int("count", len(chatroomDTOs)))
+	return chatroomDTOs, nil
 }

@@ -36,3 +36,11 @@ type CreateChatroomDTO struct {
 	Members   []string `json:"members"` // List of user IDs to add to the chatroom
 	IsPrivate bool     `json:"is_private"`
 }
+
+// ChatroomDTO represents the structure of a chatroom
+type ChatroomDTO struct {
+	ChatroomID    string `json:"chatroom_id"`
+	Name          string `json:"name"`
+	IsPrivate     bool   `json:"is_private"`
+	LastMessageID string `json:"last_message_id"`
+}

@@ -33,5 +33,5 @@ type ChatService interface {
 	CreateChatroom(name string, members []string, isPrivate bool) (string, error)
 
 	// GetChatroomByUserID retrieves the chatroom ID for a user.
-	GetChatroomsForUser(userID string, limit int, offset int) (string, error)
+	GetChatroomsForUser(userID string, limit int, offset int) ([]dtos.ChatroomDTO, error)
 }
