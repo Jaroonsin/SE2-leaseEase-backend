@@ -8,7 +8,7 @@ type Chatroom struct {
 	ChatroomID    uint      `gorm:"primaryKey"`
 	Name          string    `gorm:"type:varchar(255);default:null" json:"name,omitempty"`
 	IsPrivate     bool      `gorm:"default:false" json:"is_private"`
-	LastMessageID *uint     `gorm:"default:null"`
+	LastMessageID *uint     `gorm:"default:0"`
 	CreatedAt     time.Time `json:"created_at"`
 
 	// Relationships
