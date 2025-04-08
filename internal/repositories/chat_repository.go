@@ -72,6 +72,7 @@ func (r *chatRepository) AddMemberToChatroom(chatroomID uint, userID uint) error
 	err := r.db.Create(&models.ChatroomMember{
 		ChatroomID: chatroomID,
 		UserID:     userID,
+		JoinedAt:   time.Now(),
 	}).Error
 
 	if err != nil {

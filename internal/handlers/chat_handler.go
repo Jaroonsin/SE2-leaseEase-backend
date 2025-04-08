@@ -3,6 +3,7 @@ package handlers
 import (
 	"LeaseEase/internal/dtos"
 	"LeaseEase/internal/services"
+	"LeaseEase/utils"
 	"log"
 	"sync"
 
@@ -165,8 +166,11 @@ func (h *chatHandler) CreateChatroom(c *fiber.Ctx) error {
 		log.Println("Error parsing request body:", err)
 		return err
 	}
-	_, err := h.chatService.CreateChatroom(createChatroomDTO.Name, createChatroomDTO.Members, createChatroomDTO.IsPrivate)
-	return err
+	chatroomID, err := h.chatService.CreateChatroom(createChatroomDTO.Name, createChatroomDTO.Members, createChatroomDTO.IsPrivate)
+	if err != nil {
+		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
+	}
+	return utils.SuccessResponse(c, fiber.StatusCreated, "Chatroom created successfully", chatroomID)
 }
 
 func (h *chatHandler) HandleStartPage(ws *websocket.Conn, userID string, limit int, offset int) error {

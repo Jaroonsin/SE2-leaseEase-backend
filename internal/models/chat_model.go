@@ -33,7 +33,6 @@ type Message struct {
 	SenderID   uint      `json:"sender_id"`
 	Content    string    `gorm:"type:text" json:"content"`
 	Timestamp  time.Time `gorm:"autoCreateTime" json:"sent_at"`
-	Type       string    `gorm:"type:varchar(50)" json:"type"`
 
 	// Relationships
 
