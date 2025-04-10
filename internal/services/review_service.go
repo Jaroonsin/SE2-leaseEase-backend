@@ -196,7 +196,7 @@ func (s *reviewService) GetAllReviewsForAdmin(page int, pageSize int, queryStrin
 		offset := (page - 1) * pageSize
 
 		switch sortParam {
-		case "property_name":
+		case "name":
 			propertyReviews, err = s.reviewRepo.GetPaginatedReviewsSortedByPropertyName(pageSize, offset, queryString, direction)
 		case "reviewer":
 			propertyReviews, err = s.reviewRepo.GetPaginatedReviewsSortedByReviewer(pageSize, offset, queryString, direction)
