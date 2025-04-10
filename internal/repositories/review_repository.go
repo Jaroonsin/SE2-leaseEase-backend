@@ -133,7 +133,8 @@ func (r *reviewRepository) CountReviewsByProperty(propertyID uint, totalRecords 
 
 func (r *reviewRepository) CountReviewsByPropertyForAdmin(queryString string, totalRecords *int64) error {
 	return r.db.Model(&models.PropertyReview{}).
-		Where("property_id = ?", queryString).
+		Joins("JOIN properties ON properties.id = property_reviews.property_id").
+		Where("properties.name ILIKE ?", "%"+queryString+"%").
 		Count(totalRecords).Error
 }
 
