@@ -42,7 +42,7 @@ func (h *chatHandler) HandleWebSocket(ws *websocket.Conn) {
 				log.Println("Error handling message:", err)
 			}
 		case "read":
-			if err := h.HandleMessageRead(msg.MessageID, msg.SenderID); err != nil {
+			if err := h.HandleMessageRead(msg.ChatroomID, msg.MessageID, msg.SenderID); err != nil {
 				log.Println("Error marking message as read:", err)
 			}
 		case "join":
@@ -128,9 +128,9 @@ func (h *chatHandler) HandleUserDisconnect(userID string) error {
 	return nil
 }
 
-func (h *chatHandler) HandleMessageRead(messageID, userID string) error {
+func (h *chatHandler) HandleMessageRead(chatroomID, messageID, userID string) error {
 	log.Printf("Marking message %s as read by user %s\n", messageID, userID)
-	return h.chatService.MarkMessageAsRead(messageID, userID)
+	return h.chatService.MarkMessageAsRead(chatroomID, messageID, userID)
 }
 
 func (h *chatHandler) HandleUserJoinChatroom(userID, chatroomID string) error {
