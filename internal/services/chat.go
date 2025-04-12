@@ -18,7 +18,7 @@ type ChatService interface {
 	GetChatroomMembers(chatroomID string) ([]string, error)
 
 	// MarkMessageAsRead marks a message as read by the specified user.
-	MarkMessageAsRead(messageID, userID string) error
+	MarkMessageAsRead(chatroomID, messageID, userID string) error
 
 	// JoinChatroom adds a user to the specified chatroom.
 	JoinChatroom(userID, chatroomID string) error

@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"LeaseEase/internal/models"
+	"errors"
 	"time"
 
 	"gorm.io/gorm"
@@ -57,11 +58,19 @@ func (r *chatRepository) GetChatroomsByUser(userID uint, limit int, offset int) 
 	return chatrooms, nil
 }
 
-func (r *chatRepository) UpdateLastMessage(chatroomID uint, messageID uint) error {
+func (r *chatRepository) UpdateLastMessageID(chatroomID uint, messageID uint) error {
 	err := r.db.Model(&models.Chatroom{}).
 		Where("chatroom_id = ?", chatroomID).
 		Update("last_message_id", messageID).Error
 
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *chatRepository) UpdateLastMessageContent(chatroomID uint, content string) error {
+	err := r.db.Model(&models.Chatroom{}).Where("chatroom_id = ?", chatroomID).Update("last_message_content", content).Error
 	if err != nil {
 		return err
 	}
@@ -136,8 +145,13 @@ func (r *chatRepository) GetMessagesByChatroom(chatroomID uint, limit, offset in
 func (r *chatRepository) GetLastMessageInChatroom(chatroomID uint) (*models.Message, error) {
 	var message models.Message
 	err := r.db.Where("chatroom_id = ?", chatroomID).
-		Order("sent_at DESC").
+		Order("timestamp DESC").
 		First(&message).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		// Return nil message and nil error if no message found
+		return nil, nil
+	}
 
 	if err != nil {
 		return nil, err
@@ -232,4 +246,27 @@ func (r *chatRepository) GetHistoryMessages(chatroomID string, limit int, offset
 	}
 
 	return messages, nil
+}
+
+func (r *chatRepository) UpdateLastReadMessageID(chatroomID uint, userID uint, messageID uint) error {
+	err := r.db.Model(&models.ChatroomMember{}).
+		Where("chatroom_id = ? AND user_id = ?", chatroomID, userID).
+		Update("last_seen_message_id", messageID).Error
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *chatRepository) GetLastReadMessageID(chatroomID uint, userID uint) (uint, error) {
+	var member models.ChatroomMember
+	err := r.db.Select("last_seen_message_id").
+		Where("chatroom_id = ? AND user_id = ?", chatroomID, userID).
+		First(&member).Error
+
+	if err != nil {
+		return 0, err
+	}
+	return member.LastSeenMessageID, nil
 }

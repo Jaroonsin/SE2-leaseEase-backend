@@ -49,10 +49,16 @@ func (s *chatService) CreateMessage(chatroomID, senderID, content string) error 
 	}
 
 	// Update the last message in the chatroom
-	err = s.chatRepo.UpdateLastMessage(uint(chatroomIDUint), message.MessageID)
+	err = s.chatRepo.UpdateLastMessageID(uint(chatroomIDUint), message.MessageID)
 	if err != nil {
 		logger.Error("Failed to update last message in chatroom", zap.Error(err))
 	}
+
+	err = s.chatRepo.UpdateLastMessageContent(uint(chatroomIDUint), content)
+	if err != nil {
+		logger.Error("Failed to update last message content in chatroom", zap.Error(err))
+	}
+
 	logger.Info("Last message updated successfully", zap.String("chatroomID", strconv.FormatUint(uint64(chatroomIDUint), 10)))
 
 	logger.Info("Message created successfully", zap.String("messageID", strconv.FormatUint(uint64(message.MessageID), 10)))
@@ -123,7 +129,7 @@ func (s *chatService) GetChatroomMembers(chatroomID string) ([]string, error) {
 }
 
 // MarkMessageAsRead marks a message as read by the specified user.
-func (s *chatService) MarkMessageAsRead(messageID, userID string) error {
+func (s *chatService) MarkMessageAsRead(chatroomID, messageID, userID string) error {
 	logger := s.logger.Named("MarkMessageAsRead")
 	logger.Info("Marking message as read", zap.String("messageID", messageID), zap.String("userID", userID))
 
@@ -139,13 +145,24 @@ func (s *chatService) MarkMessageAsRead(messageID, userID string) error {
 		return err
 	}
 
+	chatroomIDUint, err := strconv.ParseUint(chatroomID, 10, 0)
+	if err != nil {
+		logger.Error("Invalid chatroom ID", zap.Error(err))
+		return err
+	}
+
 	err = s.chatRepo.MarkMessageAsRead(uint(messageIDUint), uint(userIDUint))
 	if err != nil {
 		logger.Error("Failed to mark message as read", zap.Error(err))
 		return err
 	}
-
 	logger.Info("Message marked as read successfully")
+
+	err = s.chatRepo.UpdateLastReadMessageID(uint(chatroomIDUint), uint(userIDUint), uint(messageIDUint))
+	if err != nil {
+		logger.Error("Failed to update last read message ID", zap.Error(err))
+	}
+	logger.Info("Last read message ID updated successfully")
 	return nil
 }
 
@@ -249,12 +266,19 @@ func (s *chatService) GetChatroomsForUser(userID string, limit int, offset int) 
 
 	var chatroomDTOs []dtos.ChatroomDTO
 	for _, chatroom := range chatrooms {
+		lastReadMessageID, err := s.chatRepo.GetLastReadMessageID(chatroom.ChatroomID, uint(userIDUint))
+		if err != nil {
+			logger.Error("Failed to fetch last read message ID", zap.Error(err))
+			return nil, err
+		}
 		chatroomDTO := dtos.ChatroomDTO{
-			ChatroomID:    strconv.FormatUint(uint64(chatroom.ChatroomID), 10),
-			Name:          chatroom.Name,
-			IsPrivate:     chatroom.IsPrivate,
-			LastMessageID: strconv.FormatUint(uint64(*chatroom.LastMessageID), 10), // depending on your struct
-			// add other fields as needed
+			ChatroomID:           strconv.FormatUint(uint64(chatroom.ChatroomID), 10),
+			Name:                 chatroom.Name,
+			IsPrivate:            chatroom.IsPrivate,
+			LastReadMessageID:    strconv.FormatUint(uint64(lastReadMessageID), 10),       // depending on your struct
+			LastMessageID:        strconv.FormatUint(uint64(*chatroom.LastMessageID), 10), // depending on your struct
+			LastMessageContent:   chatroom.LastMessageContent,
+			LastMessageTimestamp: chatroom.CreatedAt.String(),
 		}
 		chatroomDTOs = append(chatroomDTOs, chatroomDTO)
 	}

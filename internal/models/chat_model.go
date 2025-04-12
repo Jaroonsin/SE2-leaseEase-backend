@@ -5,11 +5,12 @@ import (
 )
 
 type Chatroom struct {
-	ChatroomID    uint      `gorm:"primaryKey"`
-	Name          string    `gorm:"type:varchar(255);default:null" json:"name,omitempty"`
-	IsPrivate     bool      `gorm:"default:false" json:"is_private"`
-	LastMessageID *uint     `gorm:"default:0"`
-	CreatedAt     time.Time `json:"created_at"`
+	ChatroomID         uint      `gorm:"primaryKey"`
+	Name               string    `gorm:"type:varchar(255);default:null" json:"name,omitempty"`
+	IsPrivate          bool      `gorm:"default:false" json:"is_private"`
+	LastMessageID      *uint     `gorm:"default:0"`
+	LastMessageContent string    `gorm:"type:text;default:null" json:"last_message_content,omitempty"`
+	CreatedAt          time.Time `json:"created_at"`
 
 	// Relationships
 	// LastMessage *Message `gorm:"foreignKey:LastMessageID;references:MessageID;constraint:OnDelete:SET NULL"`
@@ -18,9 +19,10 @@ type Chatroom struct {
 }
 
 type ChatroomMember struct {
-	ChatroomID uint      `gorm:"primaryKey" json:"chatroom_id"`
-	UserID     uint      `gorm:"primaryKey" json:"user_id"`
-	JoinedAt   time.Time `json:"joined_at"`
+	ChatroomID        uint      `gorm:"primaryKey" json:"chatroom_id"`
+	UserID            uint      `gorm:"primaryKey" json:"user_id"`
+	JoinedAt          time.Time `json:"joined_at"`
+	LastSeenMessageID uint      `gorm:"default:0"`
 
 	// Relationships
 	// Chatroom Chatroom `gorm:"foreignKey:ChatroomID;references:ChatroomID;"`

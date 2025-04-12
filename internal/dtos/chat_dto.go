@@ -39,8 +39,11 @@ type CreateChatroomDTO struct {
 
 // ChatroomDTO represents the structure of a chatroom
 type ChatroomDTO struct {
-	ChatroomID    string `json:"chatroom_id"`
-	Name          string `json:"name"`
-	IsPrivate     bool   `json:"is_private"`
-	LastMessageID string `json:"last_message_id"`
+	ChatroomID           string `json:"chatroom_id"`
+	Name                 string `json:"name"`
+	IsPrivate            bool   `json:"is_private"`
+	LastReadMessageID    string `json:"last_read_message_id"`
+	LastMessageID        string `json:"last_message_id"`
+	LastMessageContent   string `json:"last_message_content"`
+	LastMessageTimestamp string `json:"last_message_timestamp"`
 }

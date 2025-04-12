@@ -7,12 +7,15 @@ type ChatRepository interface {
 	CreateChatroom(name string, isPrivate bool) (*models.Chatroom, error)
 	GetChatroomByID(chatroomID uint) (*models.Chatroom, error)
 	GetChatroomsByUser(userID uint, limit int, offset int) ([]models.Chatroom, error)
-	UpdateLastMessage(chatroomID uint, messageID uint) error
+	UpdateLastMessageID(chatroomID uint, messageID uint) error
+	UpdateLastMessageContent(chatroomID uint, content string) error
 
 	// Chatroom Members Management
 	AddMemberToChatroom(chatroomID uint, userID uint) error
 	RemoveMemberFromChatroom(chatroomID uint, userID uint) error
 	GetMembersOfChatroom(chatroomID uint) ([]models.User, error)
+	GetLastReadMessageID(chatroomID uint, userID uint) (uint, error)
+	UpdateLastReadMessageID(chatroomID uint, userID uint, messageID uint) error
 
 	// Message Management
 	CreateMessage(chatroomID uint, senderID uint, content string) (*models.Message, error)
