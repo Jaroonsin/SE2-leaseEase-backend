@@ -136,6 +136,7 @@ func (s *adminService) GetAllUsers(pageInt, pageSizeInt int) ([]dtos.UserForAdmi
 			ID:       user.ID,
 			Name:     user.Name,
 			Role:     user.UserType,
+			Status:   user.Status,
 			Address:  user.Address,
 			ImageURL: user.ImageURL,
 		})
