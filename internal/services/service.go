@@ -10,4 +10,5 @@ type Service interface {
 	User() UserService
 	Chat() ChatService
 	Image() ImageService
+	Admin() AdminService
 }

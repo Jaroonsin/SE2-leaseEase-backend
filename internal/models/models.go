@@ -11,7 +11,8 @@ type User struct {
 	Address     string `gorm:"size:255"`
 	ImageURL    string `gorm:"size:255"`
 	CreatedAt   time.Time
-	UserType    string `gorm:"size:50;not null"` // lessor, lessee
+	UserType    string `gorm:"size:50;not null"`         // lessor, lessee, admin
+	Status      string `gorm:"size:50;default:'active'"` // active, warned, banned
 	ResetToken  string
 	TokenExpiry time.Time
 	Payments    []Payment `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"` // One-to-Many Relationship
@@ -63,7 +64,7 @@ type LessorReview struct {
 	ReviewID uint   `gorm:"primaryKey"`
 	LessorID uint   `gorm:"not null"`
 	LesseeID uint   `gorm:"not null"`
-	Review   Review `gorm:"foreignKey:ReviewID;references:ID"`
+	Review   Review `gorm:"foreignKey:ReviewID;references:ID;constraint:OnDelete:CASCADE"`
 	Lessor   User   `gorm:"foreignKey:LessorID;references:ID"`
 	Lessee   User   `gorm:"foreignKey:LesseeID;references:ID"`
 }
@@ -73,7 +74,7 @@ type PropertyReview struct {
 	ReviewID   uint     `gorm:"primaryKey"`
 	LesseeID   uint     `gorm:"not null"`
 	PropertyID uint     `gorm:"not null"`
-	Review     Review   `gorm:"foreignKey:ReviewID;references:ID"`
+	Review     Review   `gorm:"foreignKey:ReviewID;references:ID;constraint:OnDelete:CASCADE"`
 	Lessee     User     `gorm:"foreignKey:LesseeID;references:ID"`
 	Property   Property `gorm:"foreignKey:PropertyID;references:ID"`
 }

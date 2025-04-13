@@ -10,4 +10,5 @@ type Repository interface {
 	Lessor() LessorRepository
 	Chat() ChatRepository
 	Image() ImageRepository
+	Admin() AdminRepository
 }

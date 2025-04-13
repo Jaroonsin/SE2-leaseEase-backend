@@ -10,4 +10,5 @@ type Handler interface {
 	User() *userHandler
 	Chat() *chatHandler
 	Image() *imageHandler
+	Admin() *adminHandler
 }
