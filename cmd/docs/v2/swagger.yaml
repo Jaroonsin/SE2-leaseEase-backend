@@ -315,6 +315,13 @@ definitions:
       name:
         type: string
     type: object
+  dtos.UpdateUserStatusDTO:
+    properties:
+      status:
+        description: user's status (active, warned, banned)
+        example: active
+        type: string
+    type: object
   dtos.VerifyOTPDTO:
     properties:
       email:
@@ -349,6 +356,162 @@ info:
   title: LeaseEase API
   version: "2.0"
 paths:
+  /admin/delete-review/{id}:
+    delete:
+      description: Delete a review by its ID.
+      parameters:
+      - description: Review ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Review deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid review ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a review
+      tags:
+      - Review
+  /admin/get-reviews:
+    get:
+      description: Get all reviews for admin. Supports pagination through query parameters.
+      parameters:
+      - description: Page number for pagination
+        in: query
+        name: page
+        type: integer
+      - description: Page size for pagination
+        in: query
+        name: pageSize
+        type: integer
+      - description: Property name to filter reviews
+        in: query
+        name: name
+        type: string
+      - description: Sort parameter
+        in: query
+        name: sort
+        type: string
+      - description: Sort direction (asc/desc)
+        in: query
+        name: dir
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Reviews retrieved successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid pagination parameters
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Retrieve all reviews for admin
+      tags:
+      - Review
+  /admin/get-users:
+    get:
+      description: Get all users with pagination support.
+      parameters:
+      - description: Page number for pagination
+        in: query
+        name: page
+        type: integer
+      - description: Page size for pagination
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Users retrieved successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid pagination parameters
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Retrieve all users
+      tags:
+      - User
+  /admin/manage-user/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update the status of a user by their ID.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Updated status
+        in: body
+        name: status
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateUserStatusDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User status updated successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid user ID or request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update user status
+      tags:
+      - User
   /auth/forgot-password:
     post:
       consumes:
@@ -1279,42 +1442,6 @@ paths:
               type: string
             type: object
       summary: Delete a review
-      tags:
-      - Review
-  /propertyReview/get:
-    get:
-      description: Get all reviews for admin. Supports pagination through query parameters.
-      parameters:
-      - description: Page number for pagination
-        in: query
-        name: page
-        type: integer
-      - description: Page size for pagination
-        in: query
-        name: pageSize
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Reviews retrieved successfully
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Invalid pagination parameters
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "500":
-          description: Internal server error
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Retrieve all reviews for admin
       tags:
       - Review
   /propertyReview/get/{propertyID}:
