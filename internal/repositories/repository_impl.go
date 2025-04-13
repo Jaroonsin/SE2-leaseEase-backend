@@ -17,6 +17,7 @@ type repository struct {
 	LessorRepository   LessorRepository
 	ChatRepository     ChatRepository
 	ImageRepository    ImageRepository
+	AdminRepository    AdminRepository
 }
 
 // Lessor implements Repository.
@@ -32,6 +33,7 @@ func NewRepository(cfg *config.Config, db *gorm.DB, s3 *s3.Client) Repository {
 		LessorRepository:   NewLessorRepository(db),
 		ChatRepository:     NewChatRepository(db),
 		ImageRepository:    NewImageRepository(s3),
+		AdminRepository:    NewAdminRepository(db),
 	}
 }
 
@@ -69,4 +71,8 @@ func (r *repository) Chat() ChatRepository {
 
 func (r *repository) Image() ImageRepository {
 	return r.ImageRepository
+}
+
+func (r *repository) Admin() AdminRepository {
+	return r.AdminRepository
 }

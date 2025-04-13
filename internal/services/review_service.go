@@ -99,7 +99,7 @@ func (s *reviewService) DeleteReview(reviewID uint, lesseeID uint) error {
 	return nil
 }
 
-func (s *reviewService) GetAllReviews(propertyID uint, page, pageSize int) (*dtos.GetReviewPaginatedDTO, error) {
+func (s *reviewService) GetAllReviewsByProperty(propertyID uint, page, pageSize int) (*dtos.GetReviewPaginatedDTO, error) {
 	logger := s.logger.Named("GetAllReviews")
 	var propertyReviews []models.PropertyReview
 	var totalRecords int64
@@ -107,7 +107,7 @@ func (s *reviewService) GetAllReviews(propertyID uint, page, pageSize int) (*dto
 
 	// Case 1: Fetch all reviews (when no pagination)
 	if page == 0 || pageSize == 0 {
-		propertyReviews, err = s.reviewRepo.GetAllReviews(propertyID)
+		propertyReviews, err = s.reviewRepo.GetAllReviewsByProperty(propertyID)
 		if err != nil {
 			logger.Error("Failed to fetch all reviews", zap.Error(err))
 			return nil, err
@@ -153,93 +153,4 @@ func (s *reviewService) GetAllReviews(propertyID uint, page, pageSize int) (*dto
 		CurrentPage:  page,
 		PageSize:     pageSize,
 	}, nil
-}
-
-func (s *reviewService) GetAllReviewsForAdmin(page int, pageSize int, queryString string, sortParam string, direction string) (*dtos.GetReviewPaginatedDTO, error) {
-	logger := s.logger.Named("GetAllReviewsForAdmin")
-	var propertyReviews []models.PropertyReview
-	var totalRecords int64
-	var err error
-
-	if direction != "asc" && direction != "desc" {
-		logger.Error("Invalid sort direction", zap.String("direction", direction))
-		return nil, errors.New("invalid sort direction")
-	}
-
-	if page == 0 || pageSize == 0 {
-		switch sortParam {
-		case "name":
-			propertyReviews, err = s.reviewRepo.GetAllReviewsSortedByPropertyName(queryString, direction)
-		case "reviewer":
-			propertyReviews, err = s.reviewRepo.GetAllReviewsSortedByReviewer(queryString, direction)
-		case "time":
-			propertyReviews, err = s.reviewRepo.GetAllReviewsSortedByTime(queryString, direction)
-		default:
-			logger.Error("Invalid sort parameter", zap.String("sortParam", sortParam))
-			return nil, errors.New("invalid sort parameter")
-		}
-
-		if err != nil {
-			logger.Error("Failed to fetch all reviews", zap.Error(err))
-			return nil, err
-		}
-
-		totalRecords = int64(len(propertyReviews))
-
-	} else {
-		// With pagination
-		err = s.reviewRepo.CountReviewsByPropertyForAdmin(queryString, &totalRecords)
-		if err != nil {
-			return nil, err
-		}
-
-		offset := (page - 1) * pageSize
-
-		switch sortParam {
-		case "name":
-			propertyReviews, err = s.reviewRepo.GetPaginatedReviewsSortedByPropertyName(pageSize, offset, queryString, direction)
-		case "reviewer":
-			propertyReviews, err = s.reviewRepo.GetPaginatedReviewsSortedByReviewer(pageSize, offset, queryString, direction)
-		case "time":
-			propertyReviews, err = s.reviewRepo.GetPaginatedReviewsSortedByTime(pageSize, offset, queryString, direction)
-		default:
-			logger.Error("Invalid sort parameter", zap.String("sortParam", sortParam))
-			return nil, errors.New("invalid sort parameter")
-		}
-
-		if err != nil {
-			logger.Error("Failed to fetch paginated reviews", zap.Int("page", page), zap.Int("pageSize", pageSize), zap.Error(err))
-			return nil, err
-		}
-	}
-
-	// Calculate total pages
-	totalPages := 1
-	if pageSize > 0 {
-		totalPages = int((totalRecords + int64(pageSize) - 1) / int64(pageSize))
-	}
-
-	// Convert to DTO
-	var reviewDTOs []dtos.GetReviewDTO
-	for _, pr := range propertyReviews {
-		reviewDTOs = append(reviewDTOs, dtos.GetReviewDTO{
-			ReviewID:      pr.Review.ID,
-			ReviewMessage: pr.Review.ReviewMessage,
-			Rating:        pr.Review.Rating,
-			TimeStamp:     pr.Review.TimeStamp,
-			LesseeName:    pr.Lessee.Name,
-		})
-	}
-
-	// Prepare final response
-	responseForAdmin := dtos.GetReviewPaginatedDTO{
-		Reviews:      reviewDTOs,
-		TotalRecords: int(totalRecords),
-		TotalPages:   totalPages,
-		CurrentPage:  page,
-		PageSize:     pageSize,
-	}
-
-	logger.Info("Success fetching reviews for admin", zap.Int("count", len(reviewDTOs)))
-	return &responseForAdmin, nil
 }

@@ -19,6 +19,7 @@ func (s *FiberHttpServer) initRouter(router fiber.Router) {
 	initUserRouter(router, s.handlers, s.cfg)
 	initChatRouter(router, s.handlers, s.cfg)
 	initImageRouter(router, s.handlers, s.cfg)
+	initAdminRouter(router, s.handlers, s.cfg)
 }
 
 func initAuthRouter(router fiber.Router, httpHandler handlers.Handler) {
@@ -63,10 +64,9 @@ func initLessorRouter(router fiber.Router, httpHandler handlers.Handler, cfg *co
 func initPropertyReviewRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
 	propertyReviewRouter := router.Group("/propertyReview", middleware.AuthRequired(cfg))
 	propertyReviewRouter.Post("/create", httpHandler.Review().CreateReview)
+	propertyReviewRouter.Get("/get/:propertyID", httpHandler.Review().GetAllReviewsByPropertyID)
 	propertyReviewRouter.Put("/update/:id", httpHandler.Review().UpdateReview)
 	propertyReviewRouter.Delete("/delete/:id", httpHandler.Review().DeleteReview)
-	propertyReviewRouter.Get("/get/admin", httpHandler.Review().GetAllReviewsForAdmin)
-	propertyReviewRouter.Get("/get/:propertyID", httpHandler.Review().GetAllReviews)
 }
 
 func initPaymentRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
@@ -95,4 +95,14 @@ func initChatRouter(router fiber.Router, httpHandler handlers.Handler, cfg *conf
 func initImageRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
 	imageRouter := router.Group("/images", middleware.AuthRequired(cfg))
 	imageRouter.Post("/upload", httpHandler.Image().UploadImage)
+}
+
+func initAdminRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
+	adminRouter := router.Group("/admin", middleware.AuthRequired(cfg))
+	adminRouter.Use(middleware.AdminRoleRequired(cfg))
+
+	adminRouter.Get("/get-users", httpHandler.Admin().GetAllUsersForAdmin)
+	adminRouter.Patch("/update-users-status/:id", httpHandler.Admin().ManageUserStatus)
+	adminRouter.Get("/get-reviews", httpHandler.Admin().GetAllReviewsForAdmin)
+	adminRouter.Delete("/delete-review/:id", httpHandler.Admin().DeleteReview)
 }
