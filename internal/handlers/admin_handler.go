@@ -69,18 +69,18 @@ func (h *adminHandler) GetAllReviewsForAdmin(c *fiber.Ctx) error {
 	return utils.SuccessResponse(c, fiber.StatusOK, "Success", reviews)
 }
 
-// GetAllUsers godoc
-// @Summary      Retrieve all users
-// @Description  Get all users with pagination support.
+// GetAllUsersForAdmin godoc
+// @Summary      Retrieve all users for admin
+// @Description  Get all users with pagination support. Allows specifying page number and page size.
 // @Tags         User
 // @Produce      json
-// @Param        page     query     int     false "Page number for pagination"
-// @Param        pageSize query     int     false "Page size for pagination"
+// @Param        page     query     int     false "Page number for pagination (default: 1)"
+// @Param        pageSize query     int     false "Page size for pagination (default: 10)"
 // @Success      200      {object}  map[string]interface{} "Users retrieved successfully"
 // @Failure      400      {object}  map[string]string      "Invalid pagination parameters"
 // @Failure      500      {object}  map[string]string      "Internal server error"
 // @Router       /admin/get-users [get]
-func (h *adminHandler) GetAllUsers(c *fiber.Ctx) error {
+func (h *adminHandler) GetAllUsersForAdmin(c *fiber.Ctx) error {
 	page := c.Query("page", "1")
 	pageSize := c.Query("pageSize", "10")
 

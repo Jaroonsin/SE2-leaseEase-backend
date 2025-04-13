@@ -101,7 +101,7 @@ func initAdminRouter(router fiber.Router, httpHandler handlers.Handler, cfg *con
 	adminRouter := router.Group("/admin", middleware.AuthRequired(cfg))
 	adminRouter.Use(middleware.AdminRoleRequired(cfg))
 
-	adminRouter.Get("/get-users", httpHandler.Admin().GetAllUsers)
+	adminRouter.Get("/get-users", httpHandler.Admin().GetAllUsersForAdmin)
 	adminRouter.Patch("/update-users-status/:id", httpHandler.Admin().ManageUserStatus)
 	adminRouter.Get("/get-reviews", httpHandler.Admin().GetAllReviewsForAdmin)
 	adminRouter.Delete("/delete-review/:id", httpHandler.Admin().DeleteReview)
