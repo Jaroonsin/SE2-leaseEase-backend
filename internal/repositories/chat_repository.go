@@ -238,7 +238,7 @@ func (r *chatRepository) GetHistoryMessages(chatroomID string, limit int, offset
 
 	var messages []models.Message
 	if err := r.db.Where("chatroom_id = ?", chatroomID).
-		Order("Timestamp ASC").
+		Order("Timestamp DESC").
 		Limit(limit).
 		Offset(offset).
 		Find(&messages).Error; err != nil {
