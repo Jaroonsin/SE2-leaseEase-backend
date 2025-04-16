@@ -80,13 +80,14 @@ func (h *chatHandler) HandleWebSocket(ws *websocket.Conn) {
 }
 
 func (h *chatHandler) HandleNewMessage(message *dtos.MessageDTO) error {
-	if err := h.chatService.CreateMessage(message.ChatroomID, message.SenderID, message.Content); err != nil {
+	createdMessage, err := h.chatService.CreateMessage(message.ChatroomID, message.SenderID, message.Content)
+	if err != nil {
 		log.Println("Error saving message to database:", err)
 		return err
 	}
 
-	log.Printf("New message from %s in chatroom %s: %s\n", message.SenderID, message.ChatroomID, message.Content)
-	return h.BroadcastMessageToChatroom(message.ChatroomID, message)
+	log.Printf("New message from %s in chatroom %s: %s\n", createdMessage.SenderID, createdMessage.ChatroomID, createdMessage.Content)
+	return h.BroadcastMessageToChatroom(createdMessage.ChatroomID, createdMessage)
 }
 
 func (h *chatHandler) BroadcastMessageToChatroom(chatroomID string, message *dtos.MessageDTO) error {

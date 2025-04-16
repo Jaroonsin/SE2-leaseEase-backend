@@ -21,7 +21,7 @@ func NewChatService(chatRepo repositories.ChatRepository, logger *zap.Logger) Ch
 }
 
 // CreateMessage handles saving a new message to the database.
-func (s *chatService) CreateMessage(chatroomID, senderID, content string) error {
+func (s *chatService) CreateMessage(chatroomID, senderID, content string) (*dtos.MessageDTO, error) {
 	logger := s.logger.Named("CreateMessage")
 	logger.Info("Creating new message", zap.String("chatroomID", chatroomID), zap.String("senderID", senderID), zap.String("content", content))
 
@@ -45,7 +45,7 @@ func (s *chatService) CreateMessage(chatroomID, senderID, content string) error 
 	message, err := s.chatRepo.CreateMessage(uint(chatroomIDUint), uint(senderIDUint), content)
 	if err != nil {
 		logger.Error("Failed to create message", zap.Error(err))
-		return err
+		return nil, err
 	}
 
 	// Update the last message in the chatroom
@@ -58,11 +58,21 @@ func (s *chatService) CreateMessage(chatroomID, senderID, content string) error 
 	if err != nil {
 		logger.Error("Failed to update last message content in chatroom", zap.Error(err))
 	}
-
 	logger.Info("Last message updated successfully", zap.String("chatroomID", strconv.FormatUint(uint64(chatroomIDUint), 10)))
 
+	messageReturn := &dtos.MessageDTO{
+		Type:       "message",
+		ChatroomID: chatroomID,
+		SenderID:   senderID,
+		Content:    content,
+		MessageID:  strconv.FormatUint(uint64(message.MessageID), 10),
+		Timestamp:  message.Timestamp.String(),
+		Limit:      0,
+		Offset:     0,
+	}
+
 	logger.Info("Message created successfully", zap.String("messageID", strconv.FormatUint(uint64(message.MessageID), 10)))
-	return nil
+	return messageReturn, nil
 
 	// need to handle the case where the chatroom does not exist
 	// need to handle the case where the sender is not a member of the chatroom

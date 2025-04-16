@@ -12,7 +12,7 @@ import (
 
 type ChatService interface {
 	// CreateMessage handles saving a new message to the database.
-	CreateMessage(chatroomID, senderID, content string) error
+	CreateMessage(chatroomID, senderID, content string) (*dtos.MessageDTO, error)
 
 	// GetChatroomMembers retrieves a list of members in the specified chatroom.
 	GetChatroomMembers(chatroomID string) ([]string, error)
