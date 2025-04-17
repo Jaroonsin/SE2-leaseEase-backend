@@ -28,7 +28,7 @@ func (s *adminService) GetAllReviewsForAdmin(page int, pageSize int, queryString
 	var err error
 
 	if direction == "" {
-		direction = "asc"
+		direction = "ASC"
 	}
 
 	if sortParam == "" {
@@ -97,11 +97,14 @@ func (s *adminService) GetAllReviewsForAdmin(page int, pageSize int, queryString
 	var reviewDTOs []dtos.GetReviewDTO
 	for _, pr := range propertyReviews {
 		reviewDTOs = append(reviewDTOs, dtos.GetReviewDTO{
-			ReviewID:      pr.Review.ID,
-			ReviewMessage: pr.Review.ReviewMessage,
-			Rating:        pr.Review.Rating,
-			TimeStamp:     pr.Review.TimeStamp,
-			LesseeName:    pr.Lessee.Name,
+			ReviewID:       pr.Review.ID,
+			ReviewMessage:  pr.Review.ReviewMessage,
+			Rating:         pr.Review.Rating,
+			TimeStamp:      pr.Review.TimeStamp,
+			LesseeName:     pr.Lessee.Name,
+			LesseeID:       pr.Lessee.ID,
+			PropertyName:   pr.Property.Name,
+			LesseeImageUrl: pr.Lessee.ImageURL,
 		})
 	}
 
