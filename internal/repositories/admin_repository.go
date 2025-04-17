@@ -122,7 +122,7 @@ func (r *adminRepository) GetPaginatedReviewsSortedByReviewer(limit, offset int,
 	}
 
 	err := r.db.
-		Joins("JOIN lessees ON users.id = property_reviews.lessee_id").
+		Joins("JOIN users ON users.id = property_reviews.lessee_id").
 		Preload("Review").
 		Preload("Lessee").
 		Where("users.name ILIKE ?", "%"+query+"%").

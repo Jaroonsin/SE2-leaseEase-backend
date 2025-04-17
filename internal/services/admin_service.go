@@ -35,7 +35,7 @@ func (s *adminService) GetAllReviewsForAdmin(page int, pageSize int, queryString
 		sortParam = "name"
 	}
 
-	if direction != "asc" && direction != "desc" {
+	if direction != "ASC" && direction != "DESC" {
 		logger.Error("Invalid sort direction", zap.String("direction", direction))
 		return nil, errors.New("invalid sort direction")
 	}
