@@ -5,6 +5,7 @@ import (
 	"LeaseEase/internal/handlers"
 	"context"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -49,6 +50,11 @@ func (s *FiberHttpServer) initHttpServer(version string) fiber.Router {
 		MaxAge:           300,
 	}))
 
+	// Not found handler for unmatched routes
+	s.app.Use(func(c *fiber.Ctx) error {
+		log.Printf("Request to unmatched path: %s %s from %s", c.Method(), c.Path(), c.IP())
+		return c.SendStatus(http.StatusNotFound)
+	})
 	// init logger
 	// router.Use(logger.New(logger.Config{
 	// 	Format:     "${time} ${status} - ${method} ${path}\n",
