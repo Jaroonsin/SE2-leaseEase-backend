@@ -4,5 +4,6 @@ go.mod
 go.sum
 
 *.env
+.env.development
 tmp
 *.db

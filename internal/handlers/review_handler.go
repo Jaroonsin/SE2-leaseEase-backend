@@ -122,7 +122,7 @@ func (h *reviewHandler) DeleteReview(c *fiber.Ctx) error {
 // @Failure      400         {object}  map[string]string"Invalid property ID or pagination parameters"
 // @Failure      500         {object}  map[string]string"Internal server error"
 // @Router       /propertyReview/get/{propertyID} [get]
-func (h *reviewHandler) GetAllReviews(c *fiber.Ctx) error {
+func (h *reviewHandler) GetAllReviewsByPropertyID(c *fiber.Ctx) error {
 	pageStr := c.Query("page", "")
 	pageSizeStr := c.Query("pageSize", "")
 
@@ -132,7 +132,7 @@ func (h *reviewHandler) GetAllReviews(c *fiber.Ctx) error {
 	}
 
 	if pageStr == "" && pageSizeStr == "" {
-		reviews, err := h.reviewService.GetAllReviews(uint(propertyID), 0, 0)
+		reviews, err := h.reviewService.GetAllReviewsByProperty(uint(propertyID), 0, 0)
 		if err != nil {
 			return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 		}
@@ -152,7 +152,7 @@ func (h *reviewHandler) GetAllReviews(c *fiber.Ctx) error {
 		}
 	}
 
-	reviews, err := h.reviewService.GetAllReviews(uint(propertyID), page, pageSize)
+	reviews, err := h.reviewService.GetAllReviewsByProperty(uint(propertyID), page, pageSize)
 	if err != nil {
 		return utils.ErrorResponse(c, fiber.StatusInternalServerError, err.Error())
 	}

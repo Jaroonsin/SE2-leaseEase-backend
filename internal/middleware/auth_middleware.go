@@ -21,3 +21,19 @@ func AuthRequired(cfg *config.Config) fiber.Handler {
 		return c.Next()
 	}
 }
+
+func AdminRoleRequired(cfg *config.Config) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		cookie := c.Cookies("auth_token")
+		claims, err := utils.ParseJWT(cookie)
+		if err != nil {
+			return utils.ErrorResponse(c, fiber.StatusUnauthorized, "Invalid token")
+		}
+		if claims["role"] != "admin" {
+			return utils.ErrorResponse(c, fiber.StatusForbidden, "Forbidden")
+		} else {
+			log.Println("Admin role middleware passed")
+			return c.Next()
+		}
+	}
+}

@@ -15,6 +15,8 @@ type service struct {
 	LessorService   LessorService
 	UserService     UserService
 	ChatService     ChatService
+	ImageService    ImageService
+	AdminService    AdminService
 }
 
 func NewService(repo repositories.Repository, logger *zap.Logger) Service {
@@ -27,6 +29,8 @@ func NewService(repo repositories.Repository, logger *zap.Logger) Service {
 		LessorService:   NewLessorService(repo.Lessor(), logger),
 		UserService:     NewUserService(repo.User(), logger),
 		ChatService:     NewChatService(repo.Chat(), logger),
+		ImageService:    NewImageService(repo.Image(), logger),
+		AdminService:    NewAdminService(repo.Admin(), logger),
 	}
 }
 
@@ -60,4 +64,12 @@ func (s *service) User() UserService {
 
 func (s *service) Chat() ChatService {
 	return s.ChatService
+}
+
+func (s *service) Image() ImageService {
+	return s.ImageService
+}
+
+func (s *service) Admin() AdminService {
+	return s.AdminService
 }

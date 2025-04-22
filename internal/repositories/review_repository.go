@@ -90,7 +90,7 @@ func (r *reviewRepository) DeleteReview(reviewID uint, lesseeID uint) error {
 	})
 }
 
-func (r *reviewRepository) GetAllReviews(propertyID uint) ([]models.PropertyReview, error) {
+func (r *reviewRepository) GetAllReviewsByProperty(propertyID uint) ([]models.PropertyReview, error) {
 	var propertyReviews []models.PropertyReview
 	err := r.db.Preload("Review").Preload("Lessee").
 		Where("property_id = ?", propertyID).

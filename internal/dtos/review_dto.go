@@ -14,11 +14,14 @@ type UpdateReviewDTO struct {
 }
 
 type GetReviewDTO struct {
-	ReviewID      uint      `json:"review_id"`
-	ReviewMessage string    `json:"review_message"`
-	Rating        int       `json:"rating"`
-	TimeStamp     time.Time `json:"time_stamp"`
-	LesseeName    string    `json:"lessee_name"`
+	ReviewID       uint      `json:"review_id"`
+	ReviewMessage  string    `json:"review_message"`
+	Rating         int       `json:"rating"`
+	TimeStamp      time.Time `json:"time_stamp"`
+	LesseeName     string    `json:"lessee_name"`
+	LesseeID       uint      `json:"lessee_id"`
+	PropertyName   string    `json:"property_id"`
+	LesseeImageUrl string    `json:"image_url"`
 }
 
 type GetReviewPaginatedDTO struct {

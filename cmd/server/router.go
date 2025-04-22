@@ -18,6 +18,8 @@ func (s *FiberHttpServer) initRouter(router fiber.Router) {
 	initPaymentRouter(router, s.handlers, s.cfg)
 	initUserRouter(router, s.handlers, s.cfg)
 	initChatRouter(router, s.handlers, s.cfg)
+	initImageRouter(router, s.handlers, s.cfg)
+	initAdminRouter(router, s.handlers, s.cfg)
 }
 
 func initAuthRouter(router fiber.Router, httpHandler handlers.Handler) {
@@ -62,9 +64,9 @@ func initLessorRouter(router fiber.Router, httpHandler handlers.Handler, cfg *co
 func initPropertyReviewRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
 	propertyReviewRouter := router.Group("/propertyReview", middleware.AuthRequired(cfg))
 	propertyReviewRouter.Post("/create", httpHandler.Review().CreateReview)
+	propertyReviewRouter.Get("/get/:propertyID", httpHandler.Review().GetAllReviewsByPropertyID)
 	propertyReviewRouter.Put("/update/:id", httpHandler.Review().UpdateReview)
 	propertyReviewRouter.Delete("/delete/:id", httpHandler.Review().DeleteReview)
-	propertyReviewRouter.Get("/get/:propertyID", httpHandler.Review().GetAllReviews)
 }
 
 func initPaymentRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
@@ -79,13 +81,28 @@ func initUserRouter(router fiber.Router, httpHandler handlers.Handler, cfg *conf
 	userRouter.Put("/image", httpHandler.User().UpdateImage)
 	userRouter.Post("/check", httpHandler.User().CheckUser)
 	userRouter.Get("/get/:id", httpHandler.User().GetUser)
+	userRouter.Post("/change-password", httpHandler.User().ChangePassword)
 }
 
 func initChatRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
+	// chatRouter := router.Group("/chat", middleware.AuthRequired(cfg))
 	chatRouter := router.Group("/chat")
 
-	chatRouter.Get("/ws", httpHandler.Chat().HandleWebSocketUpgrade)
-	chatRouter.Get("/ws", websocket.New(func(ws *websocket.Conn) {
-		httpHandler.Chat().HandleWebSocket(ws)
-	}))
+	chatRouter.Post("/create", httpHandler.Chat().CreateChatroom)
+	chatRouter.Get("/ws", websocket.New(httpHandler.Chat().HandleWebSocket))
+}
+
+func initImageRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
+	imageRouter := router.Group("/images", middleware.AuthRequired(cfg))
+	imageRouter.Post("/upload", httpHandler.Image().UploadImage)
+}
+
+func initAdminRouter(router fiber.Router, httpHandler handlers.Handler, cfg *config.Config) {
+	adminRouter := router.Group("/admin", middleware.AuthRequired(cfg))
+	adminRouter.Use(middleware.AdminRoleRequired(cfg))
+
+	adminRouter.Get("/get-users", httpHandler.Admin().GetAllUsersForAdmin)
+	adminRouter.Patch("/update-users-status/:id", httpHandler.Admin().ManageUserStatus)
+	adminRouter.Get("/get-reviews", httpHandler.Admin().GetAllReviewsForAdmin)
+	adminRouter.Delete("/delete-review/:id", httpHandler.Admin().DeleteReview)
 }

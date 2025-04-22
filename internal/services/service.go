@@ -9,4 +9,6 @@ type Service interface {
 	Lessor() LessorService
 	User() UserService
 	Chat() ChatService
+	Image() ImageService
+	Admin() AdminService
 }

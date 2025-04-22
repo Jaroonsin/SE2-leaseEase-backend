@@ -99,7 +99,7 @@ func (s *reviewService) DeleteReview(reviewID uint, lesseeID uint) error {
 	return nil
 }
 
-func (s *reviewService) GetAllReviews(propertyID uint, page, pageSize int) (*dtos.GetReviewPaginatedDTO, error) {
+func (s *reviewService) GetAllReviewsByProperty(propertyID uint, page, pageSize int) (*dtos.GetReviewPaginatedDTO, error) {
 	logger := s.logger.Named("GetAllReviews")
 	var propertyReviews []models.PropertyReview
 	var totalRecords int64
@@ -107,7 +107,7 @@ func (s *reviewService) GetAllReviews(propertyID uint, page, pageSize int) (*dto
 
 	// Case 1: Fetch all reviews (when no pagination)
 	if page == 0 || pageSize == 0 {
-		propertyReviews, err = s.reviewRepo.GetAllReviews(propertyID)
+		propertyReviews, err = s.reviewRepo.GetAllReviewsByProperty(propertyID)
 		if err != nil {
 			logger.Error("Failed to fetch all reviews", zap.Error(err))
 			return nil, err

@@ -20,7 +20,7 @@ import (
 // @contact.name API Support
 // @contact.url http://www.example.com/support
 // @contact.email support@example.com
-// @host localhost:5000/api/v2
+// @host localhost:8080/api/v2
 // @BasePath /
 func main() {
 	// Load configuration
@@ -39,8 +39,15 @@ func main() {
 		log.Printf("Failed to connect to database: %v", err)
 	}
 
+	// Initialize S3 client
+
+	s3Client, err := database.InitS3Client(cfg)
+	if err != nil {
+		log.Printf("Failed to initialize S3 client: %v", err)
+	}
+
 	// Initialize repositories, services, and handlers
-	repositories := repositories.NewRepository(cfg, db)
+	repositories := repositories.NewRepository(cfg, db, s3Client)
 	services := services.NewService(repositories, logger)
 	handlers := handlers.NewHandler(services)
 
