@@ -51,10 +51,8 @@ func (s *FiberHttpServer) initHttpServer(version string) fiber.Router {
 	}))
 
 	// Not found handler for unmatched routes
-	s.app.Use(func(c *fiber.Ctx) error {
-		log.Printf("Request to unmatched path: %s %s from %s", c.Method(), c.Path(), c.IP())
-		return c.SendStatus(http.StatusNotFound)
-	})
+	// Register Not Found handler after all routes are set up
+
 	// init logger
 	// router.Use(logger.New(logger.Config{
 	// 	Format:     "${time} ${status} - ${method} ${path}\n",
@@ -95,6 +93,11 @@ func (s *FiberHttpServer) Start() {
 	// init router
 	router := s.initHttpServer(version)
 	s.initRouter(router)
+
+	router.Use(func(c *fiber.Ctx) error {
+		log.Printf("Request to unmatched path: %s %s from %s", c.Method(), c.Path(), c.IP())
+		return c.SendStatus(http.StatusNotFound)
+	})
 
 	// Setup signal capturing for graceful shutdown
 	quit := make(chan os.Signal, 1)
