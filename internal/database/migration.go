@@ -12,16 +12,16 @@ func RunMigrations(db *gorm.DB) {
 	// AutoMigrate models
 	err := db.AutoMigrate(
 		&models.User{},
-		// &models.Property{},
-		// &models.Reservation{},
-		// &models.Review{},
-		// &models.LessorReview{},
-		// &models.PropertyReview{},
-		// &models.Payment{},
-		// &models.Chatroom{},
-		// &models.Message{},
-		// &models.ChatroomMember{},
-		// &models.MessageRead{},
+		&models.Property{},
+		&models.Reservation{},
+		&models.Review{},
+		&models.LessorReview{},
+		&models.PropertyReview{},
+		&models.Payment{},
+		&models.Chatroom{},
+		&models.Message{},
+		&models.ChatroomMember{},
+		&models.MessageRead{},
 	)
 
 	if err != nil {
