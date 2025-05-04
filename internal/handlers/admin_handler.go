@@ -82,7 +82,7 @@ func (h *adminHandler) GetAllReviewsForAdmin(c *fiber.Ctx) error {
 // @Router       /admin/get-users [get]
 func (h *adminHandler) GetAllUsersForAdmin(c *fiber.Ctx) error {
 	page := c.Query("page", "1")
-	pageSize := c.Query("pageSize", "10")
+	pageSize := c.Query("pageSize", "1000")
 
 	pageInt, err := strconv.Atoi(page)
 	if err != nil || pageInt < 1 {

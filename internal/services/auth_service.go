@@ -92,7 +92,7 @@ func (s *authService) RequestOTP(requestOTPDTO *dtos.RequestOTPDTO) error {
 	expiry := time.Now().Add(3 * time.Minute)
 
 	// re := regexp.MustCompile(`^john\.doe(?:[1-9][0-9]?)?@example\.com$`)
-	re := regexp.MustCompile(`^(?:(john\.doe|lessor|lessee)(?:[1-9][0-9]?)?)@example\.com$`)
+	re := regexp.MustCompile(`^(?:(john\.doe|lessor|lessee|admin)(?:[1-9][0-9]?)?)@example\.com$`)
 	dev := config.LoadConfig().ServerEnv == "development"
 	if dev && re.MatchString(requestOTPDTO.Email) {
 		otp = "123456"

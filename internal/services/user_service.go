@@ -70,7 +70,7 @@ func (s *userService) CheckUser(token string) (*dtos.CheckUserDTO, error) {
 		logger.Error("invalid token payload")
 		return nil, errors.New("invalid token payload")
 	}
-	if role != "lessor" && role != "lessee" {
+	if role != "lessor" && role != "lessee" && role != "admin" {
 		logger.Error("invalid role")
 		return nil, errors.New("invalid role")
 	}
